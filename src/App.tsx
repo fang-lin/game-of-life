@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {AppWrapper, Canvas} from "./App.styles";
-import {LifeMap} from "./LifeMap";
+import {CellMap} from "./LifeMap";
 import {clean, drawGrid, drawLife} from "./drawer";
 import {pixelRatio} from "./const";
 
@@ -12,7 +12,7 @@ const initLifeMap: Array<[number, number]> = [
 
 function frame(context: CanvasRenderingContext2D, rect: DOMRect){
     return function (){
-        const lifeMap = new LifeMap(initLifeMap);
+        const lifeMap = new CellMap(initLifeMap);
         clean(context, rect);
         drawGrid(context, rect);
         lifeMap.deadOrAlive()
