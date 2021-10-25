@@ -5,21 +5,21 @@ export enum Age {
 }
 
 export enum Position {
-    TopLeft = 0,
-    Top = 1,
-    TopRight = 2,
-    Left = 3,
-    Right = 5,
-    BottomLeft = 6,
-    Bottom = 7,
-    BottomRight = 8,
+    TopLeft = '0',
+    Top = '1',
+    TopRight = '2',
+    Left = '3',
+    Right = '5',
+    BottomLeft = '6',
+    Bottom = '7',
+    BottomRight = '8',
 }
 
 export const PositionNaN = -1;
 
 export type Positions = Position | typeof PositionNaN;
 
-class Pair extends Array<number> {
+export class Pair extends Array<number> {
     constructor([x, y]: [number, number]) {
         super(...[x, y]);
         this[0] = x;
@@ -29,10 +29,10 @@ class Pair extends Array<number> {
 
 export class Cell extends Pair {
     neighbors: { [key in Position]: Cell | null } = Cell.EmptyNeighbors();
-    age: Age = Age.Newborn;
+    age: Age = Age.Surviving;
 
     get neighborsLength() {
-        return Object.values(this.neighbors).filter(_ => !!_).length;
+        return Object.values(this.neighbors).filter(neighbor => neighbor && (neighbor.age === Age.Surviving || neighbor.age === Age.Dying)).length;
     }
 
     static EmptyNeighbors(): { [key in Position]: null } {
@@ -55,7 +55,7 @@ export class Cell extends Pair {
     addNeighbor(cell?: Cell): Positions {
         if (cell) {
             const index = this.index(cell);
-            if (index !== PositionNaN && cell !== this.neighbors[index]) {
+            if (index !== null && cell !== this.neighbors[index]) {
                 Object.values(this.neighbors).forEach(neighbor => neighbor && cell.addNeighbor(neighbor));
                 this.neighbors[index] = cell;
                 cell.addNeighbor(this);
@@ -68,7 +68,7 @@ export class Cell extends Pair {
     removeNeighbor(cell?: Cell | null): Positions {
         if (cell) {
             const index = this.index(cell.toTuple());
-            if (index !== PositionNaN && cell === this.neighbors[index]) {
+            if (index !== null && cell === this.neighbors[index]) {
                 this.neighbors[index] = null;
                 Object.values(cell.neighbors).forEach(neighbor => neighbor?.removeNeighbor(cell));
                 cell.neighbors = Cell.EmptyNeighbors();
@@ -83,17 +83,29 @@ export class Cell extends Pair {
     }
 
     destructor() {
-        Object.values(this.neighbors).forEach(neighbor => neighbor?.removeNeighbor(this));
+        Object.values(this.neighbors).forEach(neighbor => {
+            if (neighbor) {
+                Object.keys(neighbor.neighbors).forEach(key => {
+                    const position = key as Position;
+                    if (neighbor.neighbors[position] === this) {
+                        neighbor.neighbors[position] = null;
+                    }
+                })
+            }
+        });
+        this.neighbors = Cell.EmptyNeighbors();
     }
 
     private isNeighbor([x, y]: Pair): boolean {
         return Math.abs(x - this[0]) <= 1 && Math.abs(y - this[1]) <= 1 && !(this[0] === x && this[1] === y);
     }
 
-    private index([x, y]: Pair): Position | typeof PositionNaN {
+    private index([x, y]: Pair): Position | null {
         if (this.isNeighbor([x, y])) {
-            return ((x - this[0] + 2) + (y - this[1])) * 2 + (x - this[0]) + (this[1] - y);
+            return (
+                ((x - this[0] + 2) + (y - this[1])) * 2 + (x - this[0]) + (this[1] - y)
+            ).toString() as Position;
         }
-        return PositionNaN;
+        return null;
     }
 }
