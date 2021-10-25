@@ -5,26 +5,19 @@ export enum Age {
 }
 
 export enum Position {
-    TopLeft = 'TopLeft',
-    Top = 'Top',
-    TopRight = 'TopRight',
-    Left = 'Left',
-    Right = 'Right',
-    BottomLeft = 'BottomLeft',
-    Bottom = 'Bottom',
-    BottomRight = 'BottomRight',
+    TopLeft = 0,
+    Top = 1,
+    TopRight = 2,
+    Left = 3,
+    Right = 5,
+    BottomLeft = 6,
+    Bottom = 7,
+    BottomRight = 8,
 }
 
-export const PositionMap: { [key in number]: Position } = {
-    0: Position.TopLeft,
-    1: Position.Top,
-    2: Position.TopRight,
-    3: Position.Left,
-    5: Position.Right,
-    6: Position.BottomLeft,
-    7: Position.Bottom,
-    8: Position.BottomRight
-}
+export const PositionNaN = -1;
+
+export type Positions = Position | typeof PositionNaN;
 
 class Pair extends Array<number> {
     constructor([x, y]: [number, number]) {
@@ -59,30 +52,30 @@ export class Cell extends Pair {
         return this[0] === x && this[1] === y;
     }
 
-    addNeighbor(cell?: Cell): Position | null {
+    addNeighbor(cell?: Cell): Positions {
         if (cell) {
-            const key = this.getPosition(cell);
-            if (key !== null && cell !== this.neighbors[key]) {
+            const index = this.index(cell);
+            if (index !== PositionNaN && cell !== this.neighbors[index]) {
                 Object.values(this.neighbors).forEach(neighbor => neighbor && cell.addNeighbor(neighbor));
-                this.neighbors[key] = cell;
+                this.neighbors[index] = cell;
                 cell.addNeighbor(this);
-                return key;
+                return index;
             }
         }
-        return null;
+        return PositionNaN;
     }
 
-    removeNeighbor(cell?: Cell | null): Position | null {
+    removeNeighbor(cell?: Cell | null): Positions {
         if (cell) {
-            const key = this.getPosition(cell.toTuple());
-            if (key !== null && cell === this.neighbors[key]) {
-                this.neighbors[key] = null;
+            const index = this.index(cell.toTuple());
+            if (index !== PositionNaN && cell === this.neighbors[index]) {
+                this.neighbors[index] = null;
                 Object.values(cell.neighbors).forEach(neighbor => neighbor?.removeNeighbor(cell));
                 cell.neighbors = Cell.EmptyNeighbors();
-                return key;
+                return index;
             }
         }
-        return null;
+        return PositionNaN;
     }
 
     toTuple(): [number, number] {
@@ -97,10 +90,10 @@ export class Cell extends Pair {
         return Math.abs(x - this[0]) <= 1 && Math.abs(y - this[1]) <= 1 && !(this[0] === x && this[1] === y);
     }
 
-    private getPosition([x, y]: Pair): Position | null {
+    private index([x, y]: Pair): Position | typeof PositionNaN {
         if (this.isNeighbor([x, y])) {
-            return PositionMap[((x - this[0] + 2) + (y - this[1])) * 2 + (x - this[0]) + (this[1] - y)];
+            return ((x - this[0] + 2) + (y - this[1])) * 2 + (x - this[0]) + (this[1] - y);
         }
-        return null;
+        return PositionNaN;
     }
 }

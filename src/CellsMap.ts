@@ -1,46 +1,33 @@
-import {Age, Cell, Position} from "./Cell";
+import {Age, Cell} from "./Cell";
 
 export class CellsMap {
     cells: Cell[] = [];
 
     constructor(cellsTuple: Array<[number, number]>) {
+
         cellsTuple.forEach(cellTuple => {
             const newCell = new Cell(cellTuple);
             this.cells.forEach(cell => cell.addNeighbor(newCell));
             this.cells.push(newCell);
         });
+        // this.cells = cellsTuple.map(c => new Cell(c));
+        // this.buildNeighbors();
     }
 
     step() {
         const dying: Cell[] = [];
         const newborn: Cell[] = [];
         this.cells.forEach(cell => {
-            if (this.shouldBeDead(cell)) {
+            if (cell.neighborsLength > 3 || cell.neighborsLength < 2) {
                 cell.age = Age.Dying;
                 dying.push(cell);
             }
+            Object.keys(cell.neighbors);
 
-            const s = cell.neighbors[Position.Left];
-
-            Object.keys(cell.neighbors).forEach(index => {
-                switch (index) {
-                    case Position.Left:
-                        break;
-                }
-            });
-            // Object.values(cell.neighbors).forEach(neighbor => {
-            //     if (!neighbor) {
-            //         cell.addNeighbor();
-            //     }
-            // });
             cell.age = Age.Surviving;
         });
 
         // this.cells = filter
-    }
-
-    shouldBeDead(cell: Cell): boolean {
-        return cell.neighborsLength > 3 || cell.neighborsLength < 2;
     }
 
     // private buildNeighbors() {

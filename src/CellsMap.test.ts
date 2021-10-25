@@ -1,6 +1,5 @@
 import {CellsMap} from "./CellsMap";
 import {objectify} from "./utils";
-import {Position} from "./Cell";
 
 
 describe('CellsMap', () => {
@@ -29,66 +28,66 @@ describe('CellsMap', () => {
 
         test('the 1st cell should have correct neighbors', () => {
             expect(objectify(cellsMap.cells[0].neighbors)).toEqual({
-                [Position.TopLeft]: null,
-                [Position.Top]: null,
-                [Position.TopRight]: null,
-                [Position.Left]: null,
-                [Position.Right]: null,
-                [Position.BottomLeft]: [1, 0],
-                [Position.Bottom]: [1, 1],
-                [Position.BottomRight]: [1, 2],
+                '0': null,
+                '1': null,
+                '2': null,
+                '3': null,
+                '5': null,
+                '6': [1, 0],
+                '7': [1, 1],
+                '8': [1, 2],
             });
         });
 
         test('the 2nd cell should have correct neighbors', () => {
             expect(objectify(cellsMap.cells[1].neighbors)).toEqual({
-                [Position.TopLeft]: null,
-                [Position.Top]: null,
-                [Position.TopRight]: [0, 1],
-                [Position.Left]: null,
-                [Position.Right]: [1, 1],
-                [Position.BottomLeft]: null,
-                [Position.Bottom]: null,
-                [Position.BottomRight]: [2, 1],
+                '0': null,
+                '1': null,
+                '2': [0, 1],
+                '3': null,
+                '5': [1, 1],
+                '6': null,
+                '7': null,
+                '8': [2, 1],
             });
         });
 
         test('the 3rd cell should have correct neighbors', () => {
             expect(objectify(cellsMap.cells[2].neighbors)).toEqual({
-                [Position.TopLeft]: null,
-                [Position.Top]: [0, 1],
-                [Position.TopRight]: null,
-                [Position.Left]: [1, 0],
-                [Position.Right]: [1, 2],
-                [Position.BottomLeft]: null,
-                [Position.Bottom]: [2, 1],
-                [Position.BottomRight]: null,
+                '0': null,
+                '1': [0, 1],
+                '2': null,
+                '3': [1, 0],
+                '5': [1, 2],
+                '6': null,
+                '7': [2, 1],
+                '8': null,
             });
         });
 
         test('the 4th cell should have correct neighbors', () => {
             expect(objectify(cellsMap.cells[3].neighbors)).toEqual({
-                [Position.TopLeft]: [0, 1],
-                [Position.Top]: null,
-                [Position.TopRight]: null,
-                [Position.Left]: [1, 1],
-                [Position.Right]: null,
-                [Position.BottomLeft]: [2, 1],
-                [Position.Bottom]: null,
-                [Position.BottomRight]: null,
+                '0': [0, 1],
+                '1': null,
+                '2': null,
+                '3': [1, 1],
+                '5': null,
+                '6': [2, 1],
+                '7': null,
+                '8': null,
             });
         });
 
         test('the 5th cell should have correct neighbors', () => {
             expect(objectify(cellsMap.cells[4].neighbors)).toEqual({
-                [Position.TopLeft]: [1, 0],
-                [Position.Top]: [1, 1],
-                [Position.TopRight]: [1, 2],
-                [Position.Left]: null,
-                [Position.Right]: null,
-                [Position.BottomLeft]: null,
-                [Position.Bottom]: null,
-                [Position.BottomRight]: null,
+                '0': [1, 0],
+                '1': [1, 1],
+                '2': [1, 2],
+                '3': null,
+                '5': null,
+                '6': null,
+                '7': null,
+                '8': null,
             });
         });
 
