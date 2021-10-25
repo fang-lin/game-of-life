@@ -1,4 +1,5 @@
 import {cell, pixelRatio} from "./const";
+import {Pair} from "./Cell";
 
 export function drawGrid(context: CanvasRenderingContext2D, rect: DOMRect) {
 
@@ -21,16 +22,28 @@ export function drawGrid(context: CanvasRenderingContext2D, rect: DOMRect) {
     context.stroke();
 }
 
-export function drawLife(context: CanvasRenderingContext2D, rect: DOMRect, lifeMap: Array<[number, number]>) {
+export function drawLife(context: CanvasRenderingContext2D, rect: DOMRect, lifeMap: Pair[]) {
     lifeMap.forEach(([x, y]) => {
-        context.rect(x * cell * pixelRatio, y * cell * pixelRatio, cell * pixelRatio, cell * pixelRatio);
         context.fillStyle = '#000';
-        context.fill();
+        context.fillRect(y * cell * pixelRatio, x * cell * pixelRatio, cell * pixelRatio, cell * pixelRatio);
+    });
+}
+
+export function drawNewLife(context: CanvasRenderingContext2D, rect: DOMRect, lifeMap: Pair[]) {
+    lifeMap.forEach(([x, y]) => {
+        context.fillStyle = '#666';
+        context.fillRect(y * cell * pixelRatio, x * cell * pixelRatio, cell * pixelRatio, cell * pixelRatio);
+    })
+}
+
+export function drawDeadLife(context: CanvasRenderingContext2D, rect: DOMRect, lifeMap: Pair[]) {
+    lifeMap.forEach(([x, y]) => {
+        context.fillStyle = '#ccc';
+        context.fillRect(y * cell * pixelRatio, x * cell * pixelRatio, cell * pixelRatio, cell * pixelRatio);
     })
 }
 
 export function clean(context: CanvasRenderingContext2D, rect: DOMRect) {
-    context.rect(0, 0, rect.width * pixelRatio, rect.height * pixelRatio);
     context.fillStyle = '#fff';
-    context.fill();
+    context.fillRect(0, 0, rect.width * pixelRatio, rect.height * pixelRatio);
 }

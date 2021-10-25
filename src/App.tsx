@@ -1,28 +1,69 @@
 import React, {useEffect, useRef} from 'react';
 import {AppWrapper, Canvas} from "./App.styles";
-import {CellMap} from "./LifeMap";
-import {clean, drawGrid, drawLife} from "./drawer";
+import {CellsMap} from "./CellsMap";
+import {clean, drawDeadLife, drawGrid, drawLife, drawNewLife} from "./drawer";
 import {pixelRatio} from "./const";
 
+// const initLifeMap: Array<[number, number]> = [
+//     [21, 22],
+//     [22, 21],
+//     [22, 22],
+//     [22, 23],
+//     [23, 22]
+// ]
+
+// const initLifeMap: Array<[number, number]> = [
+//     [20, 20],
+//     [20, 21],
+//     [20, 22],
+//     [21, 19],
+//     [21, 20],
+//     [21, 21],
+// ]
+
+// const initLifeMap: Array<[number, number]> = [
+//     [20, 20],
+//     [21, 21],
+//     [22, 19],
+//     [22, 20],
+//     [22, 21],
+// ]
+
 const initLifeMap: Array<[number, number]> = [
-    [3,2],
-    [3,1],
-    [4,2],
+    [20, 20],
+    [20, 21],
+    [20, 22],
+    [20, 23],
+    [21, 19],
+    [21, 23],
+    [22, 23],
+    [23, 19],
+    [23, 22]
 ]
 
-function frame(context: CanvasRenderingContext2D, rect: DOMRect){
-    return function (){
-        const lifeMap = new CellMap(initLifeMap);
+const lifeMap = new CellsMap(initLifeMap);
+
+const duration = 50;
+
+function frame(context: CanvasRenderingContext2D, rect: DOMRect) {
+    return function () {
         clean(context, rect);
         drawGrid(context, rect);
-        lifeMap.deadOrAlive()
-        lifeMap.print();
+        lifeMap.grow();
         drawLife(context, rect, lifeMap.cells);
+        setTimeout(() => {
+            drawDeadLife(context, rect, lifeMap.dying);
+            drawNewLife(context, rect, lifeMap.newborn);
+            setTimeout(() => {
+                lifeMap.clean();
+            }, duration);
+        }, duration);
+
     }
 }
 
 function play(context: CanvasRenderingContext2D, rect: DOMRect) {
-    setInterval(frame(context, rect), 1000);
+    setInterval(frame(context, rect), duration * 3);
 }
 
 function App() {

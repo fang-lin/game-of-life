@@ -39,8 +39,9 @@ export class CellsMap {
                     const [x, y] = ConvertPosition[position](cell);
                     const newLife = new Cell([x, y]);
                     newLife.age = Age.Newborn;
-                    cell.addNeighbor(newLife);
+                    this.cells.forEach(cell => cell.addNeighbor(newLife));
                     if (this.shouldBeBorne(newLife)) {
+                        this.newborn.forEach(cell => cell.addNeighbor(newLife));
                         this.newborn.push(newLife);
                     } else {
                         this.failed.push(newLife);
