@@ -1,4 +1,4 @@
-import {Cell} from "./Cell";
+import {Cell, Position, Positions} from "./Cell";
 import {objectify} from "./utils";
 
 describe('Cell', () => {
@@ -25,12 +25,17 @@ describe('Cell', () => {
     });
 
     test('the neighbors should be empty', () => {
-        expect(cell.neighbors).toEqual({});
+        expect(cell.neighbors).toEqual(Cell.EmptyNeighbors());
     });
 
     describe('if add a neighbor on the top left', () => {
+        let addedIndex: Positions;
         beforeEach(() => {
-            cell.addNeighbor(new Cell([1, 0]));
+            addedIndex = cell.addNeighbor(new Cell([1, 0]));
+        });
+
+        test('addNeighbor should return correct index', () => {
+            expect(addedIndex).toBe(Position.TopLeft);
         });
 
         test('neighborsLength should be 1', () => {
@@ -38,16 +43,21 @@ describe('Cell', () => {
         });
 
         test('the added neighbor should exist with index 0', () => {
-            expect(cell.neighbors[0].equals([1, 0])).toBeTruthy();
+            expect(cell.neighbors[Position.TopLeft]?.toTuple()).toEqual([1, 0]);
         });
 
         test('the added neighbor should have this cell as neighbor with correct index', () => {
-            expect(cell.neighbors[0].neighbors[8].equals([2, 1])).toBeTruthy();
+            expect(cell.neighbors[Position.TopLeft]?.neighbors[Position.BottomRight]?.toTuple()).toEqual([2, 1]);
         });
 
         describe('then remove the added neighbor', () => {
+            let removedIndex: Positions;
             beforeEach(() => {
-                cell.removeNeighbor(cell.neighbors[0]);
+                removedIndex = cell.removeNeighbor(cell.neighbors[Position.TopLeft]);
+            });
+
+            test('removeNeighbor should return correct index', () => {
+                expect(removedIndex).toBe(Position.TopLeft);
             });
 
             test('neighborsLength should be 0', function () {
@@ -55,15 +65,21 @@ describe('Cell', () => {
             });
 
             test('the neighbors should be empty', function () {
-                expect(cell.neighbors).toEqual({});
+                expect(cell.neighbors).toEqual(Cell.EmptyNeighbors());
             });
         });
     });
 
     describe('if add 2 neighbors on the top left and top', () => {
+        let firstAddedIndex: Positions, secondAddedIndex: Positions;
         beforeEach(() => {
-            cell.addNeighbor(new Cell([1, 0]));
-            cell.addNeighbor(new Cell([2, 0]));
+            firstAddedIndex = cell.addNeighbor(new Cell([1, 0]));
+            secondAddedIndex = cell.addNeighbor(new Cell([2, 0]));
+        });
+
+        test('addNeighbor should return correct index', () => {
+            expect(firstAddedIndex).toBe(Position.TopLeft);
+            expect(secondAddedIndex).toBe(Position.Left);
         });
 
         test('neighborsLength should be 2', () => {
@@ -71,20 +87,25 @@ describe('Cell', () => {
         });
 
         test('the added neighbor should exist with index 3', () => {
-            expect(objectify(cell.neighbors[3])).toEqual([2, 0]);
+            expect(objectify(cell.neighbors[Position.Left])).toEqual([2, 0]);
         });
 
         test('the first added cell should be the neighbor of the second added cell', () => {
-            expect(objectify(cell.neighbors[3].neighbors[1])).toEqual([1, 0]);
+            expect(objectify(cell.neighbors[Position.Left]?.neighbors[Position.Top])).toEqual([1, 0]);
         });
 
         test('the second added cell should be the neighbor of the first added cell', () => {
-            expect(objectify(cell.neighbors[0].neighbors[7])).toEqual([2, 0]);
+            expect(objectify(cell.neighbors[Position.TopLeft]?.neighbors[Position.Bottom])).toEqual([2, 0]);
         });
 
         describe('then remove the first added neighbor', () => {
+            let removedIndex: Positions;
             beforeEach(() => {
-                cell.removeNeighbor(cell.neighbors[0]);
+                removedIndex = cell.removeNeighbor(cell.neighbors[0]);
+            });
+
+            test('removeNeighbor should return correct index', () => {
+                expect(removedIndex).toBe(Position.TopLeft);
             });
 
             test('neighborsLength should be 1', () => {
@@ -92,15 +113,15 @@ describe('Cell', () => {
             });
 
             test('the neighbors should be the second added', () => {
-                expect(objectify(cell.neighbors[3])).toEqual([2, 0])
+                expect(objectify(cell.neighbors[Position.Left])).toEqual([2, 0])
             });
 
             test('the neighborsLength of the second added neighbor should be 1', () => {
-                expect(cell.neighbors[3].neighborsLength).toBe(1);
+                expect(cell.neighbors[Position.Left]?.neighborsLength).toBe(1);
             });
 
             test('the second added neighbor should only have one neighbor which is this cell', () => {
-                expect(objectify(cell.neighbors[3].neighbors[5])).toEqual([2, 1]);
+                expect(objectify(cell.neighbors[Position.Left]?.neighbors[5])).toEqual([2, 1]);
             });
         });
 
@@ -136,35 +157,42 @@ describe('Cell', () => {
         });
 
         describe('then destroy the cell', () => {
-            let others: Array<Cell>;
+            let others: Array<Cell | null>;
             beforeEach(() => {
                 others = Object.values(cell.neighbors);
                 cell.destructor();
             });
 
             test('the neighbors of the cell should be empty', () => {
-                expect({}).toEqual({});
+                expect(cell.neighbors).toEqual(Cell.EmptyNeighbors());
             });
 
             test('All other cells should not treat this cell as neighbors', () => {
-                expect(Object.values(others[0].neighbors).includes(cell)).toBeFalsy();
-                expect(Object.values(others[1].neighbors).includes(cell)).toBeFalsy();
-                expect(Object.values(others[2].neighbors).includes(cell)).toBeFalsy();
-                expect(Object.values(others[3].neighbors).includes(cell)).toBeFalsy();
-                expect(Object.values(others[4].neighbors).includes(cell)).toBeFalsy();
-                expect(Object.values(others[5].neighbors).includes(cell)).toBeFalsy();
-                expect(Object.values(others[6].neighbors).includes(cell)).toBeFalsy();
-                expect(Object.values(others[7].neighbors).includes(cell)).toBeFalsy();
+                expect(Object.values(others[0]!.neighbors)).not.toContain(cell);
+                expect(Object.values(others[1]!.neighbors!)).not.toContain(cell);
+                expect(Object.values(others[2]!.neighbors)).not.toContain(cell);
+                expect(Object.values(others[3]!.neighbors)).not.toContain(cell);
+                expect(Object.values(others[4]!.neighbors)).not.toContain(cell);
+                expect(Object.values(others[5]!.neighbors)).not.toContain(cell);
+                expect(Object.values(others[6]!.neighbors)).not.toContain(cell);
+                expect(Object.values(others[7]!.neighbors)).not.toContain(cell);
             });
 
         });
     });
 
     describe('if add a cell which is not a neighbor', () => {
+        let firstAddedIndex: Positions, secondAddedIndex: Positions, thirdAddedIndex: Positions;
         beforeEach(() => {
-            cell.addNeighbor(new Cell([3, 3]));
-            cell.addNeighbor(new Cell([2, 3]));
-            cell.addNeighbor(new Cell([2, -1]));
+            firstAddedIndex = cell.addNeighbor(new Cell([3, 3]));
+            secondAddedIndex = cell.addNeighbor(new Cell([2, 3]));
+            thirdAddedIndex = cell.addNeighbor(new Cell([2, -1]));
+        });
+
+        test('addNeighbor should return -1', () => {
+            expect(firstAddedIndex).toBe(-1);
+            expect(secondAddedIndex).toBe(-1);
+            expect(thirdAddedIndex).toBe(-1);
         });
 
         test('neighborsLength should be 0', () => {
@@ -172,7 +200,7 @@ describe('Cell', () => {
         });
 
         test('the neighbors should be empty', () => {
-            expect(cell.neighbors).toEqual({});
+            expect(cell.neighbors).toEqual(Cell.EmptyNeighbors());
         });
     })
 
@@ -186,7 +214,7 @@ describe('Cell', () => {
         });
 
         test('the neighbors should be empty', () => {
-            expect(cell.neighbors).toEqual({});
+            expect(cell.neighbors).toEqual(Cell.EmptyNeighbors());
         });
     })
 });

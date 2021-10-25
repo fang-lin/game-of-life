@@ -1,53 +1,81 @@
 export enum Age {
-    NEWBORN,
-    SURVIVING,
-    DYING
+    Newborn,
+    Surviving,
+    Dying
 }
 
 export enum Position {
-    TL = 0,
-    T = 1,
-    TR = 2,
-    L = 3,
-    R = 5,
-    BL = 6,
-    B = 7,
-    BR = 8,
-    NaN = -1
+    TopLeft = 0,
+    Top = 1,
+    TopRight = 2,
+    Left = 3,
+    Right = 5,
+    BottomLeft = 6,
+    Bottom = 7,
+    BottomRight = 8,
 }
 
-export class Cell extends Array<number> {
-    neighbors: { [key: number]: Cell } = {};
-    age: Age = Age.NEWBORN;
+export const PositionNaN = -1;
 
+export type Positions = Position | typeof PositionNaN;
+
+class Pair extends Array<number> {
     constructor([x, y]: [number, number]) {
         super(...[x, y]);
+        this[0] = x;
+        this[1] = y;
     }
+}
+
+export class Cell extends Pair {
+    neighbors: { [key in Position]: Cell | null } = Cell.EmptyNeighbors();
+    age: Age = Age.Newborn;
 
     get neighborsLength() {
-        return Object.keys(this.neighbors).length;
+        return Object.values(this.neighbors).filter(_ => !!_).length;
+    }
+
+    static EmptyNeighbors(): { [key in Position]: null } {
+        return {
+            [Position.TopLeft]: null,
+            [Position.Top]: null,
+            [Position.TopRight]: null,
+            [Position.Left]: null,
+            [Position.Right]: null,
+            [Position.BottomLeft]: null,
+            [Position.Bottom]: null,
+            [Position.BottomRight]: null,
+        };
     }
 
     equals([x, y]: [number, number]) {
         return this[0] === x && this[1] === y;
     }
 
-    addNeighbor(cell: Cell) {
-        const index = this.index([cell[0], cell[1]]);
-        if (index !== Position.NaN && cell !== this.neighbors[index]) {
-            Object.values(this.neighbors).forEach(neighbor => cell.addNeighbor(neighbor));
-            this.neighbors[index] = cell;
-            cell.addNeighbor(this);
+    addNeighbor(cell?: Cell): Positions {
+        if (cell) {
+            const index = this.index(cell);
+            if (index !== PositionNaN && cell !== this.neighbors[index]) {
+                Object.values(this.neighbors).forEach(neighbor => neighbor && cell.addNeighbor(neighbor));
+                this.neighbors[index] = cell;
+                cell.addNeighbor(this);
+                return index;
+            }
         }
+        return PositionNaN;
     }
 
-    removeNeighbor(cell: Cell) {
-        const index = this.index(cell.toTuple());
-        if (index !== Position.NaN && cell === this.neighbors[index]) {
-            delete this.neighbors[index];
-            Object.values(cell.neighbors).forEach(neighbor => neighbor.removeNeighbor(cell));
-            cell.neighbors = {};
+    removeNeighbor(cell?: Cell | null): Positions {
+        if (cell) {
+            const index = this.index(cell.toTuple());
+            if (index !== PositionNaN && cell === this.neighbors[index]) {
+                this.neighbors[index] = null;
+                Object.values(cell.neighbors).forEach(neighbor => neighbor?.removeNeighbor(cell));
+                cell.neighbors = Cell.EmptyNeighbors();
+                return index;
+            }
         }
+        return PositionNaN;
     }
 
     toTuple(): [number, number] {
@@ -55,17 +83,17 @@ export class Cell extends Array<number> {
     }
 
     destructor() {
-        Object.values(this.neighbors).forEach(neighbor => neighbor.removeNeighbor(this));
+        Object.values(this.neighbors).forEach(neighbor => neighbor?.removeNeighbor(this));
     }
 
-    private isNeighbor([x, y]: [number, number]): boolean {
+    private isNeighbor([x, y]: Pair): boolean {
         return Math.abs(x - this[0]) <= 1 && Math.abs(y - this[1]) <= 1 && !(this[0] === x && this[1] === y);
     }
 
-    private index([x, y]: [number, number]): Position {
+    private index([x, y]: Pair): Position | typeof PositionNaN {
         if (this.isNeighbor([x, y])) {
             return ((x - this[0] + 2) + (y - this[1])) * 2 + (x - this[0]) + (this[1] - y);
         }
-        return Position.NaN;
+        return PositionNaN;
     }
 }
