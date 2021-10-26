@@ -1,94 +1,71 @@
-import React, {useEffect, useRef} from 'react';
-import {AppWrapper, Canvas} from "./App.styles";
-import {CellsMap} from "./CellsMap";
-import {clean, drawDeadLife, drawGrid, drawLife, drawNewLife} from "./drawer";
-import {pixelRatio} from "./const";
+import React, {Component, RefObject} from "react";
+import {AppWrapper} from "./App.styles";
+import debounce from 'lodash/debounce';
+import Canvas from "./Canvas";
+import {RouteComponentProps} from 'react-router-dom';
 
-// const initLifeMap: Array<[number, number]> = [
-//     [21, 22],
-//     [22, 21],
-//     [22, 22],
-//     [22, 23],
-//     [23, 22]
-// ]
+interface AppProps {
 
-// const initLifeMap: Array<[number, number]> = [
-//     [20, 20],
-//     [20, 21],
-//     [20, 22],
-//     [21, 19],
-//     [21, 20],
-//     [21, 21],
-// ]
+}
 
-// const initLifeMap: Array<[number, number]> = [
-//     [20, 20],
-//     [21, 21],
-//     [22, 19],
-//     [22, 20],
-//     [22, 21],
-// ]
+interface AppState {
+    size: [number, number];
+}
 
-const initLifeMap: Array<[number, number]> = [
-    [20, 20],
-    [20, 21],
-    [20, 22],
-    [20, 23],
-    [21, 19],
-    [21, 23],
-    [22, 23],
-    [23, 19],
-    [23, 22]
-]
-
-const lifeMap = new CellsMap(initLifeMap);
-
-const duration = 50;
-
-function frame(context: CanvasRenderingContext2D, rect: DOMRect) {
-    return function () {
-        clean(context, rect);
-        drawGrid(context, rect);
-        lifeMap.grow();
-        drawLife(context, rect, lifeMap.cells);
-        setTimeout(() => {
-            drawDeadLife(context, rect, lifeMap.dying);
-            drawNewLife(context, rect, lifeMap.newborn);
-            setTimeout(() => {
-                lifeMap.clean();
-            }, duration);
-        }, duration);
-
+export const getStageSize = (content: Element | null): [number, number] => {
+    if (content) {
+        const {width, height} = content.getBoundingClientRect();
+        return [width, height];
     }
-}
+    return [0, 0];
+};
 
-function play(context: CanvasRenderingContext2D, rect: DOMRect) {
-    setInterval(frame(context, rect), duration * 3);
-}
+export class App extends Component<RouteComponentProps<AppProps>, AppState> {
 
-function App() {
-    const canvas = useRef<HTMLCanvasElement>(null);
+    private readonly appRef: RefObject<HTMLDivElement>;
 
-    useEffect(() => {
-        const element = canvas.current;
-        if (element) {
-            const rect = element.getBoundingClientRect();
-            const width = rect.width * pixelRatio;
-            const height = rect.height * pixelRatio;
-            element.width = width
-            element.height = height;
-            const context = element.getContext('2d');
-            if (context) {
-                play(context, rect);
-            }
-        }
+    constructor(props: RouteComponentProps<AppProps>) {
+        super(props);
+        this.appRef = React.createRef();
+        this.state = {
+            // dragState: DragState.end,
+            size: [0, 0],
+            // redrawing: false,
+            // transform: [0, 0],
+            // cursor: [0, 0],
+            // trackPoint: [0, 0],
+            // client: [0, 0]
+        };
+    }
+
+    onResize = () => requestAnimationFrame(() => {
+        const {width = 0, height = 0} = this.appRef.current?.getBoundingClientRect() || {};
+        this.setState({size: [width, height]});
     });
 
-    return (
-        <AppWrapper>
-            <Canvas ref={canvas}/>
-        </AppWrapper>
-    );
+    onResizing = debounce(this.onResize, 200);
+
+    componentDidMount(): void {
+        this.onResize();
+        window.addEventListener('resize', this.onResize);
+        // window.addEventListener(DragEvents[DragState.moving], this.onMoving);
+        // window.addEventListener(DragEvents[DragState.start], this.onDragStart);
+    }
+
+    componentWillUnmount(): void {
+        window.removeEventListener('resize', this.onResize);
+        // window.removeEventListener(DragEvents[DragState.moving], this.onMoving);
+        // window.removeEventListener(DragEvents[DragState.start], this.onDragStart);
+    }
+
+    render() {
+        const size = this.state.size;
+        return (
+            <AppWrapper ref={this.appRef}>
+                <Canvas {...{size}}/>
+            </AppWrapper>
+        );
+    }
 }
 
 export default App;

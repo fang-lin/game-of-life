@@ -1,9 +1,10 @@
 import {cell, pixelRatio} from "./const";
 import {Pair} from "./Cell";
+import {Size} from "./Canvas";
 
-export function drawGrid(context: CanvasRenderingContext2D, rect: DOMRect) {
+export function drawGrid(context: CanvasRenderingContext2D, size: Size) {
 
-    const {width, height} = rect;
+    const [width, height] = size;
     const rows = Math.floor(height / cell);
     const columns = Math.floor(width / cell);
     context.beginPath();
@@ -22,28 +23,28 @@ export function drawGrid(context: CanvasRenderingContext2D, rect: DOMRect) {
     context.stroke();
 }
 
-export function drawLife(context: CanvasRenderingContext2D, rect: DOMRect, lifeMap: Pair[]) {
+export function drawLife(context: CanvasRenderingContext2D, lifeMap: Pair[]) {
     lifeMap.forEach(([x, y]) => {
         context.fillStyle = '#000';
         context.fillRect(y * cell * pixelRatio, x * cell * pixelRatio, cell * pixelRatio, cell * pixelRatio);
     });
 }
 
-export function drawNewLife(context: CanvasRenderingContext2D, rect: DOMRect, lifeMap: Pair[]) {
+export function drawNewLife(context: CanvasRenderingContext2D, lifeMap: Pair[]) {
     lifeMap.forEach(([x, y]) => {
         context.fillStyle = '#666';
         context.fillRect(y * cell * pixelRatio, x * cell * pixelRatio, cell * pixelRatio, cell * pixelRatio);
     })
 }
 
-export function drawDeadLife(context: CanvasRenderingContext2D, rect: DOMRect, lifeMap: Pair[]) {
+export function drawDeadLife(context: CanvasRenderingContext2D, lifeMap: Pair[]) {
     lifeMap.forEach(([x, y]) => {
         context.fillStyle = '#ccc';
         context.fillRect(y * cell * pixelRatio, x * cell * pixelRatio, cell * pixelRatio, cell * pixelRatio);
     })
 }
 
-export function clean(context: CanvasRenderingContext2D, rect: DOMRect) {
+export function clean(context: CanvasRenderingContext2D, size: Size) {
     context.fillStyle = '#fff';
-    context.fillRect(0, 0, rect.width * pixelRatio, rect.height * pixelRatio);
+    context.fillRect(0, 0, size[0] * pixelRatio, size[1] * pixelRatio);
 }

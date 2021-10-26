@@ -53,29 +53,14 @@ export class Cell extends Pair {
     }
 
     addNeighbor(cell: Cell): Position | null {
-        // console.log(objectify(this), objectify(cell));
         const index = this.index(cell);
         if (index && cell !== this.neighbors[index]) {
-            // Object.values(this.neighbors).forEach(neighbor => neighbor && cell.addNeighbor(neighbor));
             this.neighbors[index] = cell;
             cell.addNeighbor(this);
             return index;
         }
         return null;
     }
-
-    // removeNeighbor(cell?: Cell | null): Position | null {
-    //     if (cell) {
-    //         const index = this.index(cell.toTuple());
-    //         if (index !== null && cell === this.neighbors[index]) {
-    //             this.neighbors[index] = null;
-    //             Object.values(cell.neighbors).forEach(neighbor => neighbor?.removeNeighbor(cell));
-    //             cell.neighbors = Cell.EmptyNeighbors();
-    //             return index;
-    //         }
-    //     }
-    //     return null;
-    // }
 
     toTuple(): [number, number] {
         return [this[0], this[1]];
