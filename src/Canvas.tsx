@@ -1,8 +1,9 @@
 import React, {Component, RefObject} from 'react';
 import {CanvasWrapper} from "./Canvas.styles";
 import {CellsMap} from "./CellsMap";
-import {clean, drawDeadLife, drawGrid, drawLife, drawNewLife} from "./drawer";
-import {pixelRatio} from "./const";
+import {drawGrid, drawLife, wipe} from "./drawer";
+import {getSize, updateCanvasSize} from "./utils";
+import {PlayState} from "./App";
 
 // const initLifeMap: Array<[number, number]> = [
 //     [21, 22],
@@ -41,53 +42,79 @@ const initLifeMap: Array<[number, number]> = [
     [23, 22]
 ]
 
-const lifeMap = new CellsMap(initLifeMap);
-
 export type Size = [number, number]
 
 interface CanvasProps {
     size: [number, number];
+    playState: PlayState;
+    setPlayState: (s: PlayState) => void;
+    clickNextCallback: (cb: () => void) => void;
 }
 
-function getSize(size: Size): Size {
-    return [size[0] * pixelRatio, size[1] * pixelRatio];
-}
-
-const duration = 500;
+const duration = 100;
 
 export class Canvas extends Component<CanvasProps, {}> {
 
+    cellsMap: CellsMap;
+    playTimout?: NodeJS.Timeout;
     private readonly canvasRef: RefObject<HTMLCanvasElement>;
 
     constructor(props: CanvasProps) {
         super(props);
         this.canvasRef = React.createRef();
+        this.cellsMap = new CellsMap();
+        this.props.clickNextCallback(this.frame);
     }
 
     componentDidUpdate(prevProps: CanvasProps) {
         const element = this.canvasRef.current;
         if (element) {
-            const size = getSize(this.props.size);
-            element.width = size[0];
-            element.height = size[1];
             const context = element.getContext('2d');
             if (context) {
-                clean(context, size);
-                drawGrid(context, size);
-                drawLife(context, lifeMap.cells);
+                if (updateCanvasSize(prevProps.size, this.props.size, element)) {
+                    wipe(context, this.props.size);
+                    drawGrid(context, this.props.size);
+                    drawLife(context, this.cellsMap.cells);
+                }
+
+                switch (this.props.playState) {
+                    case PlayState.Paused:
+                        this.playTimout && clearTimeout(this.playTimout);
+                        break;
+                    case PlayState.Playing:
+                        this.play();
+                        break;
+                    case PlayState.Stopped:
+                        this.playTimout && clearTimeout(this.playTimout);
+                        this.cellsMap.reset();
+                        this.cellsMap.init(initLifeMap);
+                        wipe(context, this.props.size);
+                        drawGrid(context, this.props.size);
+                        drawLife(context, this.cellsMap.cells);
+                        break;
+                    case PlayState.Reset:
+                        this.playTimout && clearTimeout(this.playTimout);
+                        this.cellsMap.reset();
+                        wipe(context, this.props.size);
+                        drawGrid(context, this.props.size);
+                        drawLife(context, this.cellsMap.cells);
+                        break;
+                }
             }
         }
+
+
     }
 
     frame = () => {
         const context = this.canvasRef.current?.getContext('2d');
         if (context) {
             const size = getSize(this.props.size);
-            clean(context, size);
+            wipe(context, size);
             drawGrid(context, size);
-            lifeMap.grow();
-            lifeMap.clean();
-            drawLife(context, lifeMap.cells);
+            this.cellsMap.grow();
+            this.cellsMap.clean();
+            drawLife(context, this.cellsMap.cells);
             // setTimeout(() => {
             //     drawDeadLife(context, lifeMap.dying);
             //     drawNewLife(context, lifeMap.newborn);
@@ -99,13 +126,10 @@ export class Canvas extends Component<CanvasProps, {}> {
     }
 
     play() {
-        setInterval(() => {
+        this.playTimout = setTimeout(() => {
             this.frame();
-        }, duration)
-    }
-
-    componentDidMount() {
-        this.play();
+            this.play();
+        }, duration);
     }
 
     render() {

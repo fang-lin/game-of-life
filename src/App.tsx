@@ -3,13 +3,23 @@ import {AppWrapper} from "./App.styles";
 import debounce from 'lodash/debounce';
 import Canvas from "./Canvas";
 import {RouteComponentProps} from 'react-router-dom';
+import MaskCanvas from "./MaskCanvas";
+import Panel from "./Panel";
 
 interface AppProps {
 
 }
 
+export enum PlayState {
+    Playing,
+    Stopped,
+    Paused,
+    Reset
+}
+
 interface AppState {
     size: [number, number];
+    playState: PlayState;
 }
 
 export class App extends Component<RouteComponentProps<AppProps>, AppState> {
@@ -20,15 +30,12 @@ export class App extends Component<RouteComponentProps<AppProps>, AppState> {
         super(props);
         this.appRef = React.createRef();
         this.state = {
-            // dragState: DragState.end,
             size: [0, 0],
-            // redrawing: false,
-            // transform: [0, 0],
-            // cursor: [0, 0],
-            // trackPoint: [0, 0],
-            // client: [0, 0]
+            playState: PlayState.Stopped
         };
     }
+
+    onClickNext: () => void = () => undefined;
 
     onResize = () => requestAnimationFrame(() => {
         const {width = 0, height = 0} = this.appRef.current?.getBoundingClientRect() || {};
@@ -36,6 +43,10 @@ export class App extends Component<RouteComponentProps<AppProps>, AppState> {
     });
 
     onResizing = debounce(this.onResize, 200);
+
+    setPlayState = (playState: PlayState) => {
+        this.setState({playState})
+    }
 
     componentDidMount(): void {
         this.onResize();
@@ -51,11 +62,14 @@ export class App extends Component<RouteComponentProps<AppProps>, AppState> {
     }
 
     render() {
-        const size = this.state.size;
-        console.log('render', size);
+        const {size, playState} = this.state;
+        const {setPlayState, onClickNext} = this;
+        const clickNextCallback = (cb: () => void) => this.onClickNext = cb;
         return (
             <AppWrapper ref={this.appRef}>
-                <Canvas {...{size}}/>
+                <Canvas {...{size, playState, setPlayState, clickNextCallback}}/>
+                <MaskCanvas {...{size, playState}} />
+                <Panel {...{playState, setPlayState, onClickNext}}/>
             </AppWrapper>
         );
     }

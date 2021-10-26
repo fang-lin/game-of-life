@@ -17,7 +17,7 @@ export class CellsMap {
     newborn: Cell[] = [];
     failed: Cell[] = [];
 
-    constructor(cellsTuple: Array<[number, number]>) {
+    init(cellsTuple: Array<[number, number]>) {
         cellsTuple.forEach(cellTuple => {
             const newCell = new Cell(cellTuple);
             this.cells.forEach(cell => cell.addNeighbor(newCell));
@@ -60,6 +60,13 @@ export class CellsMap {
         this.dying = [];
         this.newborn.forEach(cell => cell.age = Age.Surviving);
         this.newborn = [];
+    }
+
+    reset() {
+        this.cells = [];
+        this.dying = [];
+        this.newborn = [];
+        this.failed = [];
     }
 
     shouldBeDead(cell: Cell): boolean {
