@@ -26,21 +26,21 @@ export function drawGrid(context: CanvasRenderingContext2D, size: Size) {
 export function drawLife(context: CanvasRenderingContext2D, lifeMap: Pair[]) {
     lifeMap.forEach(([x, y]) => {
         context.fillStyle = '#000';
-        context.fillRect(y * cell * pixelRatio, x * cell * pixelRatio, cell * pixelRatio, cell * pixelRatio);
+        context.fillRect((y * cell + 1) * pixelRatio, (x * cell + 1) * pixelRatio, (cell - 1) * pixelRatio, (cell - 1) * pixelRatio);
     });
 }
 
 export function drawNewLife(context: CanvasRenderingContext2D, lifeMap: Pair[]) {
     lifeMap.forEach(([x, y]) => {
-        context.fillStyle = '#666';
-        context.fillRect(y * cell * pixelRatio, x * cell * pixelRatio, cell * pixelRatio, cell * pixelRatio);
+        context.fillStyle = '#676';
+        context.fillRect((y * cell + 1) * pixelRatio, (x * cell + 1) * pixelRatio, (cell - 1) * pixelRatio, (cell - 1) * pixelRatio);
     })
 }
 
 export function drawDeadLife(context: CanvasRenderingContext2D, lifeMap: Pair[]) {
     lifeMap.forEach(([x, y]) => {
-        context.fillStyle = '#ccc';
-        context.fillRect(y * cell * pixelRatio, x * cell * pixelRatio, cell * pixelRatio, cell * pixelRatio);
+        context.fillStyle = '#dcc';
+        context.fillRect((y * cell + 1) * pixelRatio, (x * cell + 1) * pixelRatio, (cell - 1) * pixelRatio, (cell - 1) * pixelRatio);
     })
 }
 

@@ -12,14 +12,6 @@ interface AppState {
     size: [number, number];
 }
 
-export const getStageSize = (content: Element | null): [number, number] => {
-    if (content) {
-        const {width, height} = content.getBoundingClientRect();
-        return [width, height];
-    }
-    return [0, 0];
-};
-
 export class App extends Component<RouteComponentProps<AppProps>, AppState> {
 
     private readonly appRef: RefObject<HTMLDivElement>;
@@ -60,6 +52,7 @@ export class App extends Component<RouteComponentProps<AppProps>, AppState> {
 
     render() {
         const size = this.state.size;
+        console.log('render', size);
         return (
             <AppWrapper ref={this.appRef}>
                 <Canvas {...{size}}/>
