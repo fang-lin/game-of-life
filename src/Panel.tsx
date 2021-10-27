@@ -1,14 +1,13 @@
 import React, {MouseEvent} from 'react';
-import {PanelWrapper} from "./Panel.styles";
+import {Button, PanelWrapper} from "./Panel.styles";
 import {PlayState} from "./App";
 
 interface PanelProps {
     playState: PlayState,
-    setPlayState: (s: PlayState) => void;
-    onClickNext: () => void;
+    setPlayState: (playState: PlayState, callback?: () => void) => void;
 }
 
-function Panel({playState, setPlayState, onClickNext}: PanelProps) {
+function Panel({playState, setPlayState}: PanelProps) {
 
     function onClickPlayPaused(event: MouseEvent<HTMLButtonElement>) {
         if (playState === PlayState.Playing) {
@@ -19,24 +18,28 @@ function Panel({playState, setPlayState, onClickNext}: PanelProps) {
 
     }
 
-    function onClickStopReset(event: MouseEvent<HTMLButtonElement>) {
-        if (playState === PlayState.Stopped) {
-            setPlayState(PlayState.Reset);
+    function onClickResetClean(event: MouseEvent<HTMLButtonElement>) {
+        if (playState === PlayState.Reset) {
+            setPlayState(PlayState.Cleaned);
         } else {
-            setPlayState(PlayState.Stopped);
+            setPlayState(PlayState.Reset);
         }
     }
 
+    function onClickNext(event: MouseEvent<HTMLButtonElement>) {
+        setPlayState(PlayState.Playing, () => setPlayState(PlayState.Paused));
+    }
+
     return (<PanelWrapper>
-        <button onClick={onClickPlayPaused} className="play-button">
+        <Button onClick={onClickPlayPaused} className="play-button">
             {playState === PlayState.Playing ? 'Paused' : 'Play'}
-        </button>
-        <button onClick={onClickStopReset} className="stop-button">
-            {playState === PlayState.Stopped ? 'Reset' : 'Stop'}
-        </button>
-        <button onClick={onClickNext} disabled={playState !== PlayState.Paused} className="next-button">
+        </Button>
+        <Button onClick={onClickResetClean} disabled={playState === PlayState.Cleaned} className="stop-button">
+            {playState === PlayState.Reset ? 'Clean' : 'Reset'}
+        </Button>
+        <Button onClick={onClickNext} disabled={playState === PlayState.Playing} className="next-button">
             Next
-        </button>
+        </Button>
     </PanelWrapper>);
 }
 

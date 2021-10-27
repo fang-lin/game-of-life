@@ -1,4 +1,5 @@
 import {Age, Cell, Pair, Position} from "./Cell";
+import {Coords} from "./Canvas";
 
 const ConvertPosition: { [key in Position]: (pair: Pair) => [number, number] } = {
     [Position.TopLeft]: ([x, y]) => [x - 1, y - 1],
@@ -17,12 +18,24 @@ export class CellsMap {
     newborn: Cell[] = [];
     failed: Cell[] = [];
 
-    init(cellsTuple: Array<[number, number]>) {
-        cellsTuple.forEach(cellTuple => {
-            const newCell = new Cell(cellTuple);
-            this.cells.forEach(cell => cell.addNeighbor(newCell));
-            this.cells.push(newCell);
-        });
+    addCells(cellsTuple: Array<Coords>) {
+        cellsTuple.forEach(this.addCell);
+    }
+
+    addCell = (coords: Coords) => {
+        const newCell = new Cell(coords);
+        this.cells.forEach(cell => cell.addNeighbor(newCell));
+        this.cells.push(newCell);
+    }
+
+    toggleCell(coords: Coords) {
+        const cell = this.cells.find(cell => cell[0] === coords[0] && cell[1] === coords[1]);
+        if (cell) {
+            cell.destructor();
+            this.cells = this.cells.filter(_ => _ !== cell);
+        } else {
+            this.addCell(coords);
+        }
     }
 
     grow() {

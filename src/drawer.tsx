@@ -1,11 +1,11 @@
-import {Pair} from "./Cell";
-import {Size} from "./Canvas";
-import {cell, pixelRatio} from "./utils";
+import {Cell, Pair} from "./Cell";
+import {cell, Size} from "./Canvas";
+import {pixelRatio} from "./utils";
 
 export function drawGrid(context: CanvasRenderingContext2D, size: Size) {
     const [width, height] = size;
-    const rows = Math.floor(height / cell);
-    const columns = Math.floor(width / cell);
+    const rows = Math.ceil(height / cell);
+    const columns = Math.ceil(width / cell);
     context.beginPath();
     for (let i = 0; i < rows; i++) {
         const y = i * cell * pixelRatio + pixelRatio / 2;
@@ -57,4 +57,10 @@ export function drawDeadLife(context: CanvasRenderingContext2D, lifeMap: Pair[])
 
 export function wipe(context: CanvasRenderingContext2D, size: Size) {
     context.clearRect(0, 0, size[0] * pixelRatio, size[1] * pixelRatio);
+}
+
+export function draw(context: CanvasRenderingContext2D, size: Size, cells: Cell[]) {
+    wipe(context, size);
+    drawGrid(context, size);
+    drawLife(context, cells);
 }

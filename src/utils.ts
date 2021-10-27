@@ -18,5 +18,4 @@ export function updateCanvasSize(prevSize: Size, size: Size, element: HTMLCanvas
     return false;
 }
 
-export const pixelRatio = 2
-export const cell = 20;
+export const pixelRatio = window.devicePixelRatio;

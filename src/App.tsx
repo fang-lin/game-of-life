@@ -1,7 +1,8 @@
 import React, {Component, RefObject} from "react";
 import {AppWrapper} from "./App.styles";
 import debounce from 'lodash/debounce';
-import Canvas from "./Canvas";
+import noop from 'lodash/noop';
+import Canvas, {Coords} from "./Canvas";
 import {RouteComponentProps} from 'react-router-dom';
 import MaskCanvas from "./MaskCanvas";
 import Panel from "./Panel";
@@ -12,7 +13,7 @@ interface AppProps {
 
 export enum PlayState {
     Playing,
-    Stopped,
+    Cleaned,
     Paused,
     Reset
 }
@@ -22,8 +23,11 @@ interface AppState {
     playState: PlayState;
 }
 
-export class App extends Component<RouteComponentProps<AppProps>, AppState> {
+export type OnClickCell = (xy: Coords) => void;
+export type OnClickNext = () => void;
 
+export class App extends Component<RouteComponentProps<AppProps>, AppState> {
+    onClickCell: OnClickCell = noop;
     private readonly appRef: RefObject<HTMLDivElement>;
 
     constructor(props: RouteComponentProps<AppProps>) {
@@ -31,11 +35,9 @@ export class App extends Component<RouteComponentProps<AppProps>, AppState> {
         this.appRef = React.createRef();
         this.state = {
             size: [0, 0],
-            playState: PlayState.Stopped
+            playState: PlayState.Cleaned
         };
     }
-
-    onClickNext: () => void = () => undefined;
 
     onResize = () => requestAnimationFrame(() => {
         const {width = 0, height = 0} = this.appRef.current?.getBoundingClientRect() || {};
@@ -44,9 +46,7 @@ export class App extends Component<RouteComponentProps<AppProps>, AppState> {
 
     onResizing = debounce(this.onResize, 200);
 
-    setPlayState = (playState: PlayState) => {
-        this.setState({playState})
-    }
+    setPlayState = (playState: PlayState, callback?: () => void) => this.setState({playState}, callback);
 
     componentDidMount(): void {
         this.onResize();
@@ -63,13 +63,13 @@ export class App extends Component<RouteComponentProps<AppProps>, AppState> {
 
     render() {
         const {size, playState} = this.state;
-        const {setPlayState, onClickNext} = this;
-        const clickNextCallback = (cb: () => void) => this.onClickNext = cb;
+        const {setPlayState, onClickCell} = this;
+        const clickCellCallback = (cb: OnClickCell) => this.onClickCell = cb;
         return (
             <AppWrapper ref={this.appRef}>
-                <Canvas {...{size, playState, setPlayState, clickNextCallback}}/>
-                <MaskCanvas {...{size, playState}} />
-                <Panel {...{playState, setPlayState, onClickNext}}/>
+                <Canvas {...{size, playState, setPlayState, clickCellCallback}}/>
+                <MaskCanvas {...{size, playState, onClickCell}} />
+                <Panel {...{playState, setPlayState}}/>
             </AppWrapper>
         );
     }
