@@ -8,9 +8,10 @@ jobs:
     steps:
       - checkout
       - node/install-packages:
-          with-cache: true
-      - run: npm run lint
-      - run: npm run build
+          check-cache: always
+          pkg-manager: yarn-berry
+          with-cache: false
+      - run: yarn run build
       - persist_to_workspace:
           root: .
           paths:
