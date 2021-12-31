@@ -1,20 +1,16 @@
 import {Coordinate} from './Canvas';
 
-export enum CellState {
-    Born,
-    Alive,
-    Dead
-}
-
-export interface Cell {
-    coordinate: Coordinate;
-    state: CellState;
-}
-
-export type CellsMap = Map<string, Cell>;
+export type CellsMap = Map<string, Coordinate>;
 
 export class LifeMap {
     cells: CellsMap = new Map();
+    deadList: CellsMap = new Map();
+    bornList: CellsMap = new Map();
+
+    constructor(cells?: Coordinate[]) {
+        if (cells)
+            this.addCells(cells);
+    }
 
     static adjacentCoordinates([x, y]: Coordinate): Coordinate[] {
         return [
@@ -29,14 +25,12 @@ export class LifeMap {
         ];
     }
 
-    addCell(coords: Coordinate, state: CellState = CellState.Alive) {
-        return this.cells.set(coords.toString(), {
-            coordinate: coords, state
-        });
+    addCell(coords: Coordinate) {
+        return this.cells.set(coords.toString(), coords);
     }
 
-    addCells(cells: Coordinate[], state: CellState = CellState.Alive) {
-        return cells.forEach(cell => this.addCell(cell, state));
+    addCells(cells: Coordinate[]) {
+        return cells.forEach(cell => this.addCell(cell));
     }
 
     removeCell(cell: Coordinate) {
@@ -47,44 +41,35 @@ export class LifeMap {
         return cells.forEach(cell => this.removeCell(cell));
     }
 
-    hasCell(cell: Coordinate): boolean {
-        const item = this.cells.get(cell.toString());
-        return !!item && item.state !== CellState.Born;
-    }
-
     toggleCell(cell: Coordinate) {
-        this.hasCell(cell) ? this.removeCell(cell) : this.addCell(cell);
+        this.cells.get(cell.toString()) ? this.removeCell(cell) : this.addCell(cell);
     }
 
     getNeighborsNum(coords: Coordinate): number {
         return LifeMap.adjacentCoordinates(coords)
             .reduce(
-                (neighbors, coords) => this.hasCell(coords) ? neighbors + 1 : neighbors,
+                (neighbors, coords) => this.cells.get(coords.toString()) ? neighbors + 1 : neighbors,
                 0
             );
     }
 
     evolve() {
-        const newCells: Coordinate[] = [];
+        this.bornList = new Map();
+        this.deadList = new Map();
         this.cells.forEach(cell => {
-            if (cell.state === CellState.Dead) {
-                this.removeCell(cell.coordinate);
-            } else if (cell.state === CellState.Born) {
-                cell.state = CellState.Alive;
-            } else {
-                const neighborsNum = this.getNeighborsNum(cell.coordinate);
-                if (neighborsNum < 2 || neighborsNum > 3) {
-                    cell.state = CellState.Dead;
-                }
-
-                LifeMap.adjacentCoordinates(cell.coordinate).forEach(adjacentCoordinate => {
-                    if (!this.hasCell(adjacentCoordinate) && this.getNeighborsNum(adjacentCoordinate) === 3) {
-                        newCells.push(adjacentCoordinate);
-                    }
-                });
+            const neighborsNum = this.getNeighborsNum(cell);
+            if (neighborsNum < 2 || neighborsNum > 3) {
+                this.deadList.set(cell.toString(), cell);
             }
+
+            LifeMap.adjacentCoordinates(cell).forEach(born => {
+                if (!this.cells.get(born.toString()) && !this.bornList.get(born.toString()) && this.getNeighborsNum(born) === 3) {
+                    this.bornList.set(born.toString(), born);
+                }
+            });
         });
-        this.addCells(newCells, CellState.Born);
+        this.deadList.forEach(dead => this.removeCell(dead));
+        this.bornList.forEach(born => this.addCell(born));
     }
 
     toString() {

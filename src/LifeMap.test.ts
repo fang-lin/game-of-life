@@ -1,4 +1,4 @@
-import {LifeMap, CellState} from './LifeMap';
+import {CellsMap, LifeMap} from './LifeMap';
 import {Coordinate} from './Canvas';
 
 describe('LifeMap', () => {
@@ -16,15 +16,12 @@ describe('LifeMap', () => {
 
         test('should have correct cells', () => {
             expect(cellsMap.cells).toEqual(new Map([
-                ['0,1', {
-                    coordinate: [0, 1],
-                    state: CellState.Alive
-                }],
+                ['0,1', [0, 1]],
             ]));
         });
 
         test(`should remove true when call hasCell(${formatCell})`, () => {
-            expect(cellsMap.hasCell(cell)).toBeTruthy();
+            expect(cellsMap.cells.get(cell.toString())).toBeTruthy();
         });
 
         test(`cell ${formatCell} should have 0 neighbors`, () => {
@@ -41,7 +38,7 @@ describe('LifeMap', () => {
             });
 
             test(`should remove false when call hasCell with ${formatCell}`, () => {
-                expect(cellsMap.hasCell(cell)).toBeFalsy();
+                expect(cellsMap.cells.get(cell.toString())).toBeFalsy();
             });
         });
     });
@@ -53,34 +50,18 @@ describe('LifeMap', () => {
         [1, 2],
         [2, 1]
     ];
-    const formatCells = JSON.stringify(cells);
-    describe(`when call addCells(${formatCells})`, () => {
+    describe(`when call addCells(${JSON.stringify(cells)})`, () => {
         beforeEach(() => {
             cellsMap.addCells(cells);
         });
 
         test('should have correct cells', () => {
             expect(cellsMap.cells).toEqual(new Map([
-                ['0,1', {
-                    coordinate: [0, 1],
-                    state: CellState.Alive
-                }],
-                ['1,0', {
-                    coordinate: [1, 0],
-                    state: CellState.Alive
-                }],
-                ['1,1', {
-                    coordinate: [1, 1],
-                    state: CellState.Alive
-                }],
-                ['1,2', {
-                    coordinate: [1, 2],
-                    state: CellState.Alive
-                }],
-                ['2,1', {
-                    coordinate: [2, 1],
-                    state: CellState.Alive
-                }]
+                ['0,1', [0, 1]],
+                ['1,0', [1, 0]],
+                ['1,1', [1, 1]],
+                ['1,2', [1, 2]],
+                ['2,1', [2, 1]]
             ]));
         });
 
@@ -106,7 +87,7 @@ describe('LifeMap', () => {
             });
 
             test('[0,1] should be removed', () => {
-                expect(cellsMap.hasCell([0, 1])).toBeFalsy();
+                expect(cellsMap.cells.get('0,1')).toBeFalsy();
             });
 
             test('cell [0,1] should has 3 neighbours', () => {
@@ -138,81 +119,71 @@ describe('LifeMap', () => {
 
             test('should have correct cells', () => {
                 expect(cellsMap.cells).toEqual(new Map([
-                    ['1,1', {
-                        coordinate: [1, 1],
-                        state: CellState.Alive
-                    }],
-                    ['1,2', {
-                        coordinate: [1, 2],
-                        state: CellState.Alive
-                    }],
-                    ['2,1', {
-                        coordinate: [2, 1],
-                        state: CellState.Alive
-                    }]
+                    ['1,1', [1, 1]],
+                    ['1,2', [1, 2]],
+                    ['2,1', [2, 1]]
                 ]));
             });
 
             test('should add the [0,1] when call toggleCell([0,1])', () => {
                 cellsMap.toggleCell([0, 1]);
-                expect(cellsMap.hasCell([0, 1])).toBeTruthy();
+                expect(cellsMap.cells.get('0,1')).toBeTruthy();
             });
         });
+    });
+    describe('when call AddCells()', () => {
 
-        describe('when call evolve()', () => {
-            const cells = [
-                [0, 0], [0, 1], [0, 2],
-                [1, 0], [1, 2],
-                [2, 0], [2, 1], [2, 2]
-            ];
-            const formatCells = JSON.stringify(cells);
+        function tests(cells: Coordinate[], born: Coordinate[], dead: Coordinate[]) {
+            test(`the cells should become ${JSON.stringify(cells)}`, () => {
+                expect(cellsMap.cells).toEqual(new Map(cells.map(cell => [cell.toString(), cell])));
+            });
 
+            test(`the bornList should be ${JSON.stringify(born)}`, () => {
+                expect(cellsMap.bornList).toEqual(new Map(born.map(cell => [cell.toString(), cell])));
+            });
+
+            test(`the deadList should be ${JSON.stringify(dead)}`, () => {
+                expect(cellsMap.deadList).toEqual(new Map(dead.map(cell => [cell.toString(), cell])));
+            });
+        }
+
+        const cellsSequence: Coordinate[][] = [
+            [[0, 1], [1, 1], [2, 1]],
+            [[1, 0], [1, 1], [1, 2]]
+        ]
+        const bornDeadSequence: Coordinate[][] = [
+            [[1, 0], [1, 2]],
+            [[0, 1], [2, 1]]
+        ];
+
+        beforeEach(() => {
+            cellsMap.addCells(cellsSequence[1]);
+        });
+
+        describe('when call evolve', () => {
             beforeEach(() => {
                 cellsMap.evolve();
             });
 
-            test(`the cells should become ${formatCells}`, () => {
-                expect(cellsMap.cells).toEqual(
-                    new Map([
-                        ['0,0', {
-                            coordinate: [0, 0],
-                            state: CellState.Born
-                        }],
-                        ['0,1', {
-                            coordinate: [0, 1],
-                            state: CellState.Alive
-                        }],
-                        ['0,2', {
-                            coordinate: [0, 2],
-                            state: CellState.Born
-                        }],
-                        ['1,0', {
-                            coordinate: [1, 0],
-                            state: CellState.Alive
-                        }],
-                        ['1,1', {
-                            coordinate: [1, 1],
-                            state: CellState.Dead
-                        }],
-                        ['1,2', {
-                            coordinate: [1, 2],
-                            state: CellState.Alive
-                        }],
-                        ['2,0', {
-                            coordinate: [2, 0],
-                            state: CellState.Born
-                        }],
-                        ['2,1', {
-                            coordinate: [2, 1],
-                            state: CellState.Alive
-                        }],
-                        ['2,2', {
-                            coordinate: [2, 2],
-                            state: CellState.Born
-                        }]
-                    ])
-                );
+            tests(cellsSequence[0], bornDeadSequence[1], bornDeadSequence[0]);
+
+            describe('when call evolve', () => {
+                beforeEach(() => {
+                    cellsMap.evolve();
+                });
+
+                tests(cellsSequence[1], bornDeadSequence[0], bornDeadSequence[1]);
+
+                describe('when call evolve', () => {
+                    beforeEach(() => {
+                        cellsMap.evolve();
+                    });
+
+                    tests(cellsSequence[0], bornDeadSequence[1], bornDeadSequence[0]);
+                });
             });
         });
     });
+
+
 });

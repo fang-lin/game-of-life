@@ -1,6 +1,6 @@
 import {cell, Size} from './Canvas';
 import {pixelRatio} from './utils';
-import {CellsMap, CellState} from './LifeMap';
+import {CellsMap} from './LifeMap';
 
 export function drawGrid(context: CanvasRenderingContext2D, size: Size) {
     const [width, height] = size;
@@ -36,11 +36,8 @@ export function drawCell(context: CanvasRenderingContext2D, color: string, x: nu
 
 export function drawLife(context: CanvasRenderingContext2D, cells: CellsMap) {
     context.fillStyle = '#000';
-    cells.forEach(c => {
-        if (c.state !== CellState.Dead) {
-            const [x, y] = c.coordinate;
-            context.fillRect((y * cell + 1) * pixelRatio, (x * cell + 1) * pixelRatio, (cell - 1) * pixelRatio, (cell - 1) * pixelRatio);
-        }
+    cells.forEach(([x, y]) => {
+        context.fillRect((y * cell + 1) * pixelRatio, (x * cell + 1) * pixelRatio, (cell - 1) * pixelRatio, (cell - 1) * pixelRatio);
     });
 }
 
