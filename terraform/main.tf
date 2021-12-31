@@ -99,7 +99,7 @@ resource "aws_cloudfront_distribution" "website_bucket_distribution" {
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
-      locations        = ["DE", "US", "CN"]
+      locations        = ["DE", "US"]
     }
   }
 
