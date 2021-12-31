@@ -1,5 +1,5 @@
-import {Cell, Position} from "./Cell";
-import {objectify} from "./utils";
+import {Cell, Position} from './Cell';
+import {objectify} from './utils';
 
 describe('Cell', () => {
     let cell: Cell;
@@ -8,8 +8,8 @@ describe('Cell', () => {
     });
 
     test('this cell should have correct x and y', () => {
-        expect(cell[0]).toBe(2)
-        expect(cell[1]).toBe(1)
+        expect(cell[0]).toBe(2);
+        expect(cell[1]).toBe(1);
     });
 
     test('the equals function should return true with [2, 1]', () => {
@@ -205,7 +205,7 @@ describe('Cell', () => {
         test('the neighbors should be empty', () => {
             expect(cell.neighbors).toEqual(Cell.EmptyNeighbors());
         });
-    })
+    });
 
     describe('if add a cell which equals this cell', () => {
         beforeEach(() => {
@@ -219,5 +219,5 @@ describe('Cell', () => {
         test('the neighbors should be empty', () => {
             expect(cell.neighbors).toEqual(Cell.EmptyNeighbors());
         });
-    })
+    });
 });

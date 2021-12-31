@@ -1,17 +1,17 @@
 import React, {Component, MouseEvent, RefObject} from 'react';
-import {CanvasWrapper} from "./Canvas.styles";
-import {pixelRatio, updateCanvasSize} from "./utils";
-import {cell, Coords, Size} from "./Canvas";
-import {drawCell, wipe} from "./drawer";
-import {PlayState} from "./App";
+import {CanvasWrapper} from './Canvas.styles';
+import {pixelRatio, updateCanvasSize} from './utils';
+import {cell, Coordinate, Size} from './Canvas';
+import {drawCell, wipe} from './drawer';
+import {PlayState} from './App';
 
 interface MaskCanvasProps {
     size: Size;
     playState: PlayState;
-    onClickCell: (xy: Coords) => void;
+    onClickCell: (xy: Coordinate) => void;
 }
 
-class MaskCanvas extends Component<MaskCanvasProps, {}> {
+class MaskCanvas extends Component<MaskCanvasProps> {
 
     private readonly canvasRef: RefObject<HTMLCanvasElement>;
 
@@ -33,10 +33,10 @@ class MaskCanvas extends Component<MaskCanvasProps, {}> {
             const context = event.currentTarget.getContext('2d');
             if (context) {
                 wipe(context, this.props.size);
-                drawCell(context, 'rgba(0,0,0,0.6)', x, y, (cell - 1) * pixelRatio, (cell - 1) * pixelRatio)
+                drawCell(context, 'rgba(0,0,0,0.6)', x, y, (cell - 1) * pixelRatio, (cell - 1) * pixelRatio);
             }
         }
-    }
+    };
 
     onClick = (event: MouseEvent<HTMLCanvasElement>) => {
         if (this.props.playState === PlayState.Cleaned || this.props.playState === PlayState.Reset) {
@@ -45,11 +45,11 @@ class MaskCanvas extends Component<MaskCanvasProps, {}> {
                 Math.floor(event.clientX / cell)
             ]);
         }
-    }
+    };
 
     render() {
         return (<CanvasWrapper className="mask-canvas" ref={this.canvasRef} onMouseMove={this.onMouseMove}
-                               onClick={this.onClick}/>);
+            onClick={this.onClick}/>);
     }
 }
 

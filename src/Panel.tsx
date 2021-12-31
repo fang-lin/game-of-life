@@ -1,6 +1,6 @@
 import React, {MouseEvent} from 'react';
-import {Button, PanelWrapper} from "./Panel.styles";
-import {PlayState} from "./App";
+import {Button, PanelWrapper} from './Panel.styles';
+import {PlayState} from './App';
 
 interface PanelProps {
     playState: PlayState,
@@ -11,9 +11,9 @@ function Panel({playState, setPlayState}: PanelProps) {
 
     function onClickPlayPaused(event: MouseEvent<HTMLButtonElement>) {
         if (playState === PlayState.Playing) {
-            setPlayState(PlayState.Paused)
+            setPlayState(PlayState.Paused);
         } else {
-            setPlayState(PlayState.Playing)
+            setPlayState(PlayState.Playing);
         }
 
     }

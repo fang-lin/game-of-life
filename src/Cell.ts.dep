@@ -74,7 +74,7 @@ export class Cell extends Pair {
                     if (neighbor.neighbors[position] === this) {
                         neighbor.neighbors[position] = null;
                     }
-                })
+                });
             }
         });
         this.neighbors = Cell.EmptyNeighbors();

@@ -1,15 +1,11 @@
-import React, {Component, RefObject} from "react";
-import {AppWrapper} from "./App.styles";
+import React, {Component, RefObject} from 'react';
+import {AppWrapper} from './App.styles';
 import debounce from 'lodash/debounce';
 import noop from 'lodash/noop';
-import Canvas, {Coords} from "./Canvas";
+import Canvas, {Coordinate} from './Canvas';
 import {RouteComponentProps} from 'react-router-dom';
-import MaskCanvas from "./MaskCanvas";
-import Panel from "./Panel";
-
-interface AppProps {
-
-}
+import MaskCanvas from './MaskCanvas';
+import Panel from './Panel';
 
 export enum PlayState {
     Playing,
@@ -23,14 +19,14 @@ interface AppState {
     playState: PlayState;
 }
 
-export type OnClickCell = (xy: Coords) => void;
+export type OnClickCell = (xy: Coordinate) => void;
 export type OnClickNext = () => void;
 
-export class App extends Component<RouteComponentProps<AppProps>, AppState> {
+export class App extends Component<RouteComponentProps, AppState> {
     onClickCell: OnClickCell = noop;
     private readonly appRef: RefObject<HTMLDivElement>;
 
-    constructor(props: RouteComponentProps<AppProps>) {
+    constructor(props: RouteComponentProps) {
         super(props);
         this.appRef = React.createRef();
         this.state = {
