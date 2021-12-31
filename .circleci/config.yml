@@ -11,6 +11,8 @@ jobs:
           check-cache: always
           pkg-manager: yarn-berry
           with-cache: false
+      - run: yarn run lint
+      - run: yarn run test --ci
       - run: yarn run build
       - persist_to_workspace:
           root: .
