@@ -3,23 +3,23 @@ import {pixelRatio} from './utils';
 import {CellsMap} from './LifeMap';
 
 export function drawGrid(context: CanvasRenderingContext2D, size: Size, cellSize: number) {
-    // const [width, height] = size;
-    // const rows = Math.ceil(height / cellSize);
-    // const columns = Math.ceil(width / cellSize);
-    // context.beginPath();
-    // for (let i = 0; i < rows; i++) {
-    //     const y = i * cellSize * pixelRatio + pixelRatio / 2;
-    //     context.moveTo(0, y);
-    //     context.lineTo(width * pixelRatio, y);
-    // }
-    // for (let j = 0; j < columns; j++) {
-    //     const x = j * cellSize * pixelRatio + pixelRatio / 2;
-    //     context.moveTo(x, 0);
-    //     context.lineTo(x, height * pixelRatio);
-    // }
-    // context.lineWidth = pixelRatio;
-    // context.strokeStyle = 'rgba(0,0,0,.3)';
-    // context.stroke();
+    const [width, height] = size;
+    const rows = Math.ceil(height / cellSize);
+    const columns = Math.ceil(width / cellSize);
+    context.beginPath();
+    for (let i = 0; i < rows; i++) {
+        const y = i * cellSize * pixelRatio + pixelRatio / 2;
+        context.moveTo(0, y);
+        context.lineTo(width * pixelRatio, y);
+    }
+    for (let j = 0; j < columns; j++) {
+        const x = j * cellSize * pixelRatio + pixelRatio / 2;
+        context.moveTo(x, 0);
+        context.lineTo(x, height * pixelRatio);
+    }
+    context.lineWidth = pixelRatio;
+    context.strokeStyle = 'rgba(0,0,0,.3)';
+    context.stroke();
 }
 
 export function drawCell(context: CanvasRenderingContext2D, color: string, x: number, y: number, w: number, h: number) {

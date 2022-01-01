@@ -19,7 +19,7 @@ export const Button = styled.button`
   border-radius: 4px;
   cursor: pointer;
   color: white;
-  padding: 6px 10px;
+  padding: 6px;
   box-shadow: 0 1px 5px rgba(87, 114, 144, .7);
 
   &:hover {
