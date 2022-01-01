@@ -6,6 +6,7 @@ import Canvas, {Coordinate} from './Canvas';
 import {RouteComponentProps} from 'react-router-dom';
 import MaskCanvas from './MaskCanvas';
 import Panel from './Panel';
+import {combinePathToURL, pixelRatio, OriginalParams, ParsedParams, parseParams, stringifyParams} from './utils';
 
 export enum PlayState {
     Playing,
@@ -19,14 +20,18 @@ interface AppState {
     playState: PlayState;
 }
 
-export type OnClickCell = (xy: Coordinate) => void;
-export type OnClickNext = () => void;
+export interface Attributes {
+    width: number;
+    height: number;
+}
 
-export class App extends Component<RouteComponentProps, AppState> {
+export type OnClickCell = (xy: Coordinate) => void;
+
+export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
     onClickCell: OnClickCell = noop;
     private readonly appRef: RefObject<HTMLDivElement>;
 
-    constructor(props: RouteComponentProps) {
+    constructor(props: RouteComponentProps<OriginalParams>) {
         super(props);
         this.appRef = React.createRef();
         this.state = {
@@ -44,6 +49,11 @@ export class App extends Component<RouteComponentProps, AppState> {
 
     setPlayState = (playState: PlayState, callback?: () => void) => this.setState({playState}, callback);
 
+    pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
+        const {history: {push}, match: {params}} = this.props;
+        push(combinePathToURL(stringifyParams({...parseParams(params), ...parsedParams})));
+    }
+
     componentDidMount(): void {
         this.onResize();
         window.addEventListener('resize', this.onResize);
@@ -59,13 +69,18 @@ export class App extends Component<RouteComponentProps, AppState> {
 
     render() {
         const {size, playState} = this.state;
-        const {setPlayState, onClickCell} = this;
+        const {setPlayState, onClickCell, pushToHistory} = this;
         const clickCellCallback = (cb: OnClickCell) => this.onClickCell = cb;
+        const params = parseParams(this.props.match.params);
+        const attributes: Attributes = {
+            width: size[0] * pixelRatio,
+            height: size[1] * pixelRatio
+        };
         return (
             <AppWrapper ref={this.appRef}>
-                <Canvas {...{size, playState, setPlayState, clickCellCallback}}/>
-                <MaskCanvas {...{size, playState, onClickCell}} />
-                <Panel {...{playState, setPlayState}}/>
+                <Canvas {...{size, playState, setPlayState, clickCellCallback, params, attributes}}/>
+                <MaskCanvas {...{size, playState, onClickCell, params, attributes}} />
+                <Panel {...{playState, setPlayState, pushToHistory, params}}/>
             </AppWrapper>
         );
     }

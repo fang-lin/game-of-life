@@ -45,10 +45,10 @@ export class LifeMap {
         this.cells.get(cell.toString()) ? this.removeCell(cell) : this.addCell(cell);
     }
 
-    getNeighborsNum(coords: Coordinate): number {
-        return LifeMap.adjacentCoordinates(coords)
+    getNeighborsNum(cell: Coordinate): number {
+        return LifeMap.adjacentCoordinates(cell)
             .reduce(
-                (neighbors, coords) => this.cells.get(coords.toString()) ? neighbors + 1 : neighbors,
+                (num, cell) => this.cells.get(cell.toString()) ? num + 1 : num,
                 0
             );
     }
@@ -75,7 +75,6 @@ export class LifeMap {
     toString() {
         return JSON.stringify([...this.cells]);
     }
-
 
     reset() {
         this.cells = new Map();

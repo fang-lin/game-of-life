@@ -1,4 +1,4 @@
-import {CellsMap, LifeMap} from './LifeMap';
+import {LifeMap} from './LifeMap';
 import {Coordinate} from './Canvas';
 
 describe('LifeMap', () => {
@@ -150,7 +150,7 @@ describe('LifeMap', () => {
         const cellsSequence: Coordinate[][] = [
             [[0, 1], [1, 1], [2, 1]],
             [[1, 0], [1, 1], [1, 2]]
-        ]
+        ];
         const bornDeadSequence: Coordinate[][] = [
             [[1, 0], [1, 2]],
             [[0, 1], [2, 1]]

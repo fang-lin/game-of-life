@@ -2,24 +2,25 @@ import React, {Component, RefObject} from 'react';
 import {CanvasWrapper} from './Canvas.styles';
 import {LifeMap} from './LifeMap';
 import {draw, drawGrid, drawLife, wipe} from './drawer';
-import {getSize, objectify, updateCanvasSize} from './utils';
-import {OnClickCell, PlayState} from './App';
+import {getSize, objectify, ParsedParams, shouldUpdateCanvas} from './utils';
+import {Attributes, OnClickCell, PlayState} from './App';
 
 export type Size = [number, number];
 export type Coordinate = [number, number];
 
-interface CanvasProps {
+export interface CanvasProps {
     size: [number, number];
     playState: PlayState;
     setPlayState: (s: PlayState) => void;
     clickCellCallback: (cb: OnClickCell) => void;
+    params: ParsedParams;
+    attributes: Attributes;
 }
 
 const duration = 0;
 export const cell = 20;
 
 export class Canvas extends Component<CanvasProps> {
-
     lifeMap: LifeMap;
     initCells: Array<Coordinate>;
     playTimout?: NodeJS.Timeout;
@@ -35,8 +36,8 @@ export class Canvas extends Component<CanvasProps> {
             const context = this.canvasRef.current?.getContext('2d');
             if (context) {
                 wipe(context, this.props.size);
-                drawGrid(context, this.props.size);
-                drawLife(context, this.lifeMap.cells);
+                drawGrid(context, this.props.size, this.props.params.cellSize);
+                drawLife(context, this.lifeMap.cells, this.props.params.cellSize);
             }
         });
     }
@@ -46,8 +47,8 @@ export class Canvas extends Component<CanvasProps> {
         if (element) {
             const context = element.getContext('2d');
             if (context) {
-                if (updateCanvasSize(prevProps.size, this.props.size, element)) {
-                    draw(context, this.props.size, this.lifeMap.cells);
+                if (shouldUpdateCanvas(prevProps, this.props)) {
+                    draw(context, this.props.size, this.lifeMap.cells, this.props.params.cellSize);
                 }
                 switch (this.props.playState) {
                 case PlayState.Paused:
@@ -63,19 +64,17 @@ export class Canvas extends Component<CanvasProps> {
                 case PlayState.Cleaned:
                     this.playTimout && clearTimeout(this.playTimout);
                     this.lifeMap.reset();
-                    draw(context, this.props.size, this.lifeMap.cells);
+                    draw(context, this.props.size, this.lifeMap.cells, this.props.params.cellSize);
                     break;
                 case PlayState.Reset:
                     this.playTimout && clearTimeout(this.playTimout);
                     this.lifeMap.reset();
                     this.lifeMap.addCells(this.initCells);
-                    draw(context, this.props.size, this.lifeMap.cells);
+                    draw(context, this.props.size, this.lifeMap.cells, this.props.params.cellSize);
                     break;
                 }
             }
         }
-
-
     }
 
     frame = () => {
@@ -83,10 +82,10 @@ export class Canvas extends Component<CanvasProps> {
         if (context) {
             const size = getSize(this.props.size);
             wipe(context, size);
-            drawGrid(context, size);
+            drawGrid(context, size, this.props.params.cellSize);
             this.lifeMap.evolve();
             console.log(this.lifeMap.toString());
-            drawLife(context, this.lifeMap.cells);
+            drawLife(context, this.lifeMap.cells, this.props.params.cellSize);
         }
     };
 
@@ -96,7 +95,8 @@ export class Canvas extends Component<CanvasProps> {
     };
 
     render() {
-        return (<CanvasWrapper ref={this.canvasRef}/>);
+        const {attributes} = this.props;
+        return (<CanvasWrapper ref={this.canvasRef} {...attributes}/>);
     }
 }
 
