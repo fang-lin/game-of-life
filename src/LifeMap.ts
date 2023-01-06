@@ -26,7 +26,7 @@ export class LifeMap {
     }
 
     addCell(coords: Coordinate) {
-        return this.cells.set(coords.toString(), coords);
+        return this.cells.set(`${coords}`, coords);
     }
 
     addCells(cells: Coordinate[]) {
@@ -42,15 +42,12 @@ export class LifeMap {
     }
 
     toggleCell(cell: Coordinate) {
-        this.cells.get(cell.toString()) ? this.removeCell(cell) : this.addCell(cell);
+        this.cells.get(`${cell}`) ? this.removeCell(cell) : this.addCell(cell);
     }
 
     getNeighborsNum(cell: Coordinate): number {
         return LifeMap.adjacentCoordinates(cell)
-            .reduce(
-                (num, cell) => this.cells.get(cell.toString()) ? num + 1 : num,
-                0
-            );
+            .reduce((num, cell) => this.cells.get(`${cell}`) ? num + 1 : num, 0);
     }
 
     evolve() {
@@ -59,12 +56,12 @@ export class LifeMap {
         this.cells.forEach(cell => {
             const neighborsNum = this.getNeighborsNum(cell);
             if (neighborsNum < 2 || neighborsNum > 3) {
-                this.deadList.set(cell.toString(), cell);
+                this.deadList.set(`${cell}`, cell);
             }
 
             LifeMap.adjacentCoordinates(cell).forEach(born => {
-                if (!this.cells.get(born.toString()) && !this.bornList.get(born.toString()) && this.getNeighborsNum(born) === 3) {
-                    this.bornList.set(born.toString(), born);
+                if (!this.cells.get(`${born}`) && !this.bornList.get(`${born}`) && this.getNeighborsNum(born) === 3) {
+                    this.bornList.set(`${born}`, born);
                 }
             });
         });

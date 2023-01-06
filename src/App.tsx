@@ -1,23 +1,25 @@
 import React, {Component, RefObject} from 'react';
 import {AppWrapper} from './App.styles';
 import debounce from 'lodash/debounce';
-import noop from 'lodash/noop';
 import Canvas, {Coordinate} from './Canvas';
 import {RouteComponentProps} from 'react-router-dom';
 import MaskCanvas from './MaskCanvas';
 import Panel from './Panel';
 import {combinePathToURL, pixelRatio, OriginalParams, ParsedParams, parseParams, stringifyParams} from './utils';
+import Dashboard from './Dashboard';
 
 export enum PlayState {
+    Cleaning,
+    Editing,
     Playing,
-    Cleaned,
     Paused,
-    Reset
 }
 
 interface AppState {
     size: [number, number];
     playState: PlayState;
+    frameIndex: number;
+    clickedCell: Coordinate | null;
 }
 
 export interface Attributes {
@@ -25,18 +27,17 @@ export interface Attributes {
     height: number;
 }
 
-export type OnClickCell = (xy: Coordinate) => void;
-
 export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
-    onClickCell: OnClickCell = noop;
     private readonly appRef: RefObject<HTMLDivElement>;
 
     constructor(props: RouteComponentProps<OriginalParams>) {
         super(props);
         this.appRef = React.createRef();
         this.state = {
+            frameIndex: 0,
             size: [0, 0],
-            playState: PlayState.Cleaned
+            playState: PlayState.Editing,
+            clickedCell: null,
         };
     }
 
@@ -47,7 +48,9 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
 
     onResizing = debounce(this.onResize, 200);
 
-    setPlayState = (playState: PlayState, callback?: () => void) => this.setState({playState}, callback);
+    setPlayState = (playState: PlayState, cb?: () => void) => this.setState({playState}, cb);
+    setFrameIndex = (op: (index: number) => number) => this.setState({frameIndex: op(this.state.frameIndex)});
+    setClickedCell = (clickedCell: Coordinate | null, cb?: () => void) => this.setState({clickedCell}, cb);
 
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
         const {history: {push}, match: {params}} = this.props;
@@ -68,19 +71,35 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     render() {
-        const {size, playState} = this.state;
-        const {setPlayState, onClickCell, pushToHistory} = this;
-        const clickCellCallback = (cb: OnClickCell) => this.onClickCell = cb;
+        const {size, playState, frameIndex, clickedCell} = this.state;
+        const {
+            pushToHistory,
+            setFrameIndex,
+            setClickedCell,
+            setPlayState,
+        } = this;
+
         const params = parseParams(this.props.match.params);
         const attributes: Attributes = {
             width: size[0] * pixelRatio,
             height: size[1] * pixelRatio
         };
+
         return (
             <AppWrapper ref={this.appRef}>
-                <Canvas {...{size, playState, setPlayState, clickCellCallback, params, attributes}}/>
-                <MaskCanvas {...{size, playState, onClickCell, params, attributes}} />
-                <Panel {...{playState, setPlayState, pushToHistory, params}}/>
+                <Canvas {...{
+                    size,
+                    playState,
+                    setPlayState,
+                    clickedCell,
+                    params,
+                    attributes,
+                    frameIndex,
+                    setFrameIndex
+                }}/>
+                <MaskCanvas {...{size, playState, setClickedCell, params, attributes}} />
+                <Panel {...{playState, pushToHistory, params, setPlayState}}/>
+                <Dashboard {...{frameIndex}}/>
             </AppWrapper>
         );
     }

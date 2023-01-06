@@ -1,4 +1,4 @@
-import React, {MouseEvent} from 'react';
+import React from 'react';
 import {Button, PanelWrapper, ButtonGroup} from './Panel.styles';
 import {PlayState} from './App';
 import {ParsedParams} from './utils';
@@ -6,30 +6,30 @@ import {ParsedParams} from './utils';
 interface PanelProps {
     playState: PlayState,
     pushToHistory: (parsedParams: Partial<ParsedParams>) => void;
-    setPlayState: (playState: PlayState, callback?: () => void) => void;
+    setPlayState: (playState: PlayState, cb?: () => void) => void;
     params: ParsedParams;
 }
 
-function Panel({playState, setPlayState, pushToHistory, params}: PanelProps) {
+function Panel({playState, pushToHistory, params, setPlayState}: PanelProps) {
 
-    function onClickPlayPaused(event: MouseEvent<HTMLButtonElement>) {
-        if (playState === PlayState.Playing) {
-            setPlayState(PlayState.Paused);
-        } else {
-            setPlayState(PlayState.Playing);
-        }
-
+    function onClickPlay() {
+        setPlayState(PlayState.Playing);
     }
 
-    function onClickResetClean(event: MouseEvent<HTMLButtonElement>) {
-        if (playState === PlayState.Reset) {
-            setPlayState(PlayState.Cleaned);
-        } else {
-            setPlayState(PlayState.Reset);
-        }
+    function onClickPaused() {
+        setPlayState(PlayState.Paused);
     }
 
-    function onClickNext(event: MouseEvent<HTMLButtonElement>) {
+    function onClickEdit() {
+        setPlayState(PlayState.Editing);
+    }
+
+    function onClickClean() {
+        setPlayState(PlayState.Cleaning);
+    }
+
+    function onClickNext() {
+        console.log('onClickNext');
         setPlayState(PlayState.Playing, () => setPlayState(PlayState.Paused));
     }
 
@@ -42,23 +42,26 @@ function Panel({playState, setPlayState, pushToHistory, params}: PanelProps) {
     };
 
     return (<PanelWrapper>
-        <Button onClick={onClickPlayPaused} className="play-button">
-            {playState === PlayState.Playing ? 'Paused' : 'Play'}
-        </Button>
-        <Button onClick={onClickResetClean} disabled={playState === PlayState.Cleaned} className="stop-button">
-            {playState === PlayState.Reset ? 'Clean' : 'Reset'}
-        </Button>
-        <Button onClick={onClickNext} disabled={playState === PlayState.Playing} className="next-button">
-            Next
-        </Button>
+        {
+            (playState === PlayState.Paused || playState === PlayState.Editing) &&
+            <Button onClick={onClickPlay} className="play-button">Play</Button>
+        }
+        {
+            playState === PlayState.Playing &&
+            <Button onClick={onClickPaused} className="pause-button">Paused</Button>
+        }
+        <Button onClick={onClickEdit} className="stop-button" disabled={playState !== PlayState.Paused}>Edit</Button>
+        <Button onClick={onClickNext} className="next-button" disabled={playState !== PlayState.Paused}>Next</Button>
+        <Button onClick={onClickClean} className="clean-button"
+            disabled={playState !== PlayState.Editing}>Clean</Button>
         <Button onClick={onClickToggleGrid}>
-            <span className="material-icons">{ params.gridOn ? 'grid_3x3' : 'lens_blur'}</span>
+            <span className="material-icons">{params.gridOn ? 'grid_3x3' : 'lens_blur'}</span>
         </Button>
         <ButtonGroup>
-            <Button onClick={onClickScale(-1)} disabled={playState === PlayState.Playing} title="Zoom Out">
+            <Button onClick={onClickScale(-1)} title="Zoom Out">
                 <span className="material-icons">zoom_out</span>
             </Button>
-            <Button onClick={onClickScale(1)} disabled={playState === PlayState.Playing} title="Zoom In">
+            <Button onClick={onClickScale(1)} title="Zoom In">
                 <span className="material-icons">zoom_in</span>
             </Button>
         </ButtonGroup>

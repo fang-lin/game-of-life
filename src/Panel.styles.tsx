@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 // https://coolors.co/d9ed92-b5e48c-99d98c-76c893-52b69a-34a0a4-168aad-1a759f-1e6091-184e77
 // https://coolors.co/f94144-f3722c-f8961e-f9844a-f9c74f-90be6d-43aa8b-4d908e-577590-277da1
+
 export const PanelWrapper = styled.div`
   position: absolute;
   bottom: 20px;
@@ -21,6 +22,10 @@ export const Button = styled.button`
   color: white;
   padding: 6px;
   box-shadow: 0 1px 5px rgba(87, 114, 144, .7);
+
+  &[disabled] {
+    background: #999; 
+  }
 
   &:hover {
     background: #277DA1;
