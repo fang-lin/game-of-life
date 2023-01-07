@@ -40,7 +40,7 @@ class MaskCanvas extends Component<MaskCanvasProps> {
             const x = (Math.floor(event.clientX / cellSize) * cellSize + 1) * pixelRatio;
             const y = (Math.floor(event.clientY / cellSize) * cellSize + 1) * pixelRatio;
             wipe(this.canvasRef, this.props.size);
-            drawCell(this.canvasRef, 'rgba(0,0,0,0.6)', x, y, (cellSize - 1) * pixelRatio, (cellSize - 1) * pixelRatio);
+            drawCell(this.canvasRef, 'rgba(0,0,0,0.5)', x, y, (cellSize - 1) * pixelRatio, (cellSize - 1) * pixelRatio);
         }
     };
 
