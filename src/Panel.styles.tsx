@@ -9,35 +9,76 @@ export const PanelWrapper = styled.div`
   right: 20px;
   margin: 0 -5px;
   display: flex;
+  gap: 8px;
+  z-index: 10;
 `;
 
 export const Button = styled.button`
   font-family: 'Fira Sans', sans-serif;
+  font-size: 16px;
   font-weight: 700;
-  margin: 0 5px;
-  background: #577590;
+  background: #1e6091;
   border: medium none;
-  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px #184e77;
+  border-radius: 5px;
   cursor: pointer;
   color: white;
-  padding: 6px;
-  box-shadow: 0 1px 5px rgba(87, 114, 144, .7);
+  padding: 8px;
+  position: relative;
 
   &[disabled] {
-    background: #999; 
+    color: #999;
+    background: #666;
+    box-shadow: inset 0 0 0 1px #444;
+    cursor: unset;
+  }
+
+  &[disabled]:hover {
+    background: #666;
+  }
+
+  &[disabled]:after {
+    background: linear-gradient(#444 50%, #666);
   }
 
   &:hover {
-    background: #277DA1;
+    background: #168aad;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    height: 10px;
+    right: 0;
+    bottom: -5px;
+    left: 0;
+    background: linear-gradient(#184e77 50%, #1a759f);
+    z-index: -1;
+    border-radius: 0 0 4px 4px;
   }
 `;
 
 export const ButtonGroup = styled.div`
-  margin: 0 5px;
+  position: relative;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    height: 10px;
+    right: 0;
+    bottom: -5px;
+    left: 0;
+    background: linear-gradient(#184e77 50%, #1a759f);
+    z-index: -1;
+    border-radius: 0 0 4px 4px;
+  }
 
   & > ${Button} {
     border-radius: 0;
-    margin: 0 1px 0 0;
+    margin: 0 -1px 0 0;
+    &:after {
+      display: none;
+    }
   }
 
   & > ${Button}:first-child {
