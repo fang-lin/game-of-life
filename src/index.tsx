@@ -4,14 +4,14 @@ import {GlobalStyle} from './index.styles';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {HashRouter, Redirect, Route, Switch} from 'react-router-dom';
-import {combinePathToURL, defaultParams, routerPath} from './utils';
+import {combinePathToURL, defaultParams, routerPath, stringifyParams} from './utils';
 
 ReactDOM.render(
     <React.StrictMode>
         <HashRouter>
             <Switch>
                 <Route path={routerPath()} component={App} exact/>
-                <Redirect to={combinePathToURL(defaultParams)}/>
+                <Redirect to={combinePathToURL(stringifyParams(defaultParams))}/>
             </Switch>
         </HashRouter>
         <GlobalStyle/>

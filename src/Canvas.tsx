@@ -2,7 +2,7 @@ import React, {Component, RefObject} from 'react';
 import {CanvasWrapper} from './Canvas.styles';
 import {LifeMap} from './LifeMap';
 import {draw} from './drawer';
-import {ParsedParams} from './utils';
+import {ParsedParams, Speed} from './utils';
 import {Attributes, PlayState} from './App';
 
 export type Size = [number, number];
@@ -19,6 +19,12 @@ export interface CanvasProps {
     attributes: Attributes;
 }
 
+const durations = [1000, 500, 100, 50, 0];
+
+function getDuration(speed: number) {
+    return durations[speed] === undefined ? durations[Speed.Default] : durations[speed];
+}
+
 export class Canvas extends Component<CanvasProps> {
     lifeMap: LifeMap;
     private playTimeout = NaN;
@@ -31,7 +37,6 @@ export class Canvas extends Component<CanvasProps> {
     }
 
     componentDidUpdate(prevProps: CanvasProps) {
-        debugger;
         const {
             lifeMap,
             canvasRef,
@@ -85,7 +90,7 @@ export class Canvas extends Component<CanvasProps> {
 
     play = () => {
         this.frame();
-        this.playTimeout = window.setTimeout(this.play, this.props.params.speed);
+        this.playTimeout = window.setTimeout(this.play, getDuration(this.props.params.speed));
     }
 
     render() {
@@ -93,44 +98,5 @@ export class Canvas extends Component<CanvasProps> {
         return (<CanvasWrapper ref={this.canvasRef} {...attributes}/>);
     }
 }
-
-
-// const lifeMap = new LifeMap();
-//
-// const CanvasOld: FunctionComponent<CanvasProps> = (props) => {
-//     const canvasRef = useRef<HTMLCanvasElement>(null);
-//     const [playTimout, setPlayTimeout] = useState<number>(NaN);
-//     const {attributes, clickedCell, playState, setFrameIndex, params: {cellSize, gridOn}, size} = props;
-//
-//     useEffect(() => {
-//         console.log('AAA');
-//         console.log(clickedCell);
-//         if (clickedCell) {
-//
-//         }
-//     }, [cellSize, clickedCell, gridOn, size]);
-//
-//     useEffect(() => {
-//         console.log('BBB');
-//         draw(canvasRef, size, lifeMap.cells, cellSize);
-//     }, [cellSize, gridOn, size]);
-//
-//     useEffect(() => {
-//         if (playState === PlayState.Playing) {
-//             console.log('CCC');
-//             setPlayTimeout(window.setInterval(() => {
-//                 setFrameIndex(i => i + 1);
-//                 lifeMap.evolve();
-//                 draw(canvasRef, size, lifeMap.cells, cellSize);
-//             }, duration));
-//         } else if (playState === PlayState.Paused) {
-//             window.clearInterval(playTimout);
-//         } else if (playState === PlayState.Next) {
-//
-//         }
-//     }, [cellSize, playState, size]);
-//
-//     return (<CanvasWrapper ref={canvasRef} {...attributes}/>);
-// };
 
 export default Canvas;

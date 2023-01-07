@@ -1,7 +1,13 @@
 import React from 'react';
-import {Button, PanelWrapper, ButtonGroup, GirdOnIcon, GirdOffIcon} from './Panel.styles';
+import {
+    PanelWrapper,
+    ButtonGroup,
+    ZoomInIcon,
+    ZoomOutIcon,
+    Button, FasterIcon, SlowerIcon, AntiqueRuby, CGBlue, BottleGreen, BlazeOrange,
+} from './Panel.styles';
 import {PlayState} from './App';
-import {ParsedParams} from './utils';
+import {CellSize, ParsedParams, Speed} from './utils';
 
 interface PanelProps {
     playState: PlayState,
@@ -10,75 +16,43 @@ interface PanelProps {
     params: ParsedParams;
 }
 
-function Panel({playState, pushToHistory, params, setPlayState}: PanelProps) {
+function Panel({playState, pushToHistory, params: {cellSize, gridOn, speed}, setPlayState}: PanelProps) {
+    const onClickPlay = () => setPlayState(PlayState.Playing);
 
-    function onClickPlay() {
-        setPlayState(PlayState.Playing);
-    }
+    const onClickPaused = () => setPlayState(PlayState.Paused);
 
-    function onClickPaused() {
-        setPlayState(PlayState.Paused);
-    }
+    const onClickEdit = () => setPlayState(PlayState.Editing);
 
-    function onClickEdit() {
-        setPlayState(PlayState.Editing);
-    }
+    const onClickReset = () => setPlayState(PlayState.Reset);
 
-    function onClickReset() {
-        setPlayState(PlayState.Reset);
-    }
+    const onClickNext = () => setPlayState(PlayState.Playing, () => setPlayState(PlayState.Paused));
 
-    function onClickNext() {
-        console.log('onClickNext');
-        setPlayState(PlayState.Playing, () => setPlayState(PlayState.Paused));
-    }
+    const onClickScale = (scale: number) => () => pushToHistory({cellSize: cellSize + scale});
 
-    const onClickScale = (scale: number) => {
-        return () => pushToHistory({cellSize: params.cellSize + scale});
-    };
+    const onClickToggleGrid = () => pushToHistory({gridOn: !gridOn});
 
-    const onClickToggleGrid = () => {
-        pushToHistory({gridOn: !params.gridOn});
-    };
-
-    const onClickSlower = () => {
-        pushToHistory({speed: params.speed + 50});
-    };
-
-    const onClickFaster = () => {
-        pushToHistory({speed: params.speed - 50});
-    };
+    const onClickSlowerFaster = (offset: number) => () => pushToHistory({speed: speed + offset});
 
     return (<PanelWrapper>
         {
             (playState === PlayState.Paused || playState === PlayState.Editing) &&
-            <Button onClick={onClickPlay} className="play-button">Play</Button>
+            <Button width="72px" onClick={onClickPlay} theme={BottleGreen}>Play</Button>
         }
         {
             playState === PlayState.Playing &&
-            <Button onClick={onClickPaused} className="pause-button">Paused</Button>
+            <Button width="72px" pressed onClick={onClickPaused} theme={BottleGreen}>Paused</Button>
         }
-        <Button onClick={onClickEdit} className="stop-button" disabled={playState !== PlayState.Paused}>Edit</Button>
-        <Button onClick={onClickNext} className="next-button" disabled={playState !== PlayState.Paused}>Next</Button>
-        <Button onClick={onClickReset} className="clean-button">Reset</Button>
-        <Button onClick={onClickToggleGrid}>
-            {params.gridOn ? <GirdOnIcon/> : <GirdOffIcon/>}
-        </Button>
+        <Button width="48px" onClick={onClickEdit} disabled={playState !== PlayState.Paused} theme={BlazeOrange}>Edit</Button>
+        <Button width="48px" onClick={onClickNext} disabled={playState !== PlayState.Paused} theme={BlazeOrange}>Next</Button>
+        <Button width="64px" onClick={onClickReset} theme={AntiqueRuby}>Reset</Button>
+        <Button width="84px" onClick={onClickToggleGrid} pressed={gridOn} theme={CGBlue}>Grid: {gridOn ? 'ON' : 'OFF'}</Button>
         <ButtonGroup>
-            <Button onClick={onClickScale(-1)} title="Zoom Out">
-                <span className="material-icons">zoom_out</span>
-            </Button>
-            <Button onClick={onClickScale(1)} title="Zoom In">
-                <span className="material-icons">zoom_in</span>
-            </Button>
+            <Button width="36px" onClick={onClickScale(-1)} disabled={cellSize === CellSize.Min} theme={CGBlue} title="Zoom Out"><ZoomOutIcon/></Button>
+            <Button width="36px" onClick={onClickScale(1)} disabled={cellSize === CellSize.Max} theme={CGBlue} title="Zoom In"><ZoomInIcon/></Button>
         </ButtonGroup>
         <ButtonGroup>
-            <Button onClick={onClickSlower}>
-                Slower
-            </Button>
-            <Button onClick={onClickFaster}>
-                Faster
-            </Button>
+            <Button width="36px" onClick={onClickSlowerFaster(-1)} disabled={speed === Speed.Min} theme={CGBlue} title="Slower"><SlowerIcon/></Button>
+            <Button width="36px" onClick={onClickSlowerFaster(1)} disabled={speed === Speed.Max} theme={CGBlue} title="Faster"><FasterIcon/></Button>
         </ButtonGroup>
     </PanelWrapper>);
 }
