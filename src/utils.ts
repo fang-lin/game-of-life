@@ -1,19 +1,17 @@
 import {Size} from './Canvas';
 
-export function objectify(obj: any) {
-    return JSON.parse(JSON.stringify(obj));
-}
-
 export const pixelRatio = window.devicePixelRatio;
 
 export interface ParsedParams {
     cellSize: number;
     gridOn: boolean;
+    speed: number;
 }
 
 export type OriginalParams = {
     cellSize: string;
     gridOn: string;
+    speed: string;
 }
 
 interface Props {
@@ -28,16 +26,17 @@ export function shouldUpdateCanvas(prevProps: Props, currentProps: Props): boole
         prevProps.params.gridOn !== currentProps.params.gridOn;
 }
 
-const paramsSegments: Array<keyof OriginalParams> = ['cellSize', 'gridOn'];
+const paramsSegments: Array<keyof OriginalParams> = ['cellSize', 'speed', 'gridOn'];
 
-export function parseParams({cellSize, gridOn}: OriginalParams): ParsedParams {
+export function parseParams({cellSize, gridOn, speed}: OriginalParams): ParsedParams {
     return {
         cellSize: parseInt(cellSize),
-        gridOn: gridOn === '1'
+        gridOn: gridOn === '1',
+        speed: parseInt(speed),
     };
 }
 
-function normalizeCellSize(cellSize: number) {
+function normalizeCellSize(cellSize: number): string {
     if (cellSize < 5)
         return '5';
     if (cellSize > 30)
@@ -45,10 +44,15 @@ function normalizeCellSize(cellSize: number) {
     return cellSize.toString();
 }
 
-export function stringifyParams({cellSize, gridOn}: ParsedParams): OriginalParams {
+function normalizeSpeed(speed: number): string {
+    return speed.toString();
+}
+
+export function stringifyParams({cellSize, gridOn, speed}: ParsedParams): OriginalParams {
     return {
         cellSize: normalizeCellSize(cellSize),
-        gridOn: gridOn ? '1' : '0'
+        gridOn: gridOn ? '1' : '0',
+        speed: normalizeSpeed(speed),
     };
 }
 
@@ -58,7 +62,8 @@ export function combinePathToURL(params: OriginalParams): string {
 
 export const defaultParams: OriginalParams = {
     cellSize: '20',
-    gridOn: '1'
+    gridOn: '1',
+    speed: '100'
 };
 
 export function routerPath(): string {

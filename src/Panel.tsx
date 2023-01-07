@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, PanelWrapper, ButtonGroup} from './Panel.styles';
+import {Button, PanelWrapper, ButtonGroup, GirdOnIcon, GirdOffIcon} from './Panel.styles';
 import {PlayState} from './App';
 import {ParsedParams} from './utils';
 
@@ -24,8 +24,8 @@ function Panel({playState, pushToHistory, params, setPlayState}: PanelProps) {
         setPlayState(PlayState.Editing);
     }
 
-    function onClickClean() {
-        setPlayState(PlayState.Cleaning);
+    function onClickReset() {
+        setPlayState(PlayState.Reset);
     }
 
     function onClickNext() {
@@ -41,6 +41,14 @@ function Panel({playState, pushToHistory, params, setPlayState}: PanelProps) {
         pushToHistory({gridOn: !params.gridOn});
     };
 
+    const onClickSlower = () => {
+        pushToHistory({speed: params.speed + 50});
+    };
+
+    const onClickFaster = () => {
+        pushToHistory({speed: params.speed - 50});
+    };
+
     return (<PanelWrapper>
         {
             (playState === PlayState.Paused || playState === PlayState.Editing) &&
@@ -52,10 +60,9 @@ function Panel({playState, pushToHistory, params, setPlayState}: PanelProps) {
         }
         <Button onClick={onClickEdit} className="stop-button" disabled={playState !== PlayState.Paused}>Edit</Button>
         <Button onClick={onClickNext} className="next-button" disabled={playState !== PlayState.Paused}>Next</Button>
-        <Button onClick={onClickClean} className="clean-button"
-            disabled={playState !== PlayState.Editing}>Clean</Button>
+        <Button onClick={onClickReset} className="clean-button">Reset</Button>
         <Button onClick={onClickToggleGrid}>
-            <span className="material-icons">{params.gridOn ? 'grid_3x3' : 'lens_blur'}</span>
+            {params.gridOn ? <GirdOnIcon/> : <GirdOffIcon/>}
         </Button>
         <ButtonGroup>
             <Button onClick={onClickScale(-1)} title="Zoom Out">
@@ -63,6 +70,14 @@ function Panel({playState, pushToHistory, params, setPlayState}: PanelProps) {
             </Button>
             <Button onClick={onClickScale(1)} title="Zoom In">
                 <span className="material-icons">zoom_in</span>
+            </Button>
+        </ButtonGroup>
+        <ButtonGroup>
+            <Button onClick={onClickSlower}>
+                Slower
+            </Button>
+            <Button onClick={onClickFaster}>
+                Faster
             </Button>
         </ButtonGroup>
     </PanelWrapper>);

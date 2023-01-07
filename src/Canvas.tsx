@@ -19,9 +19,6 @@ export interface CanvasProps {
     attributes: Attributes;
 }
 
-const duration = 100;
-export const cell = 20;
-
 export class Canvas extends Component<CanvasProps> {
     lifeMap: LifeMap;
     private playTimeout = NaN;
@@ -47,6 +44,7 @@ export class Canvas extends Component<CanvasProps> {
         }
 
         if (playState === PlayState.Editing && frameIndex !== 0) {
+            window.clearTimeout(this.playTimeout);
             setFrameIndex(() => 0);
         }
 
@@ -62,7 +60,8 @@ export class Canvas extends Component<CanvasProps> {
             window.clearTimeout(this.playTimeout);
         }
 
-        if (prevProps.playState === PlayState.Editing && playState === PlayState.Cleaning) {
+        if (playState === PlayState.Reset) {
+            window.clearTimeout(this.playTimeout);
             lifeMap.reset();
             draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
             setPlayState(PlayState.Editing);
@@ -86,7 +85,7 @@ export class Canvas extends Component<CanvasProps> {
 
     play = () => {
         this.frame();
-        this.playTimeout = window.setTimeout(this.play, duration);
+        this.playTimeout = window.setTimeout(this.play, this.props.params.speed);
     }
 
     render() {

@@ -9,7 +9,7 @@ import {combinePathToURL, pixelRatio, OriginalParams, ParsedParams, parseParams,
 import Dashboard from './Dashboard';
 
 export enum PlayState {
-    Cleaning,
+    Reset,
     Editing,
     Playing,
     Paused,
