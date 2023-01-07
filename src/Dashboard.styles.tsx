@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 
-
-
 export const DashboardWrapper = styled.div`
+  font-family: 'Fira Code', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #444;
   position: absolute;
-  bottom: 20px;
-  left: 20px;
-  margin: 0 -5px;
-  display: flex;
+  top: 20px;
+  right: 20px;
+  text-shadow: 0 0 5px white, 0 0 5px white, 0 0 5px white, 0 0 5px white, 0 0 5px white;
 `;

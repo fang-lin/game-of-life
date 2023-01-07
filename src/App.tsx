@@ -80,7 +80,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         } = this;
 
         const params = parseParams(this.props.match.params);
-        console.log('params', params);
         const attributes: Attributes = {
             width: size[0] * pixelRatio,
             height: size[1] * pixelRatio
