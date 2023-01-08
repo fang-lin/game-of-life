@@ -3,11 +3,13 @@ import {DashboardWrapper} from './Dashboard.styles';
 
 interface DashboardProps {
     frameIndex: number;
+    cellsCount: number;
 }
 
-function Dashboard({frameIndex}: DashboardProps) {
+function Dashboard({frameIndex, cellsCount}: DashboardProps) {
     return <DashboardWrapper>
-        Frame:<span>{frameIndex}</span>
+        <p>Frame:{frameIndex}</p>
+        <p>Cells:{cellsCount}</p>
     </DashboardWrapper>;
 }
 

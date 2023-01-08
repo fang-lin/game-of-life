@@ -22,6 +22,7 @@ interface AppState {
     playState: PlayState;
     frameIndex: number;
     clickedCell: Coordinate | null;
+    cellsCount: number;
 }
 
 export interface Attributes {
@@ -40,6 +41,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             size: [0, 0],
             playState: PlayState.Editing,
             clickedCell: null,
+            cellsCount: 0
         };
     }
 
@@ -53,6 +55,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     setPlayState = (playState: PlayState, cb?: () => void) => this.setState({playState}, cb);
     setFrameIndex = (op: (index: number) => number) => this.setState({frameIndex: op(this.state.frameIndex)});
     setClickedCell = (clickedCell: Coordinate | null, cb?: () => void) => this.setState({clickedCell}, cb);
+    setCellsCount = (cellsCount: number) => this.setState({cellsCount});
 
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
         const {history: {push}, match: {params}} = this.props;
@@ -73,12 +76,13 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     render() {
-        const {size, playState, frameIndex, clickedCell} = this.state;
+        const {size, playState, frameIndex, clickedCell, cellsCount} = this.state;
         const {
             pushToHistory,
             setFrameIndex,
             setClickedCell,
             setPlayState,
+            setCellsCount,
         } = this;
 
         const params = parseParams(this.props.match.params);
@@ -97,11 +101,12 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                     params,
                     attributes,
                     frameIndex,
-                    setFrameIndex
+                    setFrameIndex,
+                    setCellsCount
                 }}/>
                 <MaskCanvas {...{size, playState, setClickedCell, params, attributes}} />
                 <Header/>
-                <Dashboard {...{frameIndex}}/>
+                <Dashboard {...{frameIndex, cellsCount}}/>
                 <BottomSection>
                     <Footer/>
                     <Panel {...{playState, pushToHistory, params, setPlayState}}/>

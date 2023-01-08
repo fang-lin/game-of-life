@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const HeaderWrapper = styled.header`
   font-family: 'Fira Sans', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   position: absolute;
   top: 8px;

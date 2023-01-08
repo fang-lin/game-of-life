@@ -17,9 +17,10 @@ export interface CanvasProps {
     clickedCell: Coordinate | null;
     params: ParsedParams;
     attributes: Attributes;
+    setCellsCount: (cellsCount: number) => void;
 }
 
-const durations = [1000, 500, 100, 50, 0];
+const durations = [1000, 500, 100, 50, 25, 0];
 
 function getDuration(speed: number) {
     return durations[speed] === undefined ? durations[Speed.Default] : durations[speed];
@@ -29,6 +30,7 @@ export class Canvas extends Component<CanvasProps> {
     lifeMap: LifeMap;
     private playTimeout = NaN;
     private readonly canvasRef: RefObject<HTMLCanvasElement>;
+    private start: number = -Infinity;
 
     constructor(props: CanvasProps) {
         super(props);
@@ -40,16 +42,26 @@ export class Canvas extends Component<CanvasProps> {
         const {
             lifeMap,
             canvasRef,
-            props: {setFrameIndex, frameIndex, clickedCell, playState, setPlayState, params: {cellSize, gridOn}, size}
+            props: {
+                setFrameIndex,
+                frameIndex,
+                clickedCell,
+                playState,
+                setPlayState,
+                params: {cellSize, gridOn},
+                size,
+                setCellsCount
+            },
         } = this;
 
         if (playState === PlayState.Editing && clickedCell) {
             lifeMap.toggleCell(clickedCell);
+            setCellsCount(lifeMap.cells.size);
             draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
         }
 
         if (playState === PlayState.Editing && frameIndex !== 0) {
-            window.clearTimeout(this.playTimeout);
+            window.cancelAnimationFrame(this.playTimeout);
             setFrameIndex(() => 0);
         }
 
@@ -58,16 +70,17 @@ export class Canvas extends Component<CanvasProps> {
         }
 
         if ((prevProps.playState === PlayState.Paused || prevProps.playState === PlayState.Editing) && playState === PlayState.Playing) {
-            this.play();
+            window.requestAnimationFrame(this.play);
         }
 
         if (prevProps.playState === PlayState.Playing && playState === PlayState.Paused) {
-            window.clearTimeout(this.playTimeout);
+            window.cancelAnimationFrame(this.playTimeout);
         }
 
         if (playState === PlayState.Reset) {
-            window.clearTimeout(this.playTimeout);
+            window.cancelAnimationFrame(this.playTimeout);
             lifeMap.reset();
+            setCellsCount(lifeMap.cells.size);
             draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
             setPlayState(PlayState.Editing);
         }
@@ -81,16 +94,20 @@ export class Canvas extends Component<CanvasProps> {
         const {
             lifeMap,
             canvasRef,
-            props: {setFrameIndex, params: {cellSize, gridOn}, size}
+            props: {setFrameIndex, params: {cellSize, gridOn}, size, setCellsCount}
         } = this;
         setFrameIndex(i => i + 1);
         lifeMap.evolve();
+        setCellsCount(lifeMap.cells.size);
         draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
     }
 
-    play = () => {
-        this.frame();
-        this.playTimeout = window.setTimeout(this.play, getDuration(this.props.params.speed));
+    play = (timestamp: number) => {
+        if (timestamp - this.start >= getDuration(this.props.params.speed)) {
+            this.start = timestamp;
+            this.frame();
+        }
+        this.playTimeout = window.requestAnimationFrame(this.play);
     }
 
     render() {
