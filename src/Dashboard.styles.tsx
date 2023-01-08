@@ -5,12 +5,11 @@ export const DashboardWrapper = styled.div`
   font-size: 14px;
   font-weight: 700;
   text-align: right;
-  color: #444;
+  color: #333;
   position: absolute;
   top: 8px;
   right: 8px;
-  text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white;
-  z-index: 10;
+  text-shadow: 0 1px 3px white;
   p {
     margin: 0;
   }

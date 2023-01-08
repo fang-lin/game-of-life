@@ -57,68 +57,77 @@ export const PanelWrapper = styled.div`
   display: flex;
   row-gap: 13px;
   column-gap: 8px;
-  max-width: calc(100% - 20px * 2);
   flex-wrap: wrap-reverse;
   justify-content: flex-end;
   padding: 0 0 6px 0;
-  position: relative;
-  z-index: 10;
 `;
 
 export const Button = styled.button<{ height?: string; width?: string, pressed?: boolean, theme: Theme }>`
-  font-family: 'Fira Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  background: linear-gradient(${({theme}) => theme.MainDark}, ${({theme}) => theme.MainLight});
   border: medium none;
-  box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark}, inset 0 0 7px 3px ${({theme}) => theme.MainLight};
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
   padding: 0;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: ${({height}) => height || '36px'};
-  width: ${({width}) => width || '80px'};
-  top: ${({pressed}) => pressed ? '4px' : 0};
+  background: transparent;
 
-  &[disabled] {
-    color: #999;
-    background: #666;
-    box-shadow: inset 0 0 0 1px #444;
-    cursor: unset;
+  span {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    background: linear-gradient(${({theme}) => theme.MainDark}, ${({theme}) => theme.MainLight});
+    border: medium none;
+    box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark}, inset 0 0 7px 3px ${({theme}) => theme.MainLight};
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    padding: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: ${({height}) => height || '36px'};
+    width: ${({width}) => width || '80px'};
+    top: ${({pressed}) => pressed ? '4px' : 0};
   }
 
-  &[disabled]:after {
+  &:before {
+    content: '';
+    position: absolute;
+    height: 10px;
+    right: 0;
+    bottom: -6px;
+    left: 0;
+    background: ${({theme}) => theme.Main};
+    box-shadow: inset 0 0 3px 1px ${({theme}) => theme.MainDark};
+    border-radius: 0 0 5px 5px;
+  }
+
+  &[disabled] {
+    span {
+      color: #999;
+      background: #666;
+      box-shadow: inset 0 0 0 1px #444;
+      cursor: unset;
+    }
+  }
+
+  &[disabled]:before {
     background: #666;
     box-shadow: inset 0 0 3px 1px #444;
   }
 
   &:not([disabled]):hover {
-    box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark}, inset 0 0 1px 2px white, inset 0 0 15px 5px ${({theme}) => theme.MainLight};
-  }
-
-  &:not([disabled]):active {
-    top: 6px;
-
-    &:after {
-      bottom: 0;
+    span {
+      box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark}, inset 0 0 1px 2px white, inset 0 0 15px 5px ${({theme}) => theme.MainLight};
     }
   }
 
-  &:after {
-    content: '';
-    position: absolute;
-    height: 10px;
-    right: 0;
-    bottom: ${({pressed}) => pressed ? '-2px' : '-6px'};
-    left: 0;
-    background: ${({theme}) => theme.Main};
-    box-shadow: inset 0 0 3px 1px ${({theme}) => theme.MainDark};
-    z-index: -1;
-    border-radius: 0 0 5px 5px;
+  &:not([disabled]):active {
+    span {
+      top: 6px;
+    }
+
+    &:before {
+      bottom: 0;
+    }
   }
 `;
 
@@ -126,24 +135,30 @@ export const ButtonGroup = styled.div`
   position: relative;
   display: flex;
 
-  & > ${Button} {
-    border-radius: 0;
-    margin: 0 -1px 0 0;
+  ${Button} {
+    span {
+      border-radius: 0;
+      margin: 0 -1px 0 0;
+    }
   }
 
-  & > ${Button}:first-child {
-    border-radius: 4px 0 0 4px;
+  ${Button}:first-child {
+    span {
+      border-radius: 4px 0 0 4px;
+    }
 
-    &:after {
+    &:before {
       border-radius: 0 0 0 4px;
     }
   }
 
-  & > ${Button}:last-child {
-    border-radius: 0 4px 4px 0;
-    margin: 0;
+  ${Button}:last-child {
+    span {
+      border-radius: 0 4px 4px 0;
+      margin: 0;
+    }
 
-    &:after {
+    &:before {
       border-radius: 0 0 4px 0;
     }
   }

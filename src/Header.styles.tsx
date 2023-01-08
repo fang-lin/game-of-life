@@ -7,8 +7,7 @@ export const HeaderWrapper = styled.header`
   position: absolute;
   top: 8px;
   left: 8px;
-  text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white;
-  z-index: 10;
+  text-shadow: 0 1px 3px white;
 `;
 
 export const Anchor = styled.a`
