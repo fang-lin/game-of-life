@@ -54,16 +54,13 @@ export const CGBlue: Theme = {
 };
 
 export const PanelWrapper = styled.div`
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
   display: flex;
   row-gap: 13px;
   column-gap: 8px;
-  z-index: 10;
   max-width: calc(100% - 20px * 2);
-  flex-wrap: wrap;
+  flex-wrap: wrap-reverse;
   justify-content: flex-end;
+  padding: 0 0 6px 0;
 `;
 
 export const Button = styled.button<{ height?: string; width?: string, pressed?: boolean, theme: Theme }>`

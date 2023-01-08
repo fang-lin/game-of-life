@@ -1,5 +1,5 @@
 import React, {Component, RefObject} from 'react';
-import {AppWrapper} from './App.styles';
+import {AppWrapper, BottomSection} from './App.styles';
 import debounce from 'lodash/debounce';
 import Canvas, {Coordinate} from './Canvas';
 import {RouteComponentProps} from 'react-router-dom';
@@ -7,6 +7,8 @@ import MaskCanvas from './MaskCanvas';
 import Panel from './Panel';
 import {combinePathToURL, pixelRatio, OriginalParams, ParsedParams, parseParams, stringifyParams} from './utils';
 import Dashboard from './Dashboard';
+import Footer from './Footer';
+import Header from './Header';
 
 export enum PlayState {
     Reset,
@@ -98,8 +100,12 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                     setFrameIndex
                 }}/>
                 <MaskCanvas {...{size, playState, setClickedCell, params, attributes}} />
-                <Panel {...{playState, pushToHistory, params, setPlayState}}/>
+                <Header/>
                 <Dashboard {...{frameIndex}}/>
+                <BottomSection>
+                    <Footer/>
+                    <Panel {...{playState, pushToHistory, params, setPlayState}}/>
+                </BottomSection>
             </AppWrapper>
         );
     }
