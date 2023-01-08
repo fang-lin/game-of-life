@@ -18,7 +18,7 @@ export const Anchor = styled.a`
   color: #333;
   text-decoration: none;
   white-space: nowrap;
-
+  font-weight: 500;
   :hover {
     text-decoration: underline;
   }

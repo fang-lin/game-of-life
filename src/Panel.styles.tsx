@@ -65,7 +65,9 @@ export const PanelWrapper = styled.div`
 export const Button = styled.button<{ height?: string; width?: string, pressed?: boolean, theme: Theme }>`
   border: medium none;
   padding: 0;
+  margin: 0;
   position: relative;
+  cursor: pointer;
   background: transparent;
 
   span {
@@ -131,20 +133,60 @@ export const Button = styled.button<{ height?: string; width?: string, pressed?:
   }
 `;
 
+export const Tag = styled.div<{ height?: string; width?: string, theme: Theme }>`
+  position: relative;
+  span {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    background: linear-gradient(${({theme}) => theme.MainDark}, ${({theme}) => theme.MainLight});
+    border: medium none;
+    box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark}, inset 0 0 7px 3px ${({theme}) => theme.MainLight};
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    padding: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: ${({height}) => height || '36px'};
+    width: ${({width}) => width || '80px'};
+    top: 0;
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    height: 10px;
+    right: 0;
+    bottom: -6px;
+    left: 0;
+    background: ${({theme}) => theme.Main};
+    box-shadow: inset 0 0 3px 1px ${({theme}) => theme.MainDark};
+    border-radius: 0 0 5px 5px;
+  }
+`;
+
 export const ButtonGroup = styled.div`
   position: relative;
   display: flex;
 
-  ${Button} {
+  ${Button}, ${Tag} {
     span {
       border-radius: 0;
-      margin: 0 -1px 0 0;
+      margin: 0 -.5px;
+    }
+
+    &:before {
+      border-radius: 0;
     }
   }
 
-  ${Button}:first-child {
+  ${Button}:first-child, ${Tag}:first-child {
     span {
       border-radius: 4px 0 0 4px;
+      margin: 0 -.5px 0 0;
     }
 
     &:before {
@@ -152,10 +194,10 @@ export const ButtonGroup = styled.div`
     }
   }
 
-  ${Button}:last-child {
+  ${Button}:last-child, ${Tag}:last-child {
     span {
       border-radius: 0 4px 4px 0;
-      margin: 0;
+      margin: 0 0 0 -.5px;
     }
 
     &:before {

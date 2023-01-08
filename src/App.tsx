@@ -179,7 +179,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                     params
                 }}/>
                 <Header/>
-                <Dashboard {...{frameIndex, cellsCount}}/>
+                <Dashboard {...{frameIndex, cellsCount, params}}/>
                 <BottomSection>
                     <Footer/>
                     <Panel {...{playState, pushToHistory, params, setPlayState}}/>
