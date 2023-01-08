@@ -4,54 +4,10 @@ import {ReactComponent as Rabbit} from './images/rabbit.svg';
 import {ReactComponent as Snail} from './images/snail.svg';
 import {ReactComponent as ZoomIn} from './images/zoom-in.svg';
 import {ReactComponent as ZoomOut} from './images/zoom-out.svg';
+import {Theme} from './Theme';
 
 // https://coolors.co/d9ed92-b5e48c-99d98c-76c893-52b69a-34a0a4-168aad-1a759f-1e6091-184e77
 // https://coolors.co/f94144-f3722c-f8961e-f9844a-f9c74f-90be6d-43aa8b-4d908e-577590-277da1
-
-interface Theme {
-    Main: string;
-    MainDark: string;
-    MainLight: string;
-    Grey: string
-    DarkGrey: string;
-    LightGrey: string;
-}
-
-export const AntiqueRuby: Theme = {
-    DarkGrey: '#444',
-    Grey: '#666',
-    LightGrey: '#999',
-    Main: '#85182A',
-    MainDark: '#6E1423',
-    MainLight: '#B21E35'
-};
-
-export const BottleGreen: Theme = {
-    DarkGrey: '#444',
-    Grey: '#666',
-    LightGrey: '#999',
-    Main: '#2D6A4F',
-    MainDark: '#1B4332',
-    MainLight: '#52B788'
-};
-
-export const BlazeOrange: Theme = {
-    DarkGrey: '#444',
-    Grey: '#666',
-    LightGrey: '#999',
-    Main: '#CA6702',
-    MainDark: '#BB3E03',
-    MainLight: '#EE9B00'
-};
-
-export const CGBlue: Theme = {
-    DarkGrey: '#444',
-    Grey: '#666',
-    LightGrey: '#999',
-    Main: '#1A759F',
-    MainDark: '#184E77',
-    MainLight: '#168AAD'
-};
 
 export const PanelWrapper = styled.div`
   display: flex;

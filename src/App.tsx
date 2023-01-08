@@ -1,4 +1,4 @@
-import React, {Component, RefObject} from 'react';
+import React, {Component, MouseEvent, RefObject} from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
 import {Coordinate} from './Canvas';
 import {RouteComponentProps} from 'react-router-dom';
@@ -48,6 +48,7 @@ interface AppState {
     playState: PlayState;
     frameIndex: number;
     clickedCell: Coordinate | null;
+    hoveringCell: Coordinate | null;
     cellsCount: number;
     client: Coordinate;
     transform: Coordinate;
@@ -80,6 +81,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             size: [0, 0],
             playState: PlayState.Editing,
             clickedCell: null,
+            hoveringCell: null,
             cellsCount: 0,
             client: [0, 0],
             transform: [0, 0],
@@ -95,6 +97,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     setPlayState = (playState: PlayState, cb?: () => void) => this.setState({playState}, cb);
     setFrameIndex = (op: (index: number) => number) => this.setState({frameIndex: op(this.state.frameIndex)});
     setClickedCell = (clickedCell: Coordinate | null, cb?: () => void) => this.setState({clickedCell}, cb);
+    setHoveringCell = (hoveringCell: Coordinate | null, cb?: () => void) => this.setState({hoveringCell}, cb);
     setCellsCount = (cellsCount: number) => this.setState({cellsCount});
 
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
@@ -106,12 +109,37 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         this.onResize();
         window.addEventListener('resize', this.onResize);
         window.addEventListener(DragEvents[DragState.start], this.onDragStart);
+        window.addEventListener('mousemove', this.onMouseMove);
+        window.addEventListener('click', this.onClick);
     }
 
     componentWillUnmount(): void {
         window.removeEventListener('resize', this.onResize);
         window.removeEventListener(DragEvents[DragState.start], this.onDragStart);
+        window.removeEventListener('mousemove', this.onMouseMove);
+        window.removeEventListener('click', this.onClick);
     }
+
+    onMouseMove = (event: Event) => {
+        const {clientX, clientY} = event as unknown as MouseEvent;
+        const {cellSize} = parseParams(this.props.match.params);
+        this.setHoveringCell([
+            Math.floor(clientX / cellSize),
+            Math.floor(clientY / cellSize)
+        ]);
+    };
+
+    onClick = (event: Event) => {
+        const {clientX, clientY} = event as unknown as MouseEvent;
+        const {playState} = this.state;
+        if (playState === PlayState.Editing) {
+            const {cellSize} = parseParams(this.props.match.params);
+            this.setClickedCell([
+                Math.floor(clientY / cellSize),
+                Math.floor(clientX / cellSize)
+            ], () => this.setClickedCell(null));
+        }
+    };
 
     onDragging = (event: Event): void => {
         const instantaneousClient = getClient(event as DragEvent);
@@ -153,7 +181,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     };
 
     render() {
-        const {size, playState, frameIndex, clickedCell, cellsCount, transform} = this.state;
+        const {size, playState, frameIndex, clickedCell, hoveringCell, cellsCount, transform} = this.state;
         const {
             pushToHistory,
             setFrameIndex,
@@ -174,12 +202,13 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                     size,
                     playState,
                     clickedCell,
+                    hoveringCell,
                     frameIndex,
                     transform,
                     params
                 }}/>
                 <Header/>
-                <Dashboard {...{frameIndex, cellsCount, params}}/>
+                <Dashboard {...{frameIndex, cellsCount, params, hoveringCell}}/>
                 <BottomSection>
                     <Footer/>
                     <Panel {...{playState, pushToHistory, params, setPlayState}}/>

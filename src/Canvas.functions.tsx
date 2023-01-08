@@ -21,7 +21,7 @@ export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, ce
             context.lineTo(x, height * pixelRatio);
         }
         context.lineWidth = pixelRatio;
-        context.strokeStyle = 'rgba(0,0,0,.2)';
+        context.strokeStyle = 'rgba(0,0,0,.1)';
         context.stroke();
     }
 }

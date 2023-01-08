@@ -4,10 +4,13 @@ import {
     ButtonGroup,
     ZoomInIcon,
     ZoomOutIcon,
-    Button, FasterIcon, SlowerIcon, AntiqueRuby, CGBlue, BottleGreen, BlazeOrange,
+    Button,
+    FasterIcon,
+    SlowerIcon,
 } from './Panel.styles';
 import {PlayState} from './App';
 import {CellSize, ParsedParams, Speed} from './utils';
+import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from './Theme';
 
 interface PanelProps {
     playState: PlayState,
@@ -30,6 +33,7 @@ function Panel({playState, pushToHistory, params: {cellSize, gridOn, speed}, set
         setPlayState(PlayState.Editing);
     };
     const onClickReset = (event: MouseEvent<HTMLButtonElement>) => {
+        console.log('onClickReset');
         event.stopPropagation();
         setPlayState(PlayState.Reset);
     };

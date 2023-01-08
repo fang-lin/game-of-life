@@ -12,6 +12,7 @@ interface StageProps {
     frameIndex: number;
     setFrameIndex: (op: (index: number) => number) => void;
     clickedCell: Coordinate | null;
+    hoveringCell: Coordinate | null;
     transform: Coordinate;
     params: ParsedParams;
     setCellsCount: (cellsCount: number) => void;
@@ -28,8 +29,8 @@ export const Stage: FunctionComponent<StageProps> = (props) => {
         size,
         playState,
         clickedCell,
+        hoveringCell,
         frameIndex,
-        transform,
         params
     } = props;
 
@@ -38,7 +39,7 @@ export const Stage: FunctionComponent<StageProps> = (props) => {
         height: size[1] * pixelRatio
     };
 
-    return <StageWrapper style={{transform: `translate(${transform[0]}px, ${transform[1]}px)`}}>
+    return <StageWrapper>
         <Canvas {...{
             size,
             playState,
@@ -50,6 +51,6 @@ export const Stage: FunctionComponent<StageProps> = (props) => {
             setFrameIndex,
             setCellsCount
         }}/>
-        <MaskCanvas {...{size, playState, setClickedCell, params, attributes}} />
+        <MaskCanvas {...{size, playState, setClickedCell, hoveringCell, params, attributes}} />
     </StageWrapper>;
 };
