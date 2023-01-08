@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const HeaderWrapper = styled.header`
   font-family: 'Fira Sans', sans-serif;
   font-size: 14px;
+  text-shadow: 0 0 5px white, 0 0 5px white, 0 0 5px white, 0 0 5px white, 0 0 5px white;
   font-weight: 700;
   position: absolute;
   top: 20px;

@@ -33,8 +33,13 @@ export const BottomSection = styled.div`
   left: 8px;
   right: 8px;
   display: flex;
-  flex-wrap: wrap-reverse;
+  flex-direction: column-reverse;
   justify-content: flex-end;
   align-items: end;
-  row-gap: 8px;
+  gap: 8px;
+  @media ${device.laptop} {
+    text-align: left;
+    flex-grow: 1;
+    flex-direction: row;
+  }
 `;
