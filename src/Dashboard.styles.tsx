@@ -8,5 +8,5 @@ export const DashboardWrapper = styled.div`
   position: absolute;
   top: 20px;
   right: 20px;
-  text-shadow: 0 0 5px white, 0 0 5px white, 0 0 5px white, 0 0 5px white, 0 0 5px white;
+  text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white;
 `;
