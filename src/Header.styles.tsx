@@ -5,9 +5,10 @@ export const HeaderWrapper = styled.header`
   font-size: 14px;
   font-weight: 700;
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 8px;
+  left: 8px;
   text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white;
+  z-index: 10;
 `;
 
 export const Anchor = styled.a`

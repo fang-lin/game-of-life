@@ -6,6 +6,9 @@ export const FooterWrapper = styled.footer`
   text-align: right;
   color: #333;
   text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white;
+  position: relative;
+  z-index: 10;
+  
   @media ${device.laptop} {
     text-align: left;
     flex-grow: 1;

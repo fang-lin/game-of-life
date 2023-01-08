@@ -61,7 +61,8 @@ export const PanelWrapper = styled.div`
   flex-wrap: wrap-reverse;
   justify-content: flex-end;
   padding: 0 0 6px 0;
-  z-index: 1;
+  position: relative;
+  z-index: 10;
 `;
 
 export const Button = styled.button<{ height?: string; width?: string, pressed?: boolean, theme: Theme }>`

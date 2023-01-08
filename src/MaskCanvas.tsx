@@ -1,5 +1,5 @@
 import React, {Component, MouseEvent, RefObject} from 'react';
-import {CanvasWrapper} from './Canvas.styles';
+import {CanvasWrapper} from './MaskCanvas.styles';
 import {ParsedParams, pixelRatio, shouldUpdateCanvas} from './utils';
 import {Coordinate, Size} from './Canvas';
 import {drawCell, wipe} from './drawer';
