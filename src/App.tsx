@@ -37,10 +37,10 @@ export enum DragState {
 
 
 export enum PlayState {
-    Reset,
-    Editing,
-    Playing,
-    Paused,
+    Reset = 'reset',
+    Editing = 'editing',
+    Playing = 'playing',
+    Paused = 'paused',
 }
 
 interface AppState {
@@ -193,7 +193,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         const params = parseParams(this.props.match.params);
 
         return (
-            <AppWrapper ref={this.appRef}>
+            <AppWrapper ref={this.appRef} className={playState}>
                 <Stage {...{
                     setFrameIndex,
                     setClickedCell,
