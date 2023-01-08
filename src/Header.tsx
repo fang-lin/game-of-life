@@ -1,10 +1,10 @@
 import React from 'react';
 import {HeaderWrapper, Anchor} from './Header.styles';
-import {version} from '../package.json';
+import pkg from '../package.json';
 
 function Header() {
     return <HeaderWrapper>
-        <Anchor href="./">Conway's Game of Life {version}</Anchor>
+        <Anchor href="./">Conway's Game of Life {pkg.version}</Anchor>
     </HeaderWrapper>;
 }
 

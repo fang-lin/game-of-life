@@ -2,7 +2,7 @@ import React, {FunctionComponent} from 'react';
 import Canvas, {Coordinate} from './Canvas';
 import MaskCanvas from './MaskCanvas';
 import {StageWrapper} from './Stage.styles';
-import {ParsedParams, parseParams, pixelRatio} from './utils';
+import {ParsedParams, pixelRatio} from './utils';
 import {Attributes, PlayState} from './App';
 
 interface StageProps {

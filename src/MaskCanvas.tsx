@@ -3,7 +3,7 @@ import {CanvasWrapper} from './MaskCanvas.styles';
 import {ParsedParams, pixelRatio, shouldUpdateCanvas} from './utils';
 import {Coordinate, Size} from './Canvas';
 import {drawCell, wipe} from './Canvas.functions';
-import {Attributes, DragEvents, DragState, PlayState} from './App';
+import {Attributes, PlayState} from './App';
 
 interface MaskCanvasProps {
     size: Size;
@@ -13,7 +13,7 @@ interface MaskCanvasProps {
     attributes: Attributes;
 }
 
-class MaskCanvas extends Component<MaskCanvasProps> {
+class MaskCanvas extends Component<MaskCanvasProps, any> {
 
     private readonly canvasRef: RefObject<HTMLCanvasElement>;
 

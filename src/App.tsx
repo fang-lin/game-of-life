@@ -1,6 +1,5 @@
-import React, {Component, DOMAttributes, RefObject} from 'react';
+import React, {Component, RefObject} from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
-import debounce from 'lodash/debounce';
 import {Coordinate} from './Canvas';
 import {RouteComponentProps} from 'react-router-dom';
 import Panel from './Panel';
@@ -13,8 +12,6 @@ import {Stage} from './Stage';
 function isTouchEvent(event: DragEvent): event is TouchEvent {
     return window.TouchEvent && event instanceof TouchEvent;
 }
-
-export type Size = [number, number];
 
 export type DragEvent = MouseEvent | TouchEvent;
 
@@ -72,16 +69,6 @@ export const DragEvents: Record<DragState, keyof WindowEventMap> = isMobile ? {
     [DragState.end]: 'mouseup',
 };
 
-export const JSXDragEvents: Record<DragState, keyof DOMAttributes<Element>> = isMobile ? {
-    [DragState.start]: 'onTouchStart',
-    [DragState.moving]: 'onTouchMove',
-    [DragState.end]: 'onTouchEnd',
-} : {
-    [DragState.start]: 'onMouseDown',
-    [DragState.moving]: 'onMouseMove',
-    [DragState.end]: 'onMouseUp',
-};
-
 export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
     private readonly appRef: RefObject<HTMLDivElement>;
 
@@ -105,8 +92,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         this.setState({size: [width, height]});
     });
 
-    onResizing = debounce(this.onResize, 200);
-
     setPlayState = (playState: PlayState, cb?: () => void) => this.setState({playState}, cb);
     setFrameIndex = (op: (index: number) => number) => this.setState({frameIndex: op(this.state.frameIndex)});
     setClickedCell = (clickedCell: Coordinate | null, cb?: () => void) => this.setState({clickedCell}, cb);
@@ -115,7 +100,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
         const {history: {push}, match: {params}} = this.props;
         push(combinePathToURL(stringifyParams({...parseParams(params), ...parsedParams})));
-    }
+    };
 
     componentDidMount(): void {
         this.onResize();
@@ -129,7 +114,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     onDragging = (event: Event): void => {
-        console.log('onDragging');
         const instantaneousClient = getClient(event as DragEvent);
         const {client} = this.state;
 
@@ -140,7 +124,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     };
 
     onDragStart = (event: Event): void => {
-        console.log('onDragStart');
         this.setState({
             client: getClient(event as DragEvent),
             dragState: DragState.start
@@ -150,7 +133,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     };
 
     onDragEnd = (event: Event): void => {
-        console.log('onDragEnd');
         const instantaneousClient = getClient(event as DragEvent);
         const {state: {client}, props: {match: {params}}} = this;
         const {origin} = parseParams(params);

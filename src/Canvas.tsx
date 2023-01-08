@@ -108,7 +108,7 @@ export class Canvas extends Component<CanvasProps> {
             this.frame();
         }
         this.playTimeout = window.requestAnimationFrame(this.play);
-    }
+    };
 
     render() {
         const {attributes} = this.props;
