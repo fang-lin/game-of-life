@@ -1,7 +1,7 @@
-import { createGlobalStyle } from 'styled-components';
+import {createGlobalStyle} from 'styled-components';
 
 export const GlobalStyle = createGlobalStyle`
-  html, body, #root{
+  html, body, #root {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -11,16 +11,23 @@ export const GlobalStyle = createGlobalStyle`
     sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background: #999;
   }
+
+  #root {
+    overflow: hidden;
+  }
+
   code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
   }
+
   .material-icons {
     font-family: 'Material Icons';
     font-weight: normal;
     font-style: normal;
-    font-size: 24px;  /* Preferred icon size */
+    font-size: 24px; /* Preferred icon size */
     display: inline-block;
     line-height: 1;
     text-transform: none;

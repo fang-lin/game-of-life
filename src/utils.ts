@@ -1,4 +1,4 @@
-import {Size} from './Canvas';
+import {Coordinate, Size} from './Canvas';
 
 export const pixelRatio = window.devicePixelRatio;
 
@@ -19,19 +19,23 @@ export const Speed: NumberConstraint = {
 export const defaultParams: ParsedParams = {
     cellSize: CellSize.Default,
     gridOn: true,
-    speed: Speed.Default
+    speed: Speed.Default,
+    origin: [0, 0]
 };
 
 export interface ParsedParams {
     cellSize: number;
     gridOn: boolean;
     speed: number;
+    origin: Coordinate;
 }
 
 export type OriginalParams = {
     cellSize: string;
     gridOn: string;
     speed: string;
+    originX: string;
+    originY: string;
 }
 
 interface Props {
@@ -46,18 +50,19 @@ export function shouldUpdateCanvas(prevProps: Props, currentProps: Props): boole
         prevProps.params.gridOn !== currentProps.params.gridOn;
 }
 
-const paramsSegments: Array<keyof OriginalParams> = ['cellSize', 'speed', 'gridOn'];
+const paramsSegments: Array<keyof OriginalParams> = ['cellSize', 'speed', 'gridOn', 'originX', 'originY'];
 
 function parseString(s: string, constraint: NumberConstraint): number {
     const n = parseInt(s);
     return n >= constraint.Min && n <= constraint.Max ? n : constraint.Default;
 }
 
-export function parseParams({cellSize, gridOn, speed}: OriginalParams): ParsedParams {
+export function parseParams({cellSize, gridOn, speed, originX, originY}: OriginalParams): ParsedParams {
     return {
         cellSize: parseString(cellSize, CellSize),
         gridOn: gridOn === '1',
         speed: parseString(speed, Speed),
+        origin: [parseInt(originX), parseInt(originY)]
     };
 }
 
@@ -69,11 +74,20 @@ function stringifyNumber(n: number, constraint: NumberConstraint): string {
     return n.toString();
 }
 
-export function stringifyParams({cellSize, gridOn, speed}: ParsedParams): OriginalParams {
+function stringifyCoordinate(n: number): string {
+    if(Number.isNaN(stringifyCoordinate)){
+        return '0';
+    }
+    return n.toString();
+}
+
+export function stringifyParams({cellSize, gridOn, speed, origin}: ParsedParams): OriginalParams {
     return {
         cellSize: stringifyNumber(cellSize, CellSize),
         gridOn: gridOn ? '1' : '0',
         speed: stringifyNumber(speed, Speed),
+        originX: stringifyCoordinate(origin[0]),
+        originY: stringifyCoordinate(origin[1])
     };
 }
 

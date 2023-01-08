@@ -2,7 +2,7 @@ import React, {Component, MouseEvent, RefObject} from 'react';
 import {CanvasWrapper} from './MaskCanvas.styles';
 import {ParsedParams, pixelRatio, shouldUpdateCanvas} from './utils';
 import {Coordinate, Size} from './Canvas';
-import {drawCell, wipe} from './drawer';
+import {drawCell, wipe} from './Canvas.functions';
 import {Attributes, PlayState} from './App';
 
 interface MaskCanvasProps {

@@ -1,7 +1,7 @@
 import React, {Component, RefObject} from 'react';
 import {CanvasWrapper} from './Canvas.styles';
 import {LifeMap} from './LifeMap';
-import {draw} from './drawer';
+import {draw} from './Canvas.functions';
 import {ParsedParams, Speed} from './utils';
 import {Attributes, PlayState} from './App';
 

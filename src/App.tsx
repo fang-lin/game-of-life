@@ -1,14 +1,43 @@
-import React, {Component, RefObject} from 'react';
+import React, {Component, DOMAttributes, RefObject} from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
 import debounce from 'lodash/debounce';
-import Canvas, {Coordinate} from './Canvas';
+import {Coordinate} from './Canvas';
 import {RouteComponentProps} from 'react-router-dom';
-import MaskCanvas from './MaskCanvas';
 import Panel from './Panel';
-import {combinePathToURL, pixelRatio, OriginalParams, ParsedParams, parseParams, stringifyParams} from './utils';
+import {combinePathToURL, OriginalParams, ParsedParams, parseParams, stringifyParams} from './utils';
 import Dashboard from './Dashboard';
 import Footer from './Footer';
 import Header from './Header';
+import {Stage} from './Stage';
+
+function isTouchEvent(event: DragEvent): event is TouchEvent {
+    return window.TouchEvent && event instanceof TouchEvent;
+}
+
+export type Size = [number, number];
+
+export type DragEvent = MouseEvent | TouchEvent;
+
+export function getClient(event: DragEvent): Coordinate {
+    const {clientX, clientY} = isTouchEvent(event) ? event.changedTouches[0] : event;
+    return [clientX, clientY];
+}
+
+export const isMobile: boolean = ((): boolean => {
+    try {
+        document.createEvent('TouchEvent');
+        return true;
+    } catch (e) {
+        return false;
+    }
+})();
+
+export enum DragState {
+    start,
+    moving,
+    end
+}
+
 
 export enum PlayState {
     Reset,
@@ -23,12 +52,35 @@ interface AppState {
     frameIndex: number;
     clickedCell: Coordinate | null;
     cellsCount: number;
+    client: Coordinate;
+    transform: Coordinate;
+    dragState: DragState;
 }
 
 export interface Attributes {
     width: number;
     height: number;
 }
+
+export const DragEvents: Record<DragState, keyof WindowEventMap> = isMobile ? {
+    [DragState.start]: 'touchstart',
+    [DragState.moving]: 'touchmove',
+    [DragState.end]: 'touchend',
+} : {
+    [DragState.start]: 'mousedown',
+    [DragState.moving]: 'mousemove',
+    [DragState.end]: 'mouseup',
+};
+
+export const JSXDragEvents: Record<DragState, keyof DOMAttributes<Element>> = isMobile ? {
+    [DragState.start]: 'onTouchStart',
+    [DragState.moving]: 'onTouchMove',
+    [DragState.end]: 'onTouchEnd',
+} : {
+    [DragState.start]: 'onMouseDown',
+    [DragState.moving]: 'onMouseMove',
+    [DragState.end]: 'onMouseUp',
+};
 
 export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
     private readonly appRef: RefObject<HTMLDivElement>;
@@ -41,7 +93,10 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             size: [0, 0],
             playState: PlayState.Editing,
             clickedCell: null,
-            cellsCount: 0
+            cellsCount: 0,
+            client: [0, 0],
+            transform: [0, 0],
+            dragState: DragState.end,
         };
     }
 
@@ -65,18 +120,58 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     componentDidMount(): void {
         this.onResize();
         window.addEventListener('resize', this.onResize);
-        // window.addEventListener(DragEvents[DragState.moving], this.onMoving);
-        // window.addEventListener(DragEvents[DragState.start], this.onDragStart);
+        window.addEventListener(DragEvents[DragState.start], this.onDragStart);
     }
 
     componentWillUnmount(): void {
         window.removeEventListener('resize', this.onResize);
-        // window.removeEventListener(DragEvents[DragState.moving], this.onMoving);
-        // window.removeEventListener(DragEvents[DragState.start], this.onDragStart);
+        window.removeEventListener(DragEvents[DragState.start], this.onDragStart);
     }
 
+    onDragging = (event: Event): void => {
+        console.log('onDragging');
+        const instantaneousClient = getClient(event as DragEvent);
+        const {client} = this.state;
+
+        this.setState({
+            transform: [instantaneousClient[0] - client[0], instantaneousClient[1] - client[1]],
+            dragState: DragState.moving
+        });
+    };
+
+    onDragStart = (event: Event): void => {
+        console.log('onDragStart');
+        this.setState({
+            client: getClient(event as DragEvent),
+            dragState: DragState.start
+        });
+        window.addEventListener(DragEvents[DragState.moving], this.onDragging);
+        window.addEventListener(DragEvents[DragState.end], this.onDragEnd);
+    };
+
+    onDragEnd = (event: Event): void => {
+        console.log('onDragEnd');
+        const instantaneousClient = getClient(event as DragEvent);
+        const {state: {client}, props: {match: {params}}} = this;
+        const {origin} = parseParams(params);
+
+        this.pushToHistory({
+            origin: [
+                origin[0] + (instantaneousClient[0] - client[0]),
+                origin[1] + (instantaneousClient[1] - client[1])
+            ]
+        });
+        this.setState({
+            transform: [0, 0],
+            dragState: DragState.end,
+            client: [0, 0]
+        });
+        window.removeEventListener(DragEvents[DragState.moving], this.onDragging);
+        window.removeEventListener(DragEvents[DragState.end], this.onDragEnd);
+    };
+
     render() {
-        const {size, playState, frameIndex, clickedCell, cellsCount} = this.state;
+        const {size, playState, frameIndex, clickedCell, cellsCount, transform} = this.state;
         const {
             pushToHistory,
             setFrameIndex,
@@ -86,25 +181,21 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         } = this;
 
         const params = parseParams(this.props.match.params);
-        const attributes: Attributes = {
-            width: size[0] * pixelRatio,
-            height: size[1] * pixelRatio
-        };
 
         return (
             <AppWrapper ref={this.appRef}>
-                <Canvas {...{
+                <Stage {...{
+                    setFrameIndex,
+                    setClickedCell,
+                    setPlayState,
+                    setCellsCount,
                     size,
                     playState,
-                    setPlayState,
                     clickedCell,
-                    params,
-                    attributes,
                     frameIndex,
-                    setFrameIndex,
-                    setCellsCount
+                    transform,
+                    params
                 }}/>
-                <MaskCanvas {...{size, playState, setClickedCell, params, attributes}} />
                 <Header/>
                 <Dashboard {...{frameIndex, cellsCount}}/>
                 <BottomSection>
