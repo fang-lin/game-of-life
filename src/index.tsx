@@ -3,15 +3,17 @@ import ReactDOM from 'react-dom';
 import {GlobalStyle} from './index.styles';
 import {App} from './App';
 import reportWebVitals from './reportWebVitals';
-import {HashRouter, Redirect, Route} from 'react-router-dom';
+import {BrowserRouter, Switch, Redirect, Route} from 'react-router-dom';
 import {combinePathToURL, defaultParams, routerPath, stringifyParams} from './App.functions';
 
 ReactDOM.render(
     <React.StrictMode>
-        <HashRouter>
-            <Route path={routerPath()} component={App} exact/>
-            <Redirect to={combinePathToURL(stringifyParams(defaultParams))}/>
-        </HashRouter>
+        <BrowserRouter>
+            <Switch>
+                <Route path={routerPath()} component={App}/>
+                <Redirect to={combinePathToURL(stringifyParams(defaultParams))}/>
+            </Switch>
+        </BrowserRouter>
         <GlobalStyle/>
     </React.StrictMode>,
     document.getElementById('root')

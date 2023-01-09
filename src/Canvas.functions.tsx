@@ -3,20 +3,24 @@ import {ParsedParams, pixelRatio} from './App.functions';
 import {CellsMap} from './LifeMap';
 import {RefObject} from 'react';
 
-export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, cellSize: number, offset: Coordinate) {
+export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, cellSize: number, origin: Coordinate) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         const [width, height] = size;
         const rows = Math.ceil(height / cellSize);
         const columns = Math.ceil(width / cellSize);
         context.beginPath();
+        const offset = [
+            (Math.floor(size[0] / 2) - origin[0]) % cellSize,
+            (Math.floor(size[1] / 2) - origin[1]) % cellSize,
+        ];
         for (let i = 0; i < rows; i++) {
-            const y = i * cellSize * pixelRatio + pixelRatio / 2;
+            const y = (i * cellSize + offset[1]) * pixelRatio + pixelRatio / 2;
             context.moveTo(0, y);
             context.lineTo(width * pixelRatio, y);
         }
         for (let j = 0; j < columns; j++) {
-            const x = j * cellSize * pixelRatio + pixelRatio / 2;
+            const x = (j * cellSize + offset[0]) * pixelRatio + pixelRatio / 2;
             context.moveTo(x, 0);
             context.lineTo(x, height * pixelRatio);
         }
@@ -26,7 +30,7 @@ export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, ce
     }
 }
 
-function fillRect(context: CanvasRenderingContext2D, xy: Coordinate, cellSize: number, size: Size, origin: Coordinate): void {
+function fillCell(context: CanvasRenderingContext2D, xy: Coordinate, cellSize: number, size: Size, origin: Coordinate): void {
     context.fillRect(
         (xy[0] * cellSize + 1 + Math.floor(size[0] / 2) - origin[0]) * pixelRatio,
         (xy[1] * cellSize + 1 + Math.floor(size[1] / 2) - origin[1]) * pixelRatio,
@@ -39,7 +43,7 @@ export function drawCell(canvasRef: RefObject<HTMLCanvasElement>, color: string,
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         context.fillStyle = color;
-        fillRect(context, cell, cellSize, size, origin);
+        fillCell(context, cell, cellSize, size, origin);
     }
 }
 
@@ -47,7 +51,7 @@ export function drawLife(canvasRef: RefObject<HTMLCanvasElement>, color: string,
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         context.fillStyle = color;
-        cells.forEach((cell) => fillRect(context, cell, cellSize, size, origin));
+        cells.forEach((cell) => fillCell(context, cell, cellSize, size, origin));
     }
 }
 

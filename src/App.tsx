@@ -82,7 +82,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             hoveringCell: null,
             cellsCount: 0,
             client: [0, 0],
-            // offset: [0, 0],
             origin: parseParams(this.props.match.params).origin,
             dragState: DragState.end,
         };
@@ -100,6 +99,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     setCellsCount = (cellsCount: number) => this.setState({cellsCount});
 
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
+        console.log('pushToHistory', parsedParams);
         const {history: {push}, match: {params}} = this.props;
         push(combinePathToURL(stringifyParams({...parseParams(params), ...parsedParams})));
     };
