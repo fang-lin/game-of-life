@@ -4,7 +4,7 @@ export const pixelRatio = window.devicePixelRatio;
 
 type NumberConstraint = Record<'Max' | 'Min' | 'Default', number>;
 
-export const CellSize: NumberConstraint = {
+export const Scale: NumberConstraint = {
     Max: 30,
     Min: 5,
     Default: 20
@@ -17,37 +17,37 @@ export const Speed: NumberConstraint = {
 };
 
 export const defaultParams: ParsedParams = {
-    cellSize: CellSize.Default,
+    scale: Scale.Default,
     gridOn: true,
     speed: Speed.Default,
     origin: [0, 0]
 };
 
 export interface ParsedParams {
-    cellSize: number;
+    scale: number;
     gridOn: boolean;
     speed: number;
     origin: Coordinate;
 }
 
 export type OriginalParams = {
-    cellSize: string;
+    scale: string;
     gridOn: string;
     speed: string;
     originX: string;
     originY: string;
 }
 
-const paramsSegments: Array<keyof OriginalParams> = ['cellSize', 'speed', 'gridOn', 'originX', 'originY'];
+const paramsSegments: Array<keyof OriginalParams> = ['scale', 'speed', 'gridOn', 'originX', 'originY'];
 
 function parseString(s: string, constraint: NumberConstraint): number {
     const n = parseInt(s);
     return n >= constraint.Min && n <= constraint.Max ? n : constraint.Default;
 }
 
-export function parseParams({cellSize, gridOn, speed, originX, originY}: OriginalParams): ParsedParams {
+export function parseParams({scale, gridOn, speed, originX, originY}: OriginalParams): ParsedParams {
     return {
-        cellSize: parseString(cellSize, CellSize),
+        scale: parseString(scale, Scale),
         gridOn: gridOn === '1',
         speed: parseString(speed, Speed),
         origin: [parseInt(originX), parseInt(originY)]
@@ -69,9 +69,9 @@ function stringifyCoordinate(n: number): string {
     return n.toString();
 }
 
-export function stringifyParams({cellSize, gridOn, speed, origin}: ParsedParams): OriginalParams {
+export function stringifyParams({scale, gridOn, speed, origin}: ParsedParams): OriginalParams {
     return {
-        cellSize: stringifyNumber(cellSize, CellSize),
+        scale: stringifyNumber(scale, Scale),
         gridOn: gridOn ? '1' : '0',
         speed: stringifyNumber(speed, Speed),
         originX: stringifyCoordinate(origin[0]),

@@ -122,10 +122,10 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     onMouseMove = (event: Event) => {
         const currentClient = getClient(event as DragEvent);
         const {size, origin} = this.state;
-        const {cellSize} = parseParams(this.props.match.params);
+        const {scale} = parseParams(this.props.match.params);
         this.setHoveringCell([
-            Math.floor((currentClient[0] - size[0] / 2 + origin[0]) / cellSize),
-            Math.floor((currentClient[1] - size[1] / 2 + origin[1]) / cellSize),
+            Math.floor((currentClient[0] - size[0] / 2 + origin[0]) / scale),
+            Math.floor((currentClient[1] - size[1] / 2 + origin[1]) / scale),
         ]);
     };
 
@@ -135,10 +135,10 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         const instantaneousOffset = this.getInstantaneousOffset(currentClient);
         if (!this.shouldDragCanvas(instantaneousOffset)) {
             const {playState, size} = this.state;
-            const {cellSize, origin} = parseParams(this.props.match.params);
+            const {scale, origin} = parseParams(this.props.match.params);
             const cell: Coordinate = [
-                Math.floor((origin[0] + currentClient[0] - size[0] / 2) / cellSize),
-                Math.floor((origin[1] + currentClient[1] - size[1] / 2) / cellSize),
+                Math.floor((origin[0] + currentClient[0] - size[0] / 2) / scale),
+                Math.floor((origin[1] + currentClient[1] - size[1] / 2) / scale),
             ];
             if (playState === PlayState.Editing) {
                 this.setState({
@@ -162,13 +162,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         ];
     }
 
-    onDragging = (event: Event): void => {
-        this.setState({
-            origin: this.getOrigin(getClient(event as DragEvent)),
-            dragState: DragState.moving
-        });
-    };
-
     onDragStart = (event: Event): void => {
         this.setState({
             client: getClient(event as DragEvent),
@@ -176,6 +169,13 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         });
         window.addEventListener(DragEvents[DragState.moving], this.onDragging);
         window.addEventListener(DragEvents[DragState.end], this.onDragEnd);
+    };
+
+    onDragging = (event: Event): void => {
+        this.setState({
+            origin: this.getOrigin(getClient(event as DragEvent)),
+            dragState: DragState.moving
+        });
     };
 
     onDragEnd = (event: Event): void => {
@@ -230,8 +230,8 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     private shouldDragCanvas(instantaneousOffset: Coordinate): boolean {
-        const {cellSize} = parseParams(this.props.match.params);
-        return Math.abs(instantaneousOffset[0]) > cellSize || Math.abs(instantaneousOffset[1]) > cellSize;
+        const {scale} = parseParams(this.props.match.params);
+        return Math.abs(instantaneousOffset[0]) > scale || Math.abs(instantaneousOffset[1]) > scale;
     }
 
     private getInstantaneousOffset(instantaneousClient: Coordinate): Coordinate {

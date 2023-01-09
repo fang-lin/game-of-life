@@ -26,7 +26,7 @@ class MaskCanvas extends Component<MaskCanvasProps, any> {
 
     componentDidUpdate(prevProps: MaskCanvasProps) {
         const {canvasRef} = this;
-        const {size, playState, hoveringCell, params: {cellSize}, origin} = this.props;
+        const {size, playState, hoveringCell, params: {scale}, origin} = this.props;
 
         if (playState !== PlayState.Editing || shouldLayoutCanvas(prevProps, this.props)) {
             wipe(canvasRef, size);
@@ -34,7 +34,7 @@ class MaskCanvas extends Component<MaskCanvasProps, any> {
 
         if (playState === PlayState.Editing && hoveringCell && prevProps.hoveringCell !== hoveringCell) {
             wipe(canvasRef, size);
-            drawCell(canvasRef, 'rgba(0,0,0,.3)', hoveringCell, cellSize, size, origin);
+            drawCell(canvasRef, 'rgba(0,0,0,.3)', hoveringCell, scale, size, origin);
         }
     }
 

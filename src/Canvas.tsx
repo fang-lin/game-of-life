@@ -36,7 +36,18 @@ export class Canvas extends Component<CanvasProps> {
     constructor(props: CanvasProps) {
         super(props);
         this.canvasRef = React.createRef();
-        this.lifeMap = new LifeMap();
+        this.lifeMap = new LifeMap([
+            [0,0],
+            [1,0],
+            [2,0],
+            [3,0],
+            [4,0],
+            [6,0],
+            [7,0],
+            [8,0],
+            [9,0],
+            [10,0],
+        ]);
     }
 
     componentDidUpdate(prevProps: CanvasProps) {
@@ -107,6 +118,7 @@ export class Canvas extends Component<CanvasProps> {
         } = this;
         setFrameIndex(i => i + 1);
         lifeMap.evolve();
+        console.log(lifeMap.cells);
         setCellsCount(lifeMap.cells.size);
         this.renderCells();
     }
@@ -123,9 +135,9 @@ export class Canvas extends Component<CanvasProps> {
         const {
             lifeMap,
             canvasRef,
-            props: {params: {cellSize, gridOn}, size, origin}
+            props: {params: {scale, gridOn}, size, origin}
         } = this;
-        draw(canvasRef, 'black', size, lifeMap.cells, cellSize, gridOn, origin);
+        draw(canvasRef, 'black', size, lifeMap.cells, scale, gridOn, origin);
     };
 
     render() {

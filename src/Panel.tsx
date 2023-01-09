@@ -9,7 +9,7 @@ import {
     SlowerIcon,
 } from './Panel.styles';
 import {PlayState} from './App';
-import {CellSize, ParsedParams, Speed} from './App.functions';
+import {Scale, ParsedParams, Speed} from './App.functions';
 import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from './Theme';
 
 interface PanelProps {
@@ -19,7 +19,7 @@ interface PanelProps {
     params: ParsedParams;
 }
 
-function Panel({playState, pushToHistory, params: {cellSize, gridOn, speed}, setPlayState}: PanelProps) {
+function Panel({playState, pushToHistory, params: {scale, gridOn, speed}, setPlayState}: PanelProps) {
     const onClickPlay = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         setPlayState(PlayState.Playing);
@@ -40,9 +40,9 @@ function Panel({playState, pushToHistory, params: {cellSize, gridOn, speed}, set
         event.stopPropagation();
         setPlayState(PlayState.Next);
     };
-    const onClickScale = (scale: number) => (event: MouseEvent<HTMLButtonElement>) => {
+    const onClickScale = (offset: number) => (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        pushToHistory({cellSize: cellSize + scale});
+        pushToHistory({scale: scale + offset});
     };
     const onClickToggleGrid = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -69,9 +69,9 @@ function Panel({playState, pushToHistory, params: {cellSize, gridOn, speed}, set
         <Button width="84px" onClick={onClickToggleGrid} pressed={gridOn}
             theme={CGBlue}><span>Grid: {gridOn ? 'ON' : 'OFF'}</span></Button>
         <ButtonGroup>
-            <Button width="36px" onClick={onClickScale(-1)} disabled={cellSize === CellSize.Min} theme={CGBlue}
+            <Button width="36px" onClick={onClickScale(-1)} disabled={scale === Scale.Min} theme={CGBlue}
                 title="Zoom Out"><span><ZoomOutIcon/></span></Button>
-            <Button width="36px" onClick={onClickScale(1)} disabled={cellSize === CellSize.Max} theme={CGBlue}
+            <Button width="36px" onClick={onClickScale(1)} disabled={scale === Scale.Max} theme={CGBlue}
                 title="Zoom In"><span><ZoomInIcon/></span></Button>
         </ButtonGroup>
         <ButtonGroup>

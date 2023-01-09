@@ -10,10 +10,10 @@ interface DashboardProps {
     params: ParsedParams;
 }
 
-function Dashboard({frameIndex, cellsCount, params, hoveringCell}: DashboardProps) {
+function Dashboard({frameIndex, cellsCount, params: {speed, scale}, hoveringCell}: DashboardProps) {
     return <DashboardWrapper>
         <p>Frame:{frameIndex} Cells:{cellsCount}</p>
-        <p>Speed:{params.speed} Size:{params.cellSize}</p>
+        <p>Speed:{speed} Size:{scale}</p>
         <p>{hoveringCell ? `X:${hoveringCell[0]} Y:${hoveringCell[1]}` : 'X:-,Y:-'}</p>
     </DashboardWrapper>;
 }
