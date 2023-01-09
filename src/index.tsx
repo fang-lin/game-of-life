@@ -4,7 +4,7 @@ import {GlobalStyle} from './index.styles';
 import {App} from './App';
 import reportWebVitals from './reportWebVitals';
 import {HashRouter, Redirect, Route} from 'react-router-dom';
-import {combinePathToURL, defaultParams, routerPath, stringifyParams} from './utils';
+import {combinePathToURL, defaultParams, routerPath, stringifyParams} from './App.functions';
 
 ReactDOM.render(
     <React.StrictMode>

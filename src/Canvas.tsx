@@ -1,8 +1,8 @@
 import React, {Component, RefObject} from 'react';
 import {CanvasWrapper} from './Canvas.styles';
 import {LifeMap} from './LifeMap';
-import {draw} from './Canvas.functions';
-import {ParsedParams, Speed} from './utils';
+import {draw, shouldLayoutCanvas} from './Canvas.functions';
+import {ParsedParams, Speed} from './App.functions';
 import {Attributes, PlayState} from './App';
 
 export type Size = [number, number];
@@ -55,29 +55,36 @@ export class Canvas extends Component<CanvasProps> {
         } = this;
 
         if (playState === PlayState.Editing && clickedCell) {
+            // Clicked cell when editing
             lifeMap.toggleCell(clickedCell);
             setCellsCount(lifeMap.cells.size);
             draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
         }
 
         if (playState === PlayState.Editing && frameIndex !== 0) {
+            // Edit
             window.cancelAnimationFrame(this.playTimeout);
             setFrameIndex(() => 0);
         }
 
-        if (prevProps.size !== size || prevProps.params.gridOn !== gridOn) {
-            draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
-        }
-
         if ((prevProps.playState === PlayState.Paused || prevProps.playState === PlayState.Editing) && playState === PlayState.Playing) {
+            // Play
             window.requestAnimationFrame(this.play);
         }
 
         if (prevProps.playState === PlayState.Playing && playState === PlayState.Paused) {
+            // Pause
             window.cancelAnimationFrame(this.playTimeout);
         }
 
+        if (prevProps.playState === PlayState.Paused && playState === PlayState.Next) {
+            // Next
+            this.frame();
+            setPlayState(PlayState.Paused);
+        }
+
         if (playState === PlayState.Reset) {
+            // Reset
             window.cancelAnimationFrame(this.playTimeout);
             lifeMap.reset();
             setCellsCount(lifeMap.cells.size);
@@ -85,7 +92,7 @@ export class Canvas extends Component<CanvasProps> {
             setPlayState(PlayState.Editing);
         }
 
-        if (prevProps.params.cellSize !== cellSize) {
+        if (shouldLayoutCanvas(prevProps, this.props)) {
             draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
         }
     }

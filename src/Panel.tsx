@@ -9,7 +9,7 @@ import {
     SlowerIcon,
 } from './Panel.styles';
 import {PlayState} from './App';
-import {CellSize, ParsedParams, Speed} from './utils';
+import {CellSize, ParsedParams, Speed} from './App.functions';
 import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from './Theme';
 
 interface PanelProps {
@@ -33,13 +33,12 @@ function Panel({playState, pushToHistory, params: {cellSize, gridOn, speed}, set
         setPlayState(PlayState.Editing);
     };
     const onClickReset = (event: MouseEvent<HTMLButtonElement>) => {
-        console.log('onClickReset');
         event.stopPropagation();
         setPlayState(PlayState.Reset);
     };
     const onClickNext = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        setPlayState(PlayState.Playing, () => setPlayState(PlayState.Paused));
+        setPlayState(PlayState.Next);
     };
     const onClickScale = (scale: number) => (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();

@@ -1,4 +1,4 @@
-import {Coordinate, Size} from './Canvas';
+import {Coordinate} from './Canvas';
 
 export const pixelRatio = window.devicePixelRatio;
 
@@ -36,18 +36,6 @@ export type OriginalParams = {
     speed: string;
     originX: string;
     originY: string;
-}
-
-interface Props {
-    size: Size;
-    params: ParsedParams;
-}
-
-export function shouldUpdateCanvas(prevProps: Props, currentProps: Props): boolean {
-    return prevProps.size[0] !== currentProps.size[0] ||
-        prevProps.size[1] !== currentProps.size[1] ||
-        prevProps.params.cellSize !== currentProps.params.cellSize ||
-        prevProps.params.gridOn !== currentProps.params.gridOn;
 }
 
 const paramsSegments: Array<keyof OriginalParams> = ['cellSize', 'speed', 'gridOn', 'originX', 'originY'];
@@ -98,3 +86,12 @@ export function combinePathToURL(params: OriginalParams): string {
 export function routerPath(): string {
     return `/${paramsSegments.map(segment => `:${segment}`).join('/')}`;
 }
+
+export const isTouchscreenDevices: boolean = ((): boolean => {
+    try {
+        document.createEvent('TouchEvent');
+        return true;
+    } catch (e) {
+        return false;
+    }
+})();

@@ -1,8 +1,8 @@
 import React, {Component, RefObject} from 'react';
 import {CanvasWrapper} from './MaskCanvas.styles';
-import {ParsedParams, pixelRatio, shouldUpdateCanvas} from './utils';
+import {ParsedParams, pixelRatio} from './App.functions';
 import {Coordinate, Size} from './Canvas';
-import {drawCell, wipe} from './Canvas.functions';
+import {drawCell, shouldLayoutCanvas, wipe} from './Canvas.functions';
 import {Attributes, PlayState} from './App';
 
 interface MaskCanvasProps {
@@ -27,7 +27,7 @@ class MaskCanvas extends Component<MaskCanvasProps, any> {
         const {canvasRef} = this;
         const {size, playState, hoveringCell, params: {cellSize}} = this.props;
 
-        if (playState !== PlayState.Editing || shouldUpdateCanvas(prevProps, this.props)) {
+        if (playState !== PlayState.Editing || shouldLayoutCanvas(prevProps, this.props)) {
             wipe(canvasRef, size);
         }
 

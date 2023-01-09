@@ -2,7 +2,7 @@ import React, {FunctionComponent} from 'react';
 import Canvas, {Coordinate} from './Canvas';
 import MaskCanvas from './MaskCanvas';
 import {StageWrapper} from './Stage.styles';
-import {ParsedParams, pixelRatio} from './utils';
+import {isTouchscreenDevices, ParsedParams, pixelRatio} from './App.functions';
 import {Attributes, PlayState} from './App';
 
 interface StageProps {
@@ -51,6 +51,7 @@ export const Stage: FunctionComponent<StageProps> = (props) => {
             setFrameIndex,
             setCellsCount
         }}/>
-        <MaskCanvas {...{size, playState, setClickedCell, hoveringCell, params, attributes}} />
+        {isTouchscreenDevices ||
+        <MaskCanvas {...{size, playState, setClickedCell, hoveringCell, params, attributes}} />}
     </StageWrapper>;
 };

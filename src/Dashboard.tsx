@@ -1,6 +1,6 @@
 import React from 'react';
 import {DashboardWrapper} from './Dashboard.styles';
-import {ParsedParams} from './utils';
+import {ParsedParams} from './App.functions';
 import {Coordinate} from './Canvas';
 
 interface DashboardProps {

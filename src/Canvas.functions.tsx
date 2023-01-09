@@ -1,5 +1,5 @@
 import {Size} from './Canvas';
-import {pixelRatio} from './utils';
+import {ParsedParams, pixelRatio} from './App.functions';
 import {CellsMap} from './LifeMap';
 import {RefObject} from 'react';
 
@@ -39,7 +39,7 @@ export function drawLife(canvasRef: RefObject<HTMLCanvasElement>, cells: CellsMa
     if (context) {
         context.fillStyle = '#000';
         cells.forEach(([x, y]) => {
-            context.fillRect((y * cellSize + 1) * pixelRatio, (x * cellSize + 1) * pixelRatio, (cellSize - 1) * pixelRatio, (cellSize - 1) * pixelRatio);
+            context.fillRect((x * cellSize + 1) * pixelRatio, (y * cellSize + 1) * pixelRatio, (cellSize - 1) * pixelRatio, (cellSize - 1) * pixelRatio);
         });
     }
 }
@@ -56,4 +56,16 @@ export function draw(canvasRef: RefObject<HTMLCanvasElement>, size: Size, cells:
     wipe(canvasRef, size);
     gridOn && drawGrid(canvasRef, size, cellSize);
     drawLife(canvasRef, cells, cellSize);
+}
+
+interface LayoutCanvasProps {
+    size: Size;
+    params: ParsedParams;
+}
+
+export function shouldLayoutCanvas(prevProps: LayoutCanvasProps, currentProps: LayoutCanvasProps): boolean {
+    return prevProps.size[0] !== currentProps.size[0] ||
+        prevProps.size[1] !== currentProps.size[1] ||
+        prevProps.params.cellSize !== currentProps.params.cellSize ||
+        prevProps.params.gridOn !== currentProps.params.gridOn;
 }
