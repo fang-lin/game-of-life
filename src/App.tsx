@@ -49,7 +49,7 @@ interface AppState {
     hoveringCell: Coordinate | null;
     cellsCount: number;
     client: Coordinate;
-    transform: Coordinate;
+    origin: Coordinate;
     dragState: DragState;
 }
 
@@ -82,7 +82,8 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             hoveringCell: null,
             cellsCount: 0,
             client: [0, 0],
-            transform: [0, 0],
+            // offset: [0, 0],
+            origin: parseParams(this.props.match.params).origin,
             dragState: DragState.end,
         };
     }
@@ -120,23 +121,24 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
 
     onMouseMove = (event: Event) => {
         const currentClient = getClient(event as DragEvent);
+        const {size, origin} = this.state;
         const {cellSize} = parseParams(this.props.match.params);
         this.setHoveringCell([
-            Math.floor(currentClient[0] / cellSize),
-            Math.floor(currentClient[1] / cellSize)
+            Math.floor((currentClient[0] - size[0] / 2 + origin[0]) / cellSize),
+            Math.floor((currentClient[1] - size[1] / 2 + origin[1]) / cellSize),
         ]);
     };
 
     onClickCell = (event: Event) => {
-        const currentClient = getClient(event as DragEvent);
-        const instantaneousTransform = this.getInstantaneousTransform(currentClient);
-        const {playState} = this.state;
         console.log('onClickCell');
-        if (!this.shouldDragCanvas(instantaneousTransform)) {
-            const {cellSize} = parseParams(this.props.match.params);
+        const currentClient = getClient(event as DragEvent);
+        const instantaneousOffset = this.getInstantaneousOffset(currentClient);
+        if (!this.shouldDragCanvas(instantaneousOffset)) {
+            const {playState, size} = this.state;
+            const {cellSize, origin} = parseParams(this.props.match.params);
             const cell: Coordinate = [
-                Math.floor(currentClient[0] / cellSize),
-                Math.floor(currentClient[1] / cellSize),
+                Math.floor((origin[0] + currentClient[0] - size[0] / 2) / cellSize),
+                Math.floor((origin[1] + currentClient[1] - size[1] / 2) / cellSize),
             ];
             if (playState === PlayState.Editing) {
                 this.setState({
@@ -151,12 +153,18 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         }
     };
 
-    onDragging = (event: Event): void => {
-        const currentClient = getClient(event as DragEvent);
+    getOrigin = (currentClient: Coordinate): Coordinate => {
         const {client} = this.state;
+        const {origin} = parseParams(this.props.match.params);
+        return [
+            Math.floor(origin[0] - currentClient[0] + client[0]),
+            Math.floor(origin[1] - currentClient[1] + client[1]),
+        ];
+    }
 
+    onDragging = (event: Event): void => {
         this.setState({
-            transform: [currentClient[0] - client[0], currentClient[1] - client[1]],
+            origin: this.getOrigin(getClient(event as DragEvent)),
             dragState: DragState.moving
         });
     };
@@ -172,29 +180,20 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
 
     onDragEnd = (event: Event): void => {
         console.log('onDragEnd');
-        const instantaneousTransform = this.getInstantaneousTransform(getClient(event as DragEvent));
-        if (this.shouldDragCanvas(instantaneousTransform)) {
-            const {props: {match: {params}}} = this;
-            const {origin} = parseParams(params);
-
-            this.pushToHistory({
-                origin: [
-                    origin[0] + instantaneousTransform[0],
-                    origin[1] + instantaneousTransform[1]
-                ]
-            });
-            this.setState({
-                transform: [0, 0],
-                dragState: DragState.end,
-                client: [0, 0]
-            });
-        }
+        const origin = this.getOrigin(getClient(event as DragEvent));
+        this.pushToHistory({
+            origin,
+        });
+        this.setState({
+            dragState: DragState.end,
+            origin,
+        });
         window.removeEventListener(DragEvents[DragState.moving], this.onDragging);
         window.removeEventListener(DragEvents[DragState.end], this.onDragEnd);
     };
 
     render() {
-        const {size, playState, frameIndex, clickedCell, hoveringCell, cellsCount, transform} = this.state;
+        const {size, playState, frameIndex, clickedCell, hoveringCell, cellsCount, origin} = this.state;
         const {
             pushToHistory,
             setFrameIndex,
@@ -217,8 +216,8 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                     clickedCell,
                     hoveringCell,
                     frameIndex,
-                    transform,
-                    params
+                    params,
+                    origin,
                 }}/>
                 <Header/>
                 <Dashboard {...{frameIndex, cellsCount, params, hoveringCell}}/>
@@ -230,12 +229,12 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         );
     }
 
-    private shouldDragCanvas(instantaneousTransform: Coordinate): boolean {
+    private shouldDragCanvas(instantaneousOffset: Coordinate): boolean {
         const {cellSize} = parseParams(this.props.match.params);
-        return Math.abs(instantaneousTransform[0]) > cellSize || Math.abs(instantaneousTransform[1]) > cellSize;
+        return Math.abs(instantaneousOffset[0]) > cellSize || Math.abs(instantaneousOffset[1]) > cellSize;
     }
 
-    private getInstantaneousTransform(instantaneousClient: Coordinate): Coordinate {
+    private getInstantaneousOffset(instantaneousClient: Coordinate): Coordinate {
         const {state: {client}} = this;
         return [
             instantaneousClient[0] - client[0],

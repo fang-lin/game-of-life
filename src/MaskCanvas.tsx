@@ -1,6 +1,6 @@
 import React, {Component, RefObject} from 'react';
 import {CanvasWrapper} from './MaskCanvas.styles';
-import {ParsedParams, pixelRatio} from './App.functions';
+import {ParsedParams} from './App.functions';
 import {Coordinate, Size} from './Canvas';
 import {drawCell, shouldLayoutCanvas, wipe} from './Canvas.functions';
 import {Attributes, PlayState} from './App';
@@ -12,6 +12,7 @@ interface MaskCanvasProps {
     hoveringCell: Coordinate | null;
     params: ParsedParams;
     attributes: Attributes;
+    origin: Coordinate;
 }
 
 class MaskCanvas extends Component<MaskCanvasProps, any> {
@@ -25,7 +26,7 @@ class MaskCanvas extends Component<MaskCanvasProps, any> {
 
     componentDidUpdate(prevProps: MaskCanvasProps) {
         const {canvasRef} = this;
-        const {size, playState, hoveringCell, params: {cellSize}} = this.props;
+        const {size, playState, hoveringCell, params: {cellSize}, origin} = this.props;
 
         if (playState !== PlayState.Editing || shouldLayoutCanvas(prevProps, this.props)) {
             wipe(canvasRef, size);
@@ -33,14 +34,7 @@ class MaskCanvas extends Component<MaskCanvasProps, any> {
 
         if (playState === PlayState.Editing && hoveringCell && prevProps.hoveringCell !== hoveringCell) {
             wipe(canvasRef, size);
-            drawCell(
-                canvasRef,
-                'rgba(0,0,0,0.5)',
-                (hoveringCell[0] * cellSize + 1) * pixelRatio,
-                (hoveringCell[1] * cellSize + 1) * pixelRatio,
-                (cellSize - 1) * pixelRatio,
-                (cellSize - 1) * pixelRatio
-            );
+            drawCell(canvasRef, 'rgba(0,0,0,.3)', hoveringCell, cellSize, size, origin);
         }
     }
 

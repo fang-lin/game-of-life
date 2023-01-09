@@ -1,9 +1,9 @@
-import {Size} from './Canvas';
+import {Coordinate, Size} from './Canvas';
 import {ParsedParams, pixelRatio} from './App.functions';
 import {CellsMap} from './LifeMap';
 import {RefObject} from 'react';
 
-export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, cellSize: number) {
+export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, cellSize: number, offset: Coordinate) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         const [width, height] = size;
@@ -26,21 +26,28 @@ export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, ce
     }
 }
 
-export function drawCell(canvasRef: RefObject<HTMLCanvasElement>, color: string, x: number, y: number, w: number, h: number) {
+function fillRect(context: CanvasRenderingContext2D, xy: Coordinate, cellSize: number, size: Size, origin: Coordinate): void {
+    context.fillRect(
+        (xy[0] * cellSize + 1 + Math.floor(size[0] / 2) - origin[0]) * pixelRatio,
+        (xy[1] * cellSize + 1 + Math.floor(size[1] / 2) - origin[1]) * pixelRatio,
+        (cellSize - 1) * pixelRatio,
+        (cellSize - 1) * pixelRatio
+    );
+}
+
+export function drawCell(canvasRef: RefObject<HTMLCanvasElement>, color: string, cell: Coordinate, cellSize: number, size: Size, origin: Coordinate) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         context.fillStyle = color;
-        context.fillRect(x, y, w, h);
+        fillRect(context, cell, cellSize, size, origin);
     }
 }
 
-export function drawLife(canvasRef: RefObject<HTMLCanvasElement>, cells: CellsMap, cellSize: number) {
+export function drawLife(canvasRef: RefObject<HTMLCanvasElement>, color: string, cells: CellsMap, cellSize: number, size: Size, origin: Coordinate) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
-        context.fillStyle = '#000';
-        cells.forEach(([x, y]) => {
-            context.fillRect((x * cellSize + 1) * pixelRatio, (y * cellSize + 1) * pixelRatio, (cellSize - 1) * pixelRatio, (cellSize - 1) * pixelRatio);
-        });
+        context.fillStyle = color;
+        cells.forEach((cell) => fillRect(context, cell, cellSize, size, origin));
     }
 }
 
@@ -49,13 +56,12 @@ export function wipe(canvasRef: RefObject<HTMLCanvasElement>, size: Size) {
     if (context) {
         context.clearRect(0, 0, size[0] * pixelRatio, size[1] * pixelRatio);
     }
-
 }
 
-export function draw(canvasRef: RefObject<HTMLCanvasElement>, size: Size, cells: CellsMap, cellSize: number, gridOn: boolean) {
+export function draw(canvasRef: RefObject<HTMLCanvasElement>, color: string, size: Size, cells: CellsMap, cellSize: number, gridOn: boolean, origin: Coordinate = [0, 0]) {
     wipe(canvasRef, size);
-    gridOn && drawGrid(canvasRef, size, cellSize);
-    drawLife(canvasRef, cells, cellSize);
+    gridOn && drawGrid(canvasRef, size, cellSize, origin);
+    drawLife(canvasRef, color, cells, cellSize, size, origin);
 }
 
 interface LayoutCanvasProps {

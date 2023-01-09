@@ -15,6 +15,7 @@ export const AntiqueRuby: Theme = {
     MainDark: '#6E1423',
     MainLight: '#B21E35'
 };
+
 export const BottleGreen: Theme = {
     DarkGrey: '#444',
     Grey: '#666',
@@ -23,6 +24,7 @@ export const BottleGreen: Theme = {
     MainDark: '#1B4332',
     MainLight: '#52B788'
 };
+
 export const BlazeOrange: Theme = {
     DarkGrey: '#444',
     Grey: '#666',
@@ -31,6 +33,7 @@ export const BlazeOrange: Theme = {
     MainDark: '#BB3E03',
     MainLight: '#EE9B00'
 };
+
 export const CGBlue: Theme = {
     DarkGrey: '#444',
     Grey: '#666',

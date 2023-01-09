@@ -18,6 +18,7 @@ export interface CanvasProps {
     params: ParsedParams;
     attributes: Attributes;
     setCellsCount: (cellsCount: number) => void;
+    origin: Coordinate;
 }
 
 const durations = [1000, 500, 100, 50, 25, 0];
@@ -41,15 +42,13 @@ export class Canvas extends Component<CanvasProps> {
     componentDidUpdate(prevProps: CanvasProps) {
         const {
             lifeMap,
-            canvasRef,
             props: {
                 setFrameIndex,
                 frameIndex,
                 clickedCell,
                 playState,
                 setPlayState,
-                params: {cellSize, gridOn},
-                size,
+                origin,
                 setCellsCount
             },
         } = this;
@@ -58,7 +57,7 @@ export class Canvas extends Component<CanvasProps> {
             // Clicked cell when editing
             lifeMap.toggleCell(clickedCell);
             setCellsCount(lifeMap.cells.size);
-            draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
+            this.renderCells();
         }
 
         if (playState === PlayState.Editing && frameIndex !== 0) {
@@ -88,25 +87,28 @@ export class Canvas extends Component<CanvasProps> {
             window.cancelAnimationFrame(this.playTimeout);
             lifeMap.reset();
             setCellsCount(lifeMap.cells.size);
-            draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
+            this.renderCells();
             setPlayState(PlayState.Editing);
         }
 
         if (shouldLayoutCanvas(prevProps, this.props)) {
-            draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
+            this.renderCells();
+        }
+
+        if (prevProps.origin !== origin) {
+            window.requestAnimationFrame(this.renderCells);
         }
     }
 
     frame() {
         const {
             lifeMap,
-            canvasRef,
-            props: {setFrameIndex, params: {cellSize, gridOn}, size, setCellsCount}
+            props: {setFrameIndex, setCellsCount}
         } = this;
         setFrameIndex(i => i + 1);
         lifeMap.evolve();
         setCellsCount(lifeMap.cells.size);
-        draw(canvasRef, size, lifeMap.cells, cellSize, gridOn);
+        this.renderCells();
     }
 
     play = (timestamp: number) => {
@@ -115,6 +117,15 @@ export class Canvas extends Component<CanvasProps> {
             this.frame();
         }
         this.playTimeout = window.requestAnimationFrame(this.play);
+    };
+
+    renderCells = () => {
+        const {
+            lifeMap,
+            canvasRef,
+            props: {params: {cellSize, gridOn}, size, origin}
+        } = this;
+        draw(canvasRef, 'black', size, lifeMap.cells, cellSize, gridOn, origin);
     };
 
     render() {
