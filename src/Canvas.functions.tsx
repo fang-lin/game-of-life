@@ -11,8 +11,8 @@ export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, sc
         const columns = Math.ceil(width / scale);
         context.beginPath();
         const offset = [
-            (Math.floor(size[0] / 2) - origin[0]) % scale,
-            (Math.floor(size[1] / 2) - origin[1]) % scale,
+            (Math.floor(size[0] / 2) - origin[0] * scale) % scale,
+            (Math.floor(size[1] / 2) - origin[1] * scale) % scale,
         ];
         for (let i = 0; i < rows; i++) {
             const y = (i * scale + offset[1]) * pixelRatio + pixelRatio / 2;
@@ -32,8 +32,8 @@ export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, sc
 
 function fillCell(context: CanvasRenderingContext2D, xy: Coordinate, scale: number, size: Size, origin: Coordinate): void {
     context.fillRect(
-        (xy[0] * scale + 1 + Math.floor(size[0] / 2) - origin[0]) * pixelRatio,
-        (xy[1] * scale + 1 + Math.floor(size[1] / 2) - origin[1]) * pixelRatio,
+        (xy[0] * scale + 1 + Math.floor(size[0] / 2) - origin[0] * scale) * pixelRatio,
+        (xy[1] * scale + 1 + Math.floor(size[1] / 2) - origin[1] * scale) * pixelRatio,
         (scale - 1) * pixelRatio,
         (scale - 1) * pixelRatio
     );

@@ -1,45 +1,25 @@
-import React, {Component, MouseEvent, RefObject} from 'react';
+import React, {Component, RefObject} from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
 import {Coordinate} from './Canvas';
 import {RouteComponentProps} from 'react-router-dom';
 import Panel from './Panel';
 import {
     combinePathToURL,
+    DragEvent,
+    DragEvents,
+    DragState,
+    getClient,
     isTouchscreenDevices,
     OriginalParams,
     ParsedParams,
     parseParams,
+    PlayState,
     stringifyParams
 } from './App.functions';
 import Dashboard from './Dashboard';
 import Footer from './Footer';
 import Header from './Header';
 import {Stage} from './Stage';
-
-function isTouchEvent(event: DragEvent): event is TouchEvent {
-    return window.TouchEvent && event instanceof TouchEvent;
-}
-
-export type DragEvent = MouseEvent | TouchEvent;
-
-export function getClient(event: DragEvent): Coordinate {
-    const {clientX, clientY} = isTouchEvent(event) ? event.changedTouches[0] : event;
-    return [clientX, clientY];
-}
-
-export enum DragState {
-    start,
-    moving,
-    end
-}
-
-export enum PlayState {
-    Reset = 'reset',
-    Next = 'next',
-    Editing = 'editing',
-    Playing = 'playing',
-    Paused = 'paused',
-}
 
 interface AppState {
     size: [number, number];
@@ -53,20 +33,6 @@ interface AppState {
     dragState: DragState;
 }
 
-export interface Attributes {
-    width: number;
-    height: number;
-}
-
-export const DragEvents: Record<DragState, keyof WindowEventMap> = isTouchscreenDevices ? {
-    [DragState.start]: 'touchstart',
-    [DragState.moving]: 'touchmove',
-    [DragState.end]: 'touchend',
-} : {
-    [DragState.start]: 'mousedown',
-    [DragState.moving]: 'mousemove',
-    [DragState.end]: 'mouseup',
-};
 
 export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
     private readonly appRef: RefObject<HTMLDivElement>;
@@ -99,7 +65,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     setCellsCount = (cellsCount: number) => this.setState({cellsCount});
 
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
-        console.log('pushToHistory', parsedParams);
         const {history: {push}, match: {params}} = this.props;
         push(combinePathToURL(stringifyParams({...parseParams(params), ...parsedParams})));
     };
@@ -120,26 +85,25 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     onMouseMove = (event: Event) => {
-        const currentClient = getClient(event as DragEvent);
+        this.setHoveringCell(this.clientToCell(getClient(event as DragEvent)));
+    };
+
+    clientToCell = (currentClient: Coordinate): Coordinate => {
         const {size, origin} = this.state;
         const {scale} = parseParams(this.props.match.params);
-        this.setHoveringCell([
-            Math.floor((currentClient[0] - size[0] / 2 + origin[0]) / scale),
-            Math.floor((currentClient[1] - size[1] / 2 + origin[1]) / scale),
-        ]);
-    };
+        return [
+            Math.floor(origin[0] + (currentClient[0] - size[0] / 2) / scale),
+            Math.floor(origin[1] + (currentClient[1] - size[1] / 2) / scale),
+        ];
+    }
 
     onClickCell = (event: Event) => {
         console.log('onClickCell');
         const currentClient = getClient(event as DragEvent);
         const instantaneousOffset = this.getInstantaneousOffset(currentClient);
         if (!this.shouldDragCanvas(instantaneousOffset)) {
-            const {playState, size} = this.state;
-            const {scale, origin} = parseParams(this.props.match.params);
-            const cell: Coordinate = [
-                Math.floor((origin[0] + currentClient[0] - size[0] / 2) / scale),
-                Math.floor((origin[1] + currentClient[1] - size[1] / 2) / scale),
-            ];
+            const {playState} = this.state;
+            const cell: Coordinate = this.clientToCell(currentClient);
             if (playState === PlayState.Editing) {
                 this.setState({
                     clickedCell: cell,
@@ -153,16 +117,17 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         }
     };
 
-    getOrigin = (currentClient: Coordinate): Coordinate => {
+    clientToOrigin = (currentClient: Coordinate): Coordinate => {
         const {client} = this.state;
-        const {origin} = parseParams(this.props.match.params);
+        const {origin, scale} = parseParams(this.props.match.params);
         return [
-            Math.floor(origin[0] - currentClient[0] + client[0]),
-            Math.floor(origin[1] - currentClient[1] + client[1]),
+            origin[0] + (client[0] - currentClient[0]) / scale,
+            origin[1] + (client[1] - currentClient[1]) / scale
         ];
     }
 
     onDragStart = (event: Event): void => {
+        console.log('onDragStart');
         this.setState({
             client: getClient(event as DragEvent),
             dragState: DragState.start
@@ -173,17 +138,15 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
 
     onDragging = (event: Event): void => {
         this.setState({
-            origin: this.getOrigin(getClient(event as DragEvent)),
+            origin: this.clientToOrigin(getClient(event as DragEvent)),
             dragState: DragState.moving
         });
     };
 
     onDragEnd = (event: Event): void => {
         console.log('onDragEnd');
-        const origin = this.getOrigin(getClient(event as DragEvent));
-        this.pushToHistory({
-            origin,
-        });
+        const origin = this.clientToOrigin(getClient(event as DragEvent));
+        this.pushToHistory({origin});
         this.setState({
             dragState: DragState.end,
             origin,
@@ -193,7 +156,17 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     };
 
     render() {
-        const {size, playState, frameIndex, clickedCell, hoveringCell, cellsCount, origin} = this.state;
+        const {
+            size,
+            playState,
+            frameIndex,
+            clickedCell,
+            hoveringCell,
+            cellsCount,
+            origin,
+            dragState
+        } = this.state;
+
         const {
             pushToHistory,
             setFrameIndex,
@@ -205,7 +178,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         const params = parseParams(this.props.match.params);
 
         return (
-            <AppWrapper ref={this.appRef} className={playState}>
+            <AppWrapper ref={this.appRef} {...{playState, dragState}}>
                 <Stage {...{
                     setFrameIndex,
                     setClickedCell,

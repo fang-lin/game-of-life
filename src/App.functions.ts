@@ -1,12 +1,21 @@
 import {Coordinate} from './Canvas';
 
+export const isTouchscreenDevices: boolean = ((): boolean => {
+    try {
+        document.createEvent('TouchEvent');
+        return true;
+    } catch (e) {
+        return false;
+    }
+})();
+
 export const pixelRatio = window.devicePixelRatio;
 
 type NumberConstraint = Record<'Max' | 'Min' | 'Default', number>;
 
 export const Scale: NumberConstraint = {
     Max: 30,
-    Min: 5,
+    Min: 2,
     Default: 20
 };
 
@@ -38,6 +47,37 @@ export type OriginalParams = {
     originY: string;
 }
 
+export type DragEvent = MouseEvent | TouchEvent;
+
+export enum DragState {
+    start,
+    moving,
+    end
+}
+
+export enum PlayState {
+    Reset = 'reset',
+    Next = 'next',
+    Editing = 'editing',
+    Playing = 'playing',
+    Paused = 'paused',
+}
+
+export interface Attributes {
+    width: number;
+    height: number;
+}
+
+export const DragEvents: Record<DragState, keyof WindowEventMap> = isTouchscreenDevices ? {
+    [DragState.start]: 'touchstart',
+    [DragState.moving]: 'touchmove',
+    [DragState.end]: 'touchend',
+} : {
+    [DragState.start]: 'mousedown',
+    [DragState.moving]: 'mousemove',
+    [DragState.end]: 'mouseup',
+};
+
 const paramsSegments: Array<keyof OriginalParams> = ['scale', 'speed', 'gridOn', 'originX', 'originY'];
 
 function parseString(s: string, constraint: NumberConstraint): number {
@@ -50,7 +90,7 @@ export function parseParams({scale, gridOn, speed, originX, originY}: OriginalPa
         scale: parseString(scale, Scale),
         gridOn: gridOn === '1',
         speed: parseString(speed, Speed),
-        origin: [parseInt(originX), parseInt(originY)]
+        origin: [parseFloat(originX), parseFloat(originY)]
     };
 }
 
@@ -87,11 +127,11 @@ export function routerPath(): string {
     return `/${paramsSegments.map(segment => `:${segment}`).join('/')}`;
 }
 
-export const isTouchscreenDevices: boolean = ((): boolean => {
-    try {
-        document.createEvent('TouchEvent');
-        return true;
-    } catch (e) {
-        return false;
-    }
-})();
+function isTouchEvent(event: DragEvent): event is TouchEvent {
+    return window.TouchEvent && event instanceof TouchEvent;
+}
+
+export function getClient(event: DragEvent): Coordinate {
+    const {clientX, clientY} = isTouchEvent(event) ? event.changedTouches[0] : event;
+    return [clientX, clientY];
+}

@@ -2,8 +2,7 @@ import React, {Component, RefObject} from 'react';
 import {CanvasWrapper} from './Canvas.styles';
 import {LifeMap} from './LifeMap';
 import {draw, shouldLayoutCanvas} from './Canvas.functions';
-import {ParsedParams, Speed} from './App.functions';
-import {Attributes, PlayState} from './App';
+import {Attributes, ParsedParams, PlayState, Speed} from './App.functions';
 
 export type Size = [number, number];
 export type Coordinate = [number, number];
@@ -118,7 +117,6 @@ export class Canvas extends Component<CanvasProps> {
         } = this;
         setFrameIndex(i => i + 1);
         lifeMap.evolve();
-        console.log(lifeMap.cells);
         setCellsCount(lifeMap.cells.size);
         this.renderCells();
     }

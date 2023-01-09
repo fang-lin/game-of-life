@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import {DragState, PlayState} from './App.functions';
 
 const size = {
     mobileS: '320px',
@@ -21,13 +22,25 @@ export const device = {
     desktopL: `(min-width: ${size.desktop})`
 };
 
-export const AppWrapper = styled.div`
+interface AppWrapperProps {
+    playState: PlayState,
+    dragState: DragState
+}
+
+function cursor({playState, dragState}: AppWrapperProps): string {
+    if (dragState === DragState.moving) {
+        return 'grab';
+    } else if (playState === PlayState.Editing) {
+        return 'crosshair';
+    }
+    return 'default';
+}
+
+export const AppWrapper = styled.div<AppWrapperProps>`
   height: 100%;
   width: 100%;
   position: relative;
-  &.editing {
-    cursor: cell;
-  }
+  cursor: ${cursor};
 `;
 
 export const BottomSection = styled.div`

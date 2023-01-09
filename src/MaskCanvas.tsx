@@ -1,9 +1,8 @@
 import React, {Component, RefObject} from 'react';
 import {CanvasWrapper} from './MaskCanvas.styles';
-import {ParsedParams} from './App.functions';
+import {Attributes, ParsedParams, PlayState} from './App.functions';
 import {Coordinate, Size} from './Canvas';
 import {drawCell, shouldLayoutCanvas, wipe} from './Canvas.functions';
-import {Attributes, PlayState} from './App';
 
 interface MaskCanvasProps {
     size: Size;
