@@ -8,7 +8,7 @@ import {
     FasterIcon,
     SlowerIcon,
 } from './Panel.styles';
-import {Scale, ParsedParams, Speed, PlayState} from './App.functions';
+import {Scale, ParsedParams, Speed, PlayState, GridTypes} from './App.functions';
 import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from './Theme';
 
 interface PanelProps {
@@ -18,7 +18,7 @@ interface PanelProps {
     params: ParsedParams;
 }
 
-function Panel({playState, pushToHistory, params: {scale, gridOn, speed}, setPlayState}: PanelProps) {
+function Panel({playState, pushToHistory, params: {scale, gridType, speed}, setPlayState}: PanelProps) {
     const onClickPlay = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         setPlayState(PlayState.Playing);
@@ -45,7 +45,7 @@ function Panel({playState, pushToHistory, params: {scale, gridOn, speed}, setPla
     };
     const onClickToggleGrid = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        pushToHistory({gridOn: !gridOn});
+        pushToHistory({gridType: GridTypes[GridTypes.indexOf(gridType) + 1] || GridTypes[0]});
     };
     const onClickSlowerFaster = (offset: number) => (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -65,8 +65,8 @@ function Panel({playState, pushToHistory, params: {scale, gridOn, speed}, setPla
         <Button width="48px" onClick={onClickNext} disabled={playState !== PlayState.Paused}
             theme={BlazeOrange}><span>Next</span></Button>
         <Button width="64px" onClick={onClickReset} theme={AntiqueRuby}><span>Reset</span></Button>
-        <Button width="84px" onClick={onClickToggleGrid} pressed={gridOn}
-            theme={CGBlue}><span>Grid: {gridOn ? 'ON' : 'OFF'}</span></Button>
+        <Button width="96px" onClick={onClickToggleGrid}
+            theme={CGBlue}><span>Grid: {gridType}</span></Button>
         <ButtonGroup>
             <Button width="36px" onClick={onClickScale(-1)} disabled={scale === Scale.Min} theme={CGBlue}
                 title="Zoom Out"><span><ZoomOutIcon/></span></Button>

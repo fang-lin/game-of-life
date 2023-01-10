@@ -25,23 +25,26 @@ export const Speed: NumberConstraint = {
     Default: 3
 };
 
+export const GridTypes = ['Shade', 'Blank', 'None'] as const;
+export type GridType = typeof GridTypes[number];
+
 export const defaultParams: ParsedParams = {
     scale: Scale.Default,
-    gridOn: true,
+    gridType: GridTypes[0],
     speed: Speed.Default,
     origin: [0, 0]
 };
 
 export interface ParsedParams {
     scale: number;
-    gridOn: boolean;
+    gridType: GridType;
     speed: number;
     origin: Coordinate;
 }
 
 export type OriginalParams = {
     scale: string;
-    gridOn: string;
+    gridType: string;
     speed: string;
     originX: string;
     originY: string;
@@ -78,17 +81,21 @@ export const DragEvents: Record<DragState, keyof WindowEventMap> = isTouchscreen
     [DragState.end]: 'mouseup',
 };
 
-const paramsSegments: Array<keyof OriginalParams> = ['scale', 'speed', 'gridOn', 'originX', 'originY'];
+const paramsSegments: Array<keyof OriginalParams> = ['scale', 'speed', 'gridType', 'originX', 'originY'];
 
 function parseString(s: string, constraint: NumberConstraint): number {
     const n = parseInt(s);
     return n >= constraint.Min && n <= constraint.Max ? n : constraint.Default;
 }
 
-export function parseParams({scale, gridOn, speed, originX, originY}: OriginalParams): ParsedParams {
+function parseGridType(g: string): GridType {
+    return GridTypes[parseInt(g)] || GridTypes[0];
+}
+
+export function parseParams({scale, gridType, speed, originX, originY}: OriginalParams): ParsedParams {
     return {
         scale: parseString(scale, Scale),
-        gridOn: gridOn === '1',
+        gridType: parseGridType(gridType),
         speed: parseString(speed, Speed),
         origin: [parseFloat(originX), parseFloat(originY)]
     };
@@ -103,16 +110,16 @@ function stringifyNumber(n: number, constraint: NumberConstraint): string {
 }
 
 function stringifyCoordinate(n: number): string {
-    if(Number.isNaN(stringifyCoordinate)){
+    if (Number.isNaN(stringifyCoordinate)) {
         return '0';
     }
     return n.toString();
 }
 
-export function stringifyParams({scale, gridOn, speed, origin}: ParsedParams): OriginalParams {
+export function stringifyParams({scale, gridType, speed, origin}: ParsedParams): OriginalParams {
     return {
         scale: stringifyNumber(scale, Scale),
-        gridOn: gridOn ? '1' : '0',
+        gridType: GridTypes.indexOf(gridType).toString(),
         speed: stringifyNumber(speed, Speed),
         originX: stringifyCoordinate(origin[0]),
         originY: stringifyCoordinate(origin[1])

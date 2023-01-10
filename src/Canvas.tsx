@@ -133,9 +133,9 @@ export class Canvas extends Component<CanvasProps> {
         const {
             lifeMap,
             canvasRef,
-            props: {params: {scale, gridOn}, size, origin}
+            props: {params: {scale, gridType}, size, origin}
         } = this;
-        draw(canvasRef, 'black', size, lifeMap.cells, scale, gridOn, origin);
+        draw(canvasRef, 'black', size, lifeMap.cells, scale, gridType, origin);
     };
 
     render() {

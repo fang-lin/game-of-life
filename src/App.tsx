@@ -98,7 +98,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     onClickCell = (event: Event) => {
-        console.log('onClickCell');
         const currentClient = getClient(event as DragEvent);
         const instantaneousOffset = this.getInstantaneousOffset(currentClient);
         if (!this.shouldDragCanvas(instantaneousOffset)) {
@@ -127,7 +126,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     onDragStart = (event: Event): void => {
-        console.log('onDragStart');
         this.setState({
             client: getClient(event as DragEvent),
             dragState: DragState.start
@@ -144,7 +142,6 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     };
 
     onDragEnd = (event: Event): void => {
-        console.log('onDragEnd');
         const origin = this.clientToOrigin(getClient(event as DragEvent));
         this.pushToHistory({origin});
         this.setState({

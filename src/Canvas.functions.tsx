@@ -1,5 +1,5 @@
 import {Coordinate, Size} from './Canvas';
-import {ParsedParams, pixelRatio} from './App.functions';
+import {GridType, GridTypes, ParsedParams, pixelRatio} from './App.functions';
 import {CellsMap} from './LifeMap';
 import {RefObject} from 'react';
 
@@ -30,28 +30,29 @@ export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, sc
     }
 }
 
-function fillCell(context: CanvasRenderingContext2D, xy: Coordinate, scale: number, size: Size, origin: Coordinate): void {
+function fillCell(context: CanvasRenderingContext2D, xy: Coordinate, scale: number, size: Size, origin: Coordinate, gridType: GridType): void {
+    const gap = gridType === GridTypes[2] ? 0 : 1;
+    const wh = (scale - gap) * pixelRatio;
     context.fillRect(
-        (xy[0] * scale + 1 + Math.floor(size[0] / 2) - origin[0] * scale) * pixelRatio,
-        (xy[1] * scale + 1 + Math.floor(size[1] / 2) - origin[1] * scale) * pixelRatio,
-        (scale - 1) * pixelRatio,
-        (scale - 1) * pixelRatio
+        (xy[0] * scale + gap + Math.floor(size[0] / 2) - origin[0] * scale) * pixelRatio,
+        (xy[1] * scale + gap + Math.floor(size[1] / 2) - origin[1] * scale) * pixelRatio,
+        wh, wh
     );
 }
 
-export function drawCell(canvasRef: RefObject<HTMLCanvasElement>, color: string, cell: Coordinate, scale: number, size: Size, origin: Coordinate) {
+export function drawCell(canvasRef: RefObject<HTMLCanvasElement>, color: string, cell: Coordinate, scale: number, size: Size, origin: Coordinate, gridType: GridType) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         context.fillStyle = color;
-        fillCell(context, cell, scale, size, origin);
+        fillCell(context, cell, scale, size, origin, gridType);
     }
 }
 
-export function drawLife(canvasRef: RefObject<HTMLCanvasElement>, color: string, cells: CellsMap, scale: number, size: Size, origin: Coordinate) {
+export function drawLife(canvasRef: RefObject<HTMLCanvasElement>, color: string, cells: CellsMap, scale: number, size: Size, origin: Coordinate, gridType: GridType) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         context.fillStyle = color;
-        cells.forEach((cell) => fillCell(context, cell, scale, size, origin));
+        cells.forEach((cell) => fillCell(context, cell, scale, size, origin, gridType));
     }
 }
 
@@ -62,10 +63,12 @@ export function wipe(canvasRef: RefObject<HTMLCanvasElement>, size: Size) {
     }
 }
 
-export function draw(canvasRef: RefObject<HTMLCanvasElement>, color: string, size: Size, cells: CellsMap, scale: number, gridOn: boolean, origin: Coordinate = [0, 0]) {
+export function draw(canvasRef: RefObject<HTMLCanvasElement>, color: string, size: Size, cells: CellsMap, scale: number, gridType: GridType, origin: Coordinate = [0, 0]) {
     wipe(canvasRef, size);
-    gridOn && drawGrid(canvasRef, size, scale, origin);
-    drawLife(canvasRef, color, cells, scale, size, origin);
+    if (gridType === GridTypes[0]) {
+        drawGrid(canvasRef, size, scale, origin);
+    }
+    drawLife(canvasRef, color, cells, scale, size, origin, gridType);
 }
 
 interface LayoutCanvasProps {
@@ -77,5 +80,5 @@ export function shouldLayoutCanvas(prevProps: LayoutCanvasProps, currentProps: L
     return prevProps.size[0] !== currentProps.size[0] ||
         prevProps.size[1] !== currentProps.size[1] ||
         prevProps.params.scale !== currentProps.params.scale ||
-        prevProps.params.gridOn !== currentProps.params.gridOn;
+        prevProps.params.gridType !== currentProps.params.gridType;
 }
