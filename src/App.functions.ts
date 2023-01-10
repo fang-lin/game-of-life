@@ -142,3 +142,10 @@ export function getClient(event: DragEvent): Coordinate {
     const {clientX, clientY} = isTouchEvent(event) ? event.changedTouches[0] : event;
     return [clientX, clientY];
 }
+
+
+export function rotateCells(cells: Coordinate[], clockwise = true): Coordinate[] {
+    return clockwise ?
+        cells.map(([x, y]) => [-y, x]) :
+        cells.map(([x, y]) => [y, -x]);
+}

@@ -13,7 +13,7 @@ import {
     OriginalParams,
     ParsedParams,
     parseParams,
-    PlayState,
+    PlayState, rotateCells,
     stringifyParams
 } from './App.functions';
 import Dashboard from './Dashboard';
@@ -88,8 +88,13 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     onKeydown = (event: Event) => {
-        if ((event as unknown as KeyboardEvent).key === 'Escape') {
+        const {key} = event as unknown as KeyboardEvent;
+        if (key === 'Escape') {
             this.setState({selectedCells: []});
+        } else if (key === 'ArrowLeft') {
+            this.setState({selectedCells: rotateCells(this.state.selectedCells, false)});
+        } else if (key === 'ArrowRight') {
+            this.setState({selectedCells: rotateCells(this.state.selectedCells, true)});
         }
     };
 

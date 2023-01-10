@@ -32,7 +32,9 @@ class MaskCanvas extends Component<MaskCanvasProps, any> {
             wipe(canvasRef, size);
         }
 
-        if (playState === PlayState.Editing && hoveringCell && (prevProps.hoveringCell !== hoveringCell || prevProps.selectedCells.length !== selectedCells.length)) {
+        if (playState === PlayState.Editing &&
+            hoveringCell &&
+            (prevProps.hoveringCell !== hoveringCell || prevProps.selectedCells !== selectedCells)) {
             wipe(canvasRef, size);
             if (isEmpty(selectedCells)) {
                 drawCell(canvasRef, 'rgba(0,0,0,.3)', hoveringCell, scale, size, origin, gridType);
