@@ -3,6 +3,7 @@ import {CanvasWrapper} from './Canvas.styles';
 import {LifeMap} from './LifeMap';
 import {draw, shouldLayoutCanvas} from './Canvas.functions';
 import {Attributes, ParsedParams, PlayState, Speed} from './App.functions';
+import isEmpty from 'lodash/isEmpty';
 
 export type Size = [number, number];
 export type Coordinate = [number, number];
@@ -13,7 +14,7 @@ export interface CanvasProps {
     setPlayState: (playState: PlayState) => void;
     frameIndex: number;
     setFrameIndex: (op: (index: number) => number) => void;
-    clickedCell: Coordinate | null;
+    addedCells: Coordinate[];
     params: ParsedParams;
     attributes: Attributes;
     setCellsCount: (cellsCount: number) => void;
@@ -35,18 +36,7 @@ export class Canvas extends Component<CanvasProps> {
     constructor(props: CanvasProps) {
         super(props);
         this.canvasRef = React.createRef();
-        this.lifeMap = new LifeMap([
-            [0,0],
-            [1,0],
-            [2,0],
-            [3,0],
-            [4,0],
-            [6,0],
-            [7,0],
-            [8,0],
-            [9,0],
-            [10,0],
-        ]);
+        this.lifeMap = new LifeMap();
     }
 
     componentDidUpdate(prevProps: CanvasProps) {
@@ -55,7 +45,7 @@ export class Canvas extends Component<CanvasProps> {
             props: {
                 setFrameIndex,
                 frameIndex,
-                clickedCell,
+                addedCells,
                 playState,
                 setPlayState,
                 origin,
@@ -63,9 +53,10 @@ export class Canvas extends Component<CanvasProps> {
             },
         } = this;
 
-        if (playState === PlayState.Editing && clickedCell) {
+        if (playState === PlayState.Editing && !isEmpty(addedCells)) {
             // Clicked cell when editing
-            lifeMap.toggleCell(clickedCell);
+            lifeMap.toggleCells(addedCells);
+            console.log(JSON.stringify(Array.from(lifeMap.cells.values())));
             setCellsCount(lifeMap.cells.size);
             this.renderCells();
         }
@@ -118,6 +109,7 @@ export class Canvas extends Component<CanvasProps> {
         setFrameIndex(i => i + 1);
         lifeMap.evolve();
         setCellsCount(lifeMap.cells.size);
+        console.log(JSON.stringify(Array.from(lifeMap.cells.values())));
         this.renderCells();
     }
 

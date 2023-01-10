@@ -1,4 +1,4 @@
-import React, {Component, RefObject} from 'react';
+import React, {Component, RefObject, KeyboardEvent} from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
 import {Coordinate} from './Canvas';
 import {RouteComponentProps} from 'react-router-dom';
@@ -20,13 +20,15 @@ import Dashboard from './Dashboard';
 import Footer from './Footer';
 import Header from './Header';
 import {Stage} from './Stage';
+import isEmpty from 'lodash/isEmpty';
 
 interface AppState {
     size: [number, number];
     playState: PlayState;
     frameIndex: number;
-    clickedCell: Coordinate | null;
+    addedCells: Coordinate[];
     hoveringCell: Coordinate | null;
+    selectedCells: Coordinate[];
     cellsCount: number;
     client: Coordinate;
     origin: Coordinate;
@@ -43,8 +45,9 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             frameIndex: 0,
             size: [0, 0],
             playState: PlayState.Editing,
-            clickedCell: null,
+            addedCells: [],
             hoveringCell: null,
+            selectedCells: [],
             cellsCount: 0,
             client: [0, 0],
             origin: parseParams(this.props.match.params).origin,
@@ -59,8 +62,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
 
     setPlayState = (playState: PlayState) => this.setState({playState});
     setFrameIndex = (op: (index: number) => number) => this.setState({frameIndex: op(this.state.frameIndex)});
-    setClickedCell = (clickedCell: Coordinate | null, cb?: () => void) => this.setState({clickedCell}, cb);
-    setHoveringCell = (hoveringCell: Coordinate | null, cb?: () => void) => this.setState({hoveringCell}, cb);
+    setSelectedCells = (selectedCells: Coordinate[], cb?: () => void) => this.setState({selectedCells}, cb);
     setCellsCount = (cellsCount: number) => this.setState({cellsCount});
 
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
@@ -74,6 +76,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         window.addEventListener(DragEvents[DragState.start], this.onDragStart);
         isTouchscreenDevices || window.addEventListener('mousemove', this.onMouseMove);
         window.addEventListener('click', this.onClickCell);
+        window.addEventListener('keydown', this.onKeydown);
     }
 
     componentWillUnmount(): void {
@@ -81,10 +84,17 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         window.removeEventListener(DragEvents[DragState.start], this.onDragStart);
         isTouchscreenDevices || window.removeEventListener('mousemove', this.onMouseMove);
         window.removeEventListener('click', this.onClickCell);
+        window.removeEventListener('keydown', this.onKeydown);
     }
 
+    onKeydown = (event: Event) => {
+        if ((event as unknown as KeyboardEvent).key === 'Escape') {
+            this.setState({selectedCells: []});
+        }
+    };
+
     onMouseMove = (event: Event) => {
-        this.setHoveringCell(this.clientToCell(getClient(event as DragEvent)));
+        this.setState({hoveringCell: this.clientToCell(getClient(event as DragEvent))});
     };
 
     clientToCell = (currentClient: Coordinate): Coordinate => {
@@ -100,13 +110,21 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         const currentClient = getClient(event as DragEvent);
         const instantaneousOffset = this.getInstantaneousOffset(currentClient);
         if (!this.shouldDragCanvas(instantaneousOffset)) {
-            const {playState} = this.state;
+            const {playState, selectedCells} = this.state;
             const cell: Coordinate = this.clientToCell(currentClient);
             if (playState === PlayState.Editing) {
-                this.setState({
-                    clickedCell: cell,
-                    hoveringCell: cell,
-                }, () => this.setState({clickedCell: null}));
+                if (isEmpty(selectedCells)) {
+                    this.setState({
+                        addedCells: [cell],
+                        hoveringCell: cell,
+                    }, () => this.setState({addedCells: []}));
+                } else {
+                    this.setState({
+                        addedCells: selectedCells.map(s => [s[0] + cell[0], s[1] + cell[1]]),
+                        hoveringCell: cell,
+                    }, () => this.setState({addedCells: []}));
+                }
+
             } else {
                 this.setState({
                     hoveringCell: cell,
@@ -156,19 +174,20 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             size,
             playState,
             frameIndex,
-            clickedCell,
             hoveringCell,
             cellsCount,
             origin,
-            dragState
+            dragState,
+            selectedCells,
+            addedCells,
         } = this.state;
 
         const {
             pushToHistory,
             setFrameIndex,
-            setClickedCell,
             setPlayState,
             setCellsCount,
+            setSelectedCells,
         } = this;
 
         const params = parseParams(this.props.match.params);
@@ -177,19 +196,19 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             <AppWrapper ref={this.appRef} {...{playState, dragState}}>
                 <Stage {...{
                     setFrameIndex,
-                    setClickedCell,
                     setPlayState,
                     setCellsCount,
                     size,
                     playState,
-                    clickedCell,
+                    addedCells,
                     hoveringCell,
+                    selectedCells,
                     frameIndex,
                     params,
                     origin,
                 }}/>
                 <Header/>
-                <Dashboard {...{frameIndex, cellsCount, params, hoveringCell}}/>
+                <Dashboard {...{frameIndex, cellsCount, params, hoveringCell, setSelectedCells}}/>
                 <BottomSection>
                     <Footer/>
                     <Panel {...{playState, pushToHistory, params, setPlayState}}/>

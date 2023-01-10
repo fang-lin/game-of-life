@@ -10,28 +10,28 @@ interface StageProps {
     setPlayState: (playState: PlayState) => void;
     frameIndex: number;
     setFrameIndex: (op: (index: number) => number) => void;
-    clickedCell: Coordinate | null;
     hoveringCell: Coordinate | null;
+    selectedCells: Coordinate[];
+    addedCells: Coordinate[];
     origin: Coordinate;
     params: ParsedParams;
     setCellsCount: (cellsCount: number) => void;
-    setClickedCell: (xy: Coordinate | null, cb?: () => void) => void;
 }
 
 export const Stage: FunctionComponent<StageProps> = (props) => {
 
     const {
         setFrameIndex,
-        setClickedCell,
         setPlayState,
         setCellsCount,
         size,
         playState,
-        clickedCell,
         hoveringCell,
         frameIndex,
         params,
-        origin
+        origin,
+        addedCells,
+        selectedCells
     } = props;
 
     const attributes: Attributes = {
@@ -44,15 +44,15 @@ export const Stage: FunctionComponent<StageProps> = (props) => {
             size,
             playState,
             setPlayState,
-            clickedCell,
             params,
             attributes,
             frameIndex,
             setFrameIndex,
             setCellsCount,
+            addedCells,
             origin,
         }}/>
         {isTouchscreenDevices ||
-        <MaskCanvas {...{size, playState, setClickedCell, hoveringCell, params, attributes, origin}} />}
+        <MaskCanvas {...{size, playState, hoveringCell, params, attributes, origin, selectedCells}} />}
     </StageWrapper>;
 };

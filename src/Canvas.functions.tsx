@@ -48,7 +48,7 @@ export function drawCell(canvasRef: RefObject<HTMLCanvasElement>, color: string,
     }
 }
 
-export function drawLife(canvasRef: RefObject<HTMLCanvasElement>, color: string, cells: CellsMap, scale: number, size: Size, origin: Coordinate, gridType: GridType) {
+export function drawCells(canvasRef: RefObject<HTMLCanvasElement>, color: string, cells: CellsMap | Coordinate[], scale: number, size: Size, origin: Coordinate, gridType: GridType) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         context.fillStyle = color;
@@ -68,7 +68,7 @@ export function draw(canvasRef: RefObject<HTMLCanvasElement>, color: string, siz
     if (gridType === GridTypes[0]) {
         drawGrid(canvasRef, size, scale, origin);
     }
-    drawLife(canvasRef, color, cells, scale, size, origin, gridType);
+    drawCells(canvasRef, color, cells, scale, size, origin, gridType);
 }
 
 interface LayoutCanvasProps {

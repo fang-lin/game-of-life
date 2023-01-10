@@ -18,7 +18,7 @@ export const PanelWrapper = styled.div`
   padding: 0 0 6px 0;
 `;
 
-export const Button = styled.button<{ height?: string; width?: string, pressed?: boolean, theme: Theme }>`
+export const Button = styled.button<{ height?: string; width?: string, pressed?: boolean, theme: Theme}>`
   border: medium none;
   padding: 0;
   margin: 0;
@@ -37,13 +37,13 @@ export const Button = styled.button<{ height?: string; width?: string, pressed?:
     border-radius: 5px;
     cursor: pointer;
     color: white;
-    padding: 0;
+    padding: ${({width}) => width ? '0' : '0 6px'};
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     height: ${({height}) => height || '36px'};
-    width: ${({width}) => width || '80px'};
+    width: ${({width}) => width || 'auto'};
     top: ${({pressed}) => pressed ? '4px' : 0};
   }
 

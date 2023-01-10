@@ -25,25 +25,17 @@ export class LifeMap {
         ];
     }
 
-    addCell(coords: Coordinate) {
-        return this.cells.set(`${coords}`, coords);
-    }
+    addCell = (coords: Coordinate) => this.cells.set(`${coords}`, coords);
 
-    addCells(cells: Coordinate[]) {
-        return cells.forEach(cell => this.addCell(cell));
-    }
+    addCells = (cells: Coordinate[]) => cells.forEach(this.addCell);
 
-    removeCell(cell: Coordinate) {
-        return this.cells.delete(cell.toString());
-    }
+    removeCell = (cell: Coordinate) => this.cells.delete(cell.toString());
 
-    removeCells(cells: Coordinate[]) {
-        return cells.forEach(cell => this.removeCell(cell));
-    }
+    removeCells = (cells: Coordinate[]) => cells.forEach(this.removeCell);
 
-    toggleCell(cell: Coordinate) {
-        this.cells.get(`${cell}`) ? this.removeCell(cell) : this.addCell(cell);
-    }
+    toggleCell = (cell: Coordinate) => this.cells.get(`${cell}`) ? this.removeCell(cell) : this.addCell(cell);
+
+    toggleCells = (cells: Coordinate[]) => cells.forEach(this.toggleCell);
 
     getNeighborsNum(cell: Coordinate): number {
         return LifeMap.adjacentCoordinates(cell)
