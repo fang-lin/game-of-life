@@ -1,7 +1,5 @@
 import React, {MouseEvent} from 'react';
 import {Coordinate} from './Canvas';
-import {Button} from './Panel.styles';
-import {CGBlue} from './Theme';
 import {PatternsPanelWrapper} from './PatternsPanel.styles';
 import Block from './Patterns/Block.json';
 import BeeHive from './Patterns/BeeHive.json';
@@ -31,31 +29,46 @@ interface Pattern {
     cells: Coordinate[];
 }
 
-const patterns = [
+const stillLifePatterns = [
     Block,
     BeeHive,
     Loaf,
     Boat,
     Tub,
+] as Pattern[];
+
+const oscillatorsPatterns = [
     Blinker,
     Toad,
     Beacon,
     Pulsar,
     Pentadecathlon,
+] as Pattern[];
+
+
+const spaceshipsPatterns = [
     Glider,
     LWSS,
     MWSS,
     HWSS,
+] as Pattern[];
+
+const methuselahPatterns = [
     RPentomino,
     Diehard,
     Acom,
+] as Pattern[];
+
+const gliderGunPatterns = [
     GosperGliderGun,
     SimkinGliderGun,
+] as Pattern[];
+
+const infinityPatterns = [
     Infinity1,
     Infinity2,
     Infinity3,
 ] as Pattern[];
-
 
 interface PatternsPanelProps {
     setSelectedCells: (cells: Coordinate[], cb?: () => void) => void;
@@ -70,9 +83,39 @@ function PatternsPanel({setSelectedCells}: PatternsPanelProps) {
 
     return <PatternsPanelWrapper>
         {
-            patterns.map(({name, cells}) => <Button theme={CGBlue}
+            stillLifePatterns.map(({name, cells}) => <button
                 onClick={onClickButton(cells)}
-                key={name}><span>{name}</span></Button>)
+                key={name}><span>{name}</span></button>)
+        }
+        <br/>
+        {
+            oscillatorsPatterns.map(({name, cells}) => <button
+                onClick={onClickButton(cells)}
+                key={name}><span>{name}</span></button>)
+        }
+        <br/>
+        {
+            spaceshipsPatterns.map(({name, cells}) => <button
+                onClick={onClickButton(cells)}
+                key={name}><span>{name}</span></button>)
+        }
+        <br/>
+        {
+            methuselahPatterns.map(({name, cells}) => <button
+                onClick={onClickButton(cells)}
+                key={name}><span>{name}</span></button>)
+        }
+        <br/>
+        {
+            gliderGunPatterns.map(({name, cells}) => <button
+                onClick={onClickButton(cells)}
+                key={name}><span>{name}</span></button>)
+        }
+        <br/>
+        {
+            infinityPatterns.map(({name, cells}) => <button
+                onClick={onClickButton(cells)}
+                key={name}><span>{name}</span></button>)
         }
     </PatternsPanelWrapper>;
 }
