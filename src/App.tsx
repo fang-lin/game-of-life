@@ -33,7 +33,6 @@ interface AppState {
     dragState: DragState;
 }
 
-
 export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
     private readonly appRef: RefObject<HTMLDivElement>;
 

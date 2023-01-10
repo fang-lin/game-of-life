@@ -25,7 +25,7 @@ export const Speed: NumberConstraint = {
     Default: 3
 };
 
-export const GridTypes = ['Shade', 'Blank', 'None'] as const;
+export const GridTypes = ['Dark', 'Blank', 'None'] as const;
 export type GridType = typeof GridTypes[number];
 
 export const defaultParams: ParsedParams = {

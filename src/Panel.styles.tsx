@@ -25,6 +25,7 @@ export const Button = styled.button<{ height?: string; width?: string, pressed?:
   position: relative;
   cursor: pointer;
   background: transparent;
+  user-select: none;
 
   span {
     font-family: 'Fira Sans', sans-serif;

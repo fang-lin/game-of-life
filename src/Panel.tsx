@@ -34,6 +34,7 @@ function Panel({playState, pushToHistory, params: {scale, gridType, speed}, setP
     const onClickReset = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         setPlayState(PlayState.Reset);
+        pushToHistory({origin: [0, 0]});
     };
     const onClickNext = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
