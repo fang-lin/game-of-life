@@ -24,6 +24,7 @@ import Infinity1 from '../Patterns/Infinity1.json';
 import Infinity2 from '../Patterns/Infinity2.json';
 import Infinity3 from '../Patterns/Infinity3.json';
 import x66 from '../Patterns/x66.json';
+import {BottleGreen, CGBlue} from '../Theme';
 
 export interface Pattern {
     name: string;
@@ -88,6 +89,7 @@ function Row({patterns, onClickButton, selectedPattern}: ButtonGroupProps) {
         {
             patterns.map((pattern) => <SmallButton
                 pressed={selectedPattern?.name === pattern.name}
+                theme={selectedPattern?.name === pattern.name ? BottleGreen : CGBlue}
                 onClick={onClickButton(pattern)}
                 key={pattern.name}><span>{pattern.name}</span></SmallButton>)
         }
