@@ -87,6 +87,10 @@ export class Canvas extends Component<CanvasProps> {
             // Reset
             window.cancelAnimationFrame(this.playTimeout);
             lifeMap.reset();
+            const {cells} = this.props.params;
+            if (cells) {
+                lifeMap.addCells(cells);
+            }
             setCellsCount(lifeMap.cells.size);
             this.renderCells();
             setPlayState(PlayState.Editing);

@@ -40,6 +40,7 @@ export interface ParsedParams {
     gridType: GridType;
     speed: number;
     origin: Coordinate;
+    cells?: Coordinate[];
 }
 
 export type OriginalParams = {
@@ -48,6 +49,7 @@ export type OriginalParams = {
     speed: string;
     originX: string;
     originY: string;
+    cells: string;
 }
 
 export type DragEvent = MouseEvent | TouchEvent;
@@ -81,7 +83,7 @@ export const DragEvents: Record<DragState, keyof WindowEventMap> = isTouchscreen
     [DragState.end]: 'mouseup',
 };
 
-const paramsSegments: Array<keyof OriginalParams> = ['scale', 'speed', 'gridType', 'originX', 'originY'];
+const paramsSegments: Array<keyof OriginalParams> = ['scale', 'speed', 'gridType', 'originX', 'originY', 'cells'];
 
 function parseString(s: string, constraint: NumberConstraint): number {
     const n = parseInt(s);
@@ -92,12 +94,13 @@ function parseGridType(g: string): GridType {
     return GridTypes[parseInt(g)] || GridTypes[0];
 }
 
-export function parseParams({scale, gridType, speed, originX, originY}: OriginalParams): ParsedParams {
+export function parseParams({scale, gridType, speed, originX, originY, cells}: OriginalParams): ParsedParams {
     return {
         scale: parseString(scale, Scale),
         gridType: parseGridType(gridType),
         speed: parseString(speed, Speed),
-        origin: [parseFloat(originX), parseFloat(originY)]
+        origin: [parseFloat(originX), parseFloat(originY)],
+        cells: cells === '-' ? undefined : JSON.parse(cells.replaceAll('][', '],[')),
     };
 }
 
@@ -116,13 +119,14 @@ function stringifyCoordinate(n: number): string {
     return n.toString();
 }
 
-export function stringifyParams({scale, gridType, speed, origin}: ParsedParams): OriginalParams {
+export function stringifyParams({scale, gridType, speed, origin, cells}: ParsedParams): OriginalParams {
     return {
         scale: stringifyNumber(scale, Scale),
         gridType: GridTypes.indexOf(gridType).toString(),
         speed: stringifyNumber(speed, Speed),
         originX: stringifyCoordinate(origin[0]),
-        originY: stringifyCoordinate(origin[1])
+        originY: stringifyCoordinate(origin[1]),
+        cells: cells ? JSON.stringify(cells).replaceAll('],[', '][') : '-',
     };
 }
 

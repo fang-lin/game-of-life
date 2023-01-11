@@ -42,6 +42,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     constructor(props: RouteComponentProps<OriginalParams>) {
         super(props);
         this.appRef = React.createRef();
+        const {origin} = parseParams(this.props.match.params);
         this.state = {
             frameIndex: 0,
             size: [0, 0],
@@ -52,7 +53,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             showPatternPanel: false,
             cellsCount: 0,
             client: [0, 0],
-            origin: parseParams(this.props.match.params).origin,
+            origin,
             dragState: DragState.end,
         };
     }
@@ -73,8 +74,17 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         push(combinePathToURL(stringifyParams({...parseParams(params), ...parsedParams})));
     };
 
+
+    setCellsFromParams = () => {
+        const {cells} = parseParams(this.props.match.params);
+        if (cells) {
+            this.setState({addedCells: cells}, () => this.setState({addedCells: []}));
+        }
+    };
+
     componentDidMount(): void {
         this.onResize();
+        this.setCellsFromParams();
         window.addEventListener('resize', this.onResize);
         window.addEventListener(DragEvents[DragState.start], this.onDragStart);
         isTouchscreenDevices || window.addEventListener('mousemove', this.onMouseMove);
@@ -225,7 +235,16 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                 <Dashboard {...{frameIndex, cellsCount, params, hoveringCell}}/>
                 <BottomSection>
                     <Footer/>
-                    <Panel {...{playState, pushToHistory, params, setPlayState, showPatternPanel, togglePatternPanel, setSelectedPattern, selectedPattern}}/>
+                    <Panel {...{
+                        playState,
+                        pushToHistory,
+                        params,
+                        setPlayState,
+                        showPatternPanel,
+                        togglePatternPanel,
+                        setSelectedPattern,
+                        selectedPattern
+                    }}/>
                 </BottomSection>
             </AppWrapper>
         );
