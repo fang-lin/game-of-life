@@ -1,5 +1,5 @@
 import {LifeMap} from './LifeMap';
-import {Coordinate} from './Canvas';
+import {Coordinate} from './Canvas/Canvas';
 
 describe('LifeMap', () => {
     let cellsMap: LifeMap;

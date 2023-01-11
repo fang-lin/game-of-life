@@ -1,8 +1,8 @@
 import React, {Component, RefObject, KeyboardEvent} from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
-import {Coordinate} from './Canvas';
+import {Coordinate} from './Canvas/Canvas';
 import {RouteComponentProps} from 'react-router-dom';
-import Panel from './Panel';
+import Panel from './Panels/Panel';
 import {
     combinePathToURL,
     DragEvent,
@@ -19,8 +19,8 @@ import {
 import Dashboard from './Dashboard';
 import Footer from './Footer';
 import Header from './Header';
-import {Stage} from './Stage';
-import {Pattern} from './PatternsPanel';
+import {Stage} from './Canvas/Stage';
+import {Pattern} from './Panels/PatternsPanel';
 
 interface AppState {
     size: [number, number];

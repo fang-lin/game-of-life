@@ -1,4 +1,4 @@
-import {Coordinate} from './Canvas';
+import {Coordinate} from './Canvas/Canvas';
 
 export const isTouchscreenDevices: boolean = ((): boolean => {
     try {

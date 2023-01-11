@@ -1,8 +1,8 @@
 import React, {Component, RefObject} from 'react';
 import {CanvasWrapper} from './Canvas.styles';
-import {LifeMap} from './LifeMap';
+import {LifeMap} from '../LifeMap';
 import {draw, shouldLayoutCanvas} from './Canvas.functions';
-import {Attributes, ParsedParams, PlayState, Speed} from './App.functions';
+import {Attributes, ParsedParams, PlayState, Speed} from '../App.functions';
 import isEmpty from 'lodash/isEmpty';
 
 export type Size = [number, number];

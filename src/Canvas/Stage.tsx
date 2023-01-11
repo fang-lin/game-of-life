@@ -2,8 +2,8 @@ import React, {FunctionComponent} from 'react';
 import Canvas, {Coordinate} from './Canvas';
 import MaskCanvas from './MaskCanvas';
 import {StageWrapper} from './Stage.styles';
-import {Attributes, isTouchscreenDevices, ParsedParams, pixelRatio, PlayState} from './App.functions';
-import {Pattern} from './PatternsPanel';
+import {Attributes, isTouchscreenDevices, ParsedParams, pixelRatio, PlayState} from '../App.functions';
+import {Pattern} from '../Panels/PatternsPanel';
 
 interface StageProps {
     size: [number, number];

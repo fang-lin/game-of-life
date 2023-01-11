@@ -1,8 +1,8 @@
 import React from 'react';
 import {DashboardWrapper} from './Dashboard.styles';
 import {ParsedParams} from './App.functions';
-import {Coordinate} from './Canvas';
-import PatternsPanel, {Pattern} from './PatternsPanel';
+import {Coordinate} from './Canvas/Canvas';
+import PatternsPanel, {Pattern} from './Panels/PatternsPanel';
 
 interface DashboardProps {
     frameIndex: number;

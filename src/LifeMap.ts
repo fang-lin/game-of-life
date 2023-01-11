@@ -1,4 +1,4 @@
-import {Coordinate} from './Canvas';
+import {Coordinate} from './Canvas/Canvas';
 
 export type CellsMap = Map<string, Coordinate>;
 

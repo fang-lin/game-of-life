@@ -8,8 +8,8 @@ import {
     FasterIcon,
     SlowerIcon,
 } from './Panel.styles';
-import {Scale, ParsedParams, Speed, PlayState, GridTypes} from './App.functions';
-import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from './Theme';
+import {Scale, ParsedParams, Speed, PlayState, GridTypes} from '../App.functions';
+import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from '../Theme';
 
 interface PanelProps {
     playState: PlayState,

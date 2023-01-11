@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import {ComponentType} from 'react';
-import {ReactComponent as Rabbit} from './images/rabbit.svg';
-import {ReactComponent as Snail} from './images/snail.svg';
-import {ReactComponent as ZoomIn} from './images/zoom-in.svg';
-import {ReactComponent as ZoomOut} from './images/zoom-out.svg';
-import {CGBlue, Theme} from './Theme';
+import {ReactComponent as Rabbit} from '../images/rabbit.svg';
+import {ReactComponent as Snail} from '../images/snail.svg';
+import {ReactComponent as ZoomIn} from '../images/zoom-in.svg';
+import {ReactComponent as ZoomOut} from '../images/zoom-out.svg';
+import {CGBlue, Theme} from '../Theme';
 
 // https://coolors.co/d9ed92-b5e48c-99d98c-76c893-52b69a-34a0a4-168aad-1a759f-1e6091-184e77
 // https://coolors.co/f94144-f3722c-f8961e-f9844a-f9c74f-90be6d-43aa8b-4d908e-577590-277da1
