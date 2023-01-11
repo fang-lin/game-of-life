@@ -5,7 +5,9 @@ import {ReactComponent as Snail} from '../images/snail.svg';
 import {ReactComponent as ZoomIn} from '../images/zoom-in.svg';
 import {ReactComponent as ZoomOut} from '../images/zoom-out.svg';
 import {ReactComponent as Glider} from '../images/glider.svg';
+import {ReactComponent as Close} from '../images/close.svg';
 import {CGBlue, Theme} from '../Theme';
+import {Size} from '../Canvas/Canvas';
 
 // https://coolors.co/d9ed92-b5e48c-99d98c-76c893-52b69a-34a0a4-168aad-1a759f-1e6091-184e77
 // https://coolors.co/f94144-f3722c-f8961e-f9844a-f9c74f-90be6d-43aa8b-4d908e-577590-277da1
@@ -24,7 +26,7 @@ export const ButtonWrapper = styled.div`
   position: relative;
 `;
 
-export const Button = styled.button<{ height?: string; width?: string, pressed?: boolean, theme: Theme }>`
+export const Button = styled.button<{ pressed?: boolean, theme: Theme, size?: Size }>`
   border: medium none;
   padding: 0 0 6px 0;
   margin: 0;
@@ -43,20 +45,19 @@ export const Button = styled.button<{ height?: string; width?: string, pressed?:
     border-radius: 5px;
     cursor: pointer;
     color: white;
-    padding: ${({width}) => width ? '0' : '0 6px'};
+    padding: 0 6px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: ${({height}) => height || '36px'};
-    width: ${({width}) => width || 'auto'};
+    height: 36px;
     top: ${({pressed}) => pressed ? '4px' : 0};
   }
 
   &:before {
     content: '';
     position: absolute;
-    height: 10px;
+    height: 11px;
     right: 0;
     bottom: 0;
     left: 0;
@@ -96,7 +97,7 @@ export const Button = styled.button<{ height?: string; width?: string, pressed?:
   }
 `;
 
-export const Tag = styled.div<{ height?: string; width?: string, theme: Theme }>`
+export const Tag = styled.div<{theme: Theme }>`
   position: relative;
   padding: 0 0 6px 0;
 
@@ -115,8 +116,7 @@ export const Tag = styled.div<{ height?: string; width?: string, theme: Theme }>
     display: flex;
     align-items: center;
     justify-content: center;
-    height: ${({height}) => height || '36px'};
-    width: ${({width}) => width || '80px'};
+    height: 36px;
     top: 0;
   }
 
@@ -185,3 +185,4 @@ export const ZoomOutIcon = Icon(ZoomOut);
 export const FasterIcon = Icon(Rabbit);
 export const SlowerIcon = Icon(Snail);
 export const GliderIcon = Icon(Glider);
+export const CloseIcon = Icon(Close);

@@ -74,36 +74,39 @@ function Panel({
     return (<PanelWrapper>
         {
             (playState === PlayState.Paused || playState === PlayState.Editing) &&
-            <Button width="72px" onClick={onClickPlay} theme={BottleGreen}><span>Play</span></Button>
+            <Button style={{width: '72px'}} onClick={onClickPlay} theme={BottleGreen}><span>Play</span></Button>
         }
         {
             playState === PlayState.Playing &&
-            <Button width="72px" pressed onClick={onClickPaused} theme={BottleGreen}><span>Paused</span></Button>
+            <Button style={{width: '72px'}} pressed onClick={onClickPaused}
+                theme={BottleGreen}><span>Paused</span></Button>
         }
-        <Button width="48px" onClick={onClickEdit} disabled={playState !== PlayState.Paused}
+        <Button style={{width: '48px'}} onClick={onClickEdit} disabled={playState !== PlayState.Paused}
             theme={BlazeOrange}><span>Edit</span></Button>
-        <Button width="48px" onClick={onClickNext} disabled={playState !== PlayState.Paused}
+        <Button style={{width: '48px'}} onClick={onClickNext} disabled={playState !== PlayState.Paused}
             theme={BlazeOrange}><span>Next</span></Button>
-        <Button width="64px" onClick={onClickReset} theme={AntiqueRuby}><span>Reset</span></Button>
-        <Button width="96px" onClick={onClickToggleGrid}
+        <Button style={{width: '64px'}} onClick={onClickReset} theme={AntiqueRuby}><span>Reset</span></Button>
+        <Button style={{width: '96px'}} onClick={onClickToggleGrid}
             theme={CGBlue}><span>Grid: {gridType}</span></Button>
         <ButtonGroup>
-            <Button width="36px" onClick={onClickScale(-1)} disabled={scale === Scale.Min} theme={CGBlue}
+            <Button style={{width: '36px'}} onClick={onClickScale(-1)} disabled={scale === Scale.Min} theme={CGBlue}
                 title="Zoom Out"><span><ZoomOutIcon/></span></Button>
-            <Button width="36px" onClick={onClickScale(1)} disabled={scale === Scale.Max} theme={CGBlue}
+            <Button style={{width: '36px'}} onClick={onClickScale(1)} disabled={scale === Scale.Max} theme={CGBlue}
                 title="Zoom In"><span><ZoomInIcon/></span></Button>
         </ButtonGroup>
         <ButtonGroup>
-            <Button width="36px" onClick={onClickSlowerFaster(-1)} disabled={speed === Speed.Min} theme={CGBlue}
+            <Button style={{width: '36px'}} onClick={onClickSlowerFaster(-1)} disabled={speed === Speed.Min}
+                theme={CGBlue}
                 title="Slower"><span><SlowerIcon/></span></Button>
-            <Button width="36px" onClick={onClickSlowerFaster(1)} disabled={speed === Speed.Max} theme={CGBlue}
+            <Button style={{width: '36px'}} onClick={onClickSlowerFaster(1)} disabled={speed === Speed.Max}
+                theme={CGBlue}
                 title="Faster"><span><FasterIcon/></span></Button>
         </ButtonGroup>
         <ButtonWrapper>
-            <Button width="36px" onClick={onClickAdd}
+            <Button style={{width: '36px'}} onClick={onClickAdd}
                 pressed={showPatternPanel}
                 theme={selectedPattern ? BottleGreen : CGBlue}><span><GliderIcon/></span></Button>
-            {showPatternPanel && <PatternsPanel {...{setSelectedPattern, selectedPattern}}/>}
+            {showPatternPanel && <PatternsPanel {...{setSelectedPattern, selectedPattern, togglePatternPanel}}/>}
         </ButtonWrapper>
 
     </PanelWrapper>);

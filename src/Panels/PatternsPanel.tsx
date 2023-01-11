@@ -1,6 +1,6 @@
 import React, {MouseEvent} from 'react';
 import {Coordinate} from '../Canvas/Canvas';
-import {PatternsPanelWrapper, ButtonRow, SmallButton} from './PatternsPanel.styles';
+import {PatternsPanelWrapper, ButtonRow, SmallButton, CapsuleButton} from './PatternsPanel.styles';
 import Block from '../Patterns/Block.json';
 import BeeHive from '../Patterns/BeeHive.json';
 import Loaf from '../Patterns/Loaf.json';
@@ -24,7 +24,8 @@ import Infinity1 from '../Patterns/Infinity1.json';
 import Infinity2 from '../Patterns/Infinity2.json';
 import Infinity3 from '../Patterns/Infinity3.json';
 import x66 from '../Patterns/x66.json';
-import {BottleGreen, CGBlue} from '../Theme';
+import {AntiqueRuby, BottleGreen, CGBlue} from '../Theme';
+import {CloseIcon} from './Panel.styles';
 
 export interface Pattern {
     name: string;
@@ -76,6 +77,7 @@ const infinityPatterns = [
 interface PatternsPanelProps {
     selectedPattern: Pattern | null;
     setSelectedPattern: (pattern: Pattern | null, cb?: () => void) => void;
+    togglePatternPanel: (showPatternPanel: boolean) => void;
 }
 
 interface ButtonGroupProps {
@@ -96,16 +98,24 @@ function Row({patterns, onClickButton, selectedPattern}: ButtonGroupProps) {
     </ButtonRow>;
 }
 
-function PatternsPanel({setSelectedPattern, selectedPattern}: PatternsPanelProps) {
+function PatternsPanel({setSelectedPattern, selectedPattern, togglePatternPanel}: PatternsPanelProps) {
 
     const onClickButton = (pattern: Pattern) => (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         setSelectedPattern(pattern.name === selectedPattern?.name ? null : pattern);
     };
 
+    const onClickCloseButton = (event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        setSelectedPattern(null);
+        togglePatternPanel(false);
+    };
+
     const props = {onClickButton, selectedPattern};
 
     return <PatternsPanelWrapper>
+        <CapsuleButton style={{width: '32px', marginBottom: '6px'}} theme={AntiqueRuby}
+            onClick={onClickCloseButton}><span><CloseIcon/></span></CapsuleButton>
         <Row {...props} patterns={stillLifePatterns}/>
         <Row {...props} patterns={oscillatorsPatterns}/>
         <Row {...props} patterns={spaceshipsPatterns}/>
