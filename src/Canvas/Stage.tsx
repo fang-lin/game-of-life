@@ -17,6 +17,7 @@ interface StageProps {
     origin: Coordinate;
     params: ParsedParams;
     setCellsCount: (cellsCount: number) => void;
+    getCellsHandler: (cb: () => Coordinate[]) => void;
 }
 
 export const Stage: FunctionComponent<StageProps> = (props) => {
@@ -32,7 +33,8 @@ export const Stage: FunctionComponent<StageProps> = (props) => {
         params,
         origin,
         addedCells,
-        selectedPattern
+        selectedPattern,
+        getCellsHandler
     } = props;
 
     const attributes: Attributes = {
@@ -52,6 +54,7 @@ export const Stage: FunctionComponent<StageProps> = (props) => {
             setCellsCount,
             addedCells,
             origin,
+            getCellsHandler,
         }}/>
         {isTouchscreenDevices ||
         <MaskCanvas {...{size, playState, hoveringCell, params, attributes, origin, selectedPattern}} />}

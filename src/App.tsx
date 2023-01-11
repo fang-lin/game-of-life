@@ -38,6 +38,7 @@ interface AppState {
 
 export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
     private readonly appRef: RefObject<HTMLDivElement>;
+    private getCells?: () => Coordinate[];
 
     constructor(props: RouteComponentProps<OriginalParams>) {
         super(props);
@@ -191,6 +192,10 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         window.removeEventListener(DragEvents[DragState.end], this.onDragEnd);
     };
 
+    getCellsHandler = (cb: () => Coordinate[]) => {
+        this.getCells = cb;
+    }
+
     render() {
         const {
             size,
@@ -212,6 +217,8 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             setCellsCount,
             setSelectedPattern,
             togglePatternPanel,
+            getCellsHandler,
+            getCells,
         } = this;
 
         const params = parseParams(this.props.match.params);
@@ -230,6 +237,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                     frameIndex,
                     params,
                     origin,
+                    getCellsHandler,
                 }}/>
                 <Header/>
                 <Dashboard {...{frameIndex, cellsCount, params, hoveringCell}}/>
@@ -243,7 +251,8 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                         showPatternPanel,
                         togglePatternPanel,
                         setSelectedPattern,
-                        selectedPattern
+                        selectedPattern,
+                        getCells
                     }}/>
                 </BottomSection>
             </AppWrapper>

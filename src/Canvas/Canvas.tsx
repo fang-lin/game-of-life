@@ -18,6 +18,7 @@ export interface CanvasProps {
     params: ParsedParams;
     attributes: Attributes;
     setCellsCount: (cellsCount: number) => void;
+    getCellsHandler: (cb: () => Coordinate[]) => void;
     origin: Coordinate;
 }
 
@@ -37,6 +38,7 @@ export class Canvas extends Component<CanvasProps> {
         super(props);
         this.canvasRef = React.createRef();
         this.lifeMap = new LifeMap();
+        this.props.getCellsHandler(() => this.lifeMap.getCells());
     }
 
     componentDidUpdate(prevProps: CanvasProps) {

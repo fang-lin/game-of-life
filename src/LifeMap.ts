@@ -37,6 +37,10 @@ export class LifeMap {
 
     toggleCells = (cells: Coordinate[]) => cells.forEach(this.toggleCell);
 
+    getCells(): Coordinate[] {
+        return Array.from(this.cells.values());
+    }
+
     getNeighborsNum(cell: Coordinate): number {
         return LifeMap.adjacentCoordinates(cell)
             .reduce((num, cell) => this.cells.get(`${cell}`) ? num + 1 : num, 0);
@@ -59,10 +63,6 @@ export class LifeMap {
         });
         this.deadList.forEach(dead => this.removeCell(dead));
         this.bornList.forEach(born => this.addCell(born));
-    }
-
-    toString() {
-        return JSON.stringify([...this.cells]);
     }
 
     reset() {

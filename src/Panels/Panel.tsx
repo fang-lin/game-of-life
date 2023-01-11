@@ -12,6 +12,7 @@ import {
 import {Scale, ParsedParams, Speed, PlayState, GridTypes} from '../App.functions';
 import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from '../Theme';
 import PatternsPanel, {Pattern} from './PatternsPanel';
+import {Coordinate} from '../Canvas/Canvas';
 
 interface PanelProps {
     playState: PlayState,
@@ -22,6 +23,7 @@ interface PanelProps {
     params: ParsedParams;
     selectedPattern: Pattern | null;
     setSelectedPattern: (pattern: Pattern | null, cb?: () => void) => void;
+    getCells?: () => Coordinate[];
 }
 
 function Panel({
@@ -32,7 +34,8 @@ function Panel({
     showPatternPanel,
     togglePatternPanel,
     selectedPattern,
-    setSelectedPattern
+    setSelectedPattern,
+    getCells,
 }: PanelProps) {
     const onClickPlay = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -71,7 +74,12 @@ function Panel({
         event.stopPropagation();
         togglePatternPanel(!showPatternPanel);
     };
+    const onClickShare = (event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        console.log(getCells && getCells());
+    };
     return (<PanelWrapper>
+        <Button onClick={onClickShare}><span>Share</span></Button>
         {
             (playState === PlayState.Paused || playState === PlayState.Editing) &&
             <Button style={{width: '72px'}} onClick={onClickPlay} theme={BottleGreen}><span>Play</span></Button>
