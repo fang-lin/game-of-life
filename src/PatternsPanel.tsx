@@ -23,6 +23,7 @@ import SimkinGliderGun from './Patterns/SimkinGliderGun.json';
 import Infinity1 from './Patterns/Infinity1.json';
 import Infinity2 from './Patterns/Infinity2.json';
 import Infinity3 from './Patterns/Infinity3.json';
+import x66 from './Patterns/x66.json';
 
 export interface Pattern {
     name: string;
@@ -51,6 +52,7 @@ const spaceshipsPatterns = [
     LWSS,
     MWSS,
     HWSS,
+    x66,
 ] as Pattern[];
 
 const methuselahPatterns = [

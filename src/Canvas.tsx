@@ -56,6 +56,7 @@ export class Canvas extends Component<CanvasProps> {
         if (playState === PlayState.Editing && !isEmpty(addedCells)) {
             // Clicked cell when editing
             lifeMap.toggleCells(addedCells);
+            console.log(JSON.stringify(Array.from(lifeMap.cells.values())));
             setCellsCount(lifeMap.cells.size);
             this.renderCells();
         }
