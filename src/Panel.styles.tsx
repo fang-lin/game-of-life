@@ -4,10 +4,12 @@ import {ReactComponent as Rabbit} from './images/rabbit.svg';
 import {ReactComponent as Snail} from './images/snail.svg';
 import {ReactComponent as ZoomIn} from './images/zoom-in.svg';
 import {ReactComponent as ZoomOut} from './images/zoom-out.svg';
-import {Theme} from './Theme';
+import {CGBlue, Theme} from './Theme';
 
 // https://coolors.co/d9ed92-b5e48c-99d98c-76c893-52b69a-34a0a4-168aad-1a759f-1e6091-184e77
 // https://coolors.co/f94144-f3722c-f8961e-f9844a-f9c74f-90be6d-43aa8b-4d908e-577590-277da1
+
+const defaultTheme = CGBlue;
 
 export const PanelWrapper = styled.div`
   display: flex;
@@ -18,9 +20,9 @@ export const PanelWrapper = styled.div`
   padding: 0 0 6px 0;
 `;
 
-export const Button = styled.button<{ height?: string; width?: string, pressed?: boolean, theme: Theme}>`
+export const Button = styled.button<{ height?: string; width?: string, pressed?: boolean, theme: Theme }>`
   border: medium none;
-  padding: 0;
+  padding: 0 0 6px 0;
   margin: 0;
   position: relative;
   cursor: pointer;
@@ -31,9 +33,9 @@ export const Button = styled.button<{ height?: string; width?: string, pressed?:
     font-family: 'Fira Sans', sans-serif;
     font-size: 14px;
     font-weight: 700;
-    background: linear-gradient(${({theme}) => theme.MainDark}, ${({theme}) => theme.MainLight});
+    background: linear-gradient(${({theme}) => theme.MainDark || defaultTheme.MainDark}, ${({theme}) => theme.MainLight || defaultTheme.MainLight});
     border: medium none;
-    box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark}, inset 0 0 7px 3px ${({theme}) => theme.MainLight};
+    box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark || defaultTheme.MainDark}, inset 0 0 7px 3px ${({theme}) => theme.MainLight || defaultTheme.MainLight};
     border-radius: 5px;
     cursor: pointer;
     color: white;
@@ -52,10 +54,10 @@ export const Button = styled.button<{ height?: string; width?: string, pressed?:
     position: absolute;
     height: 10px;
     right: 0;
-    bottom: -6px;
+    bottom: 0;
     left: 0;
-    background: ${({theme}) => theme.Main};
-    box-shadow: inset 0 0 3px 1px ${({theme}) => theme.MainDark};
+    background: ${({theme}) => theme.Main || defaultTheme.Main};
+    box-shadow: inset 0 0 3px 1px ${({theme}) => theme.MainDark || defaultTheme.MainDark};
     border-radius: 0 0 5px 5px;
   }
 
@@ -75,7 +77,7 @@ export const Button = styled.button<{ height?: string; width?: string, pressed?:
 
   &:not([disabled]):hover {
     span {
-      box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark}, inset 0 0 1px 2px white, inset 0 0 15px 5px ${({theme}) => theme.MainLight};
+      box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark || defaultTheme.MainDark}, inset 0 0 1px 2px white, inset 0 0 15px 5px ${({theme}) => theme.MainLight || defaultTheme.MainLight};
     }
   }
 
@@ -92,13 +94,15 @@ export const Button = styled.button<{ height?: string; width?: string, pressed?:
 
 export const Tag = styled.div<{ height?: string; width?: string, theme: Theme }>`
   position: relative;
+  padding: 0 0 6px 0;
+  
   span {
     font-family: 'Fira Sans', sans-serif;
     font-size: 14px;
     font-weight: 700;
-    background: linear-gradient(${({theme}) => theme.MainDark}, ${({theme}) => theme.MainLight});
+    background: linear-gradient(${({theme}) => theme.MainDark || defaultTheme.MainDark}, ${({theme}) => theme.MainLight || defaultTheme.MainLight});
     border: medium none;
-    box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark}, inset 0 0 7px 3px ${({theme}) => theme.MainLight};
+    box-shadow: inset 0 0 0 1px ${({theme}) => theme.MainDark || defaultTheme.MainDark}, inset 0 0 7px 3px ${({theme}) => theme.MainLight || defaultTheme.MainLight};
     border-radius: 5px;
     cursor: pointer;
     color: white;
@@ -117,10 +121,10 @@ export const Tag = styled.div<{ height?: string; width?: string, theme: Theme }>
     position: absolute;
     height: 10px;
     right: 0;
-    bottom: -6px;
+    bottom: 0;
     left: 0;
-    background: ${({theme}) => theme.Main};
-    box-shadow: inset 0 0 3px 1px ${({theme}) => theme.MainDark};
+    background: ${({theme}) => theme.Main || defaultTheme.Main};
+    box-shadow: inset 0 0 3px 1px ${({theme}) => theme.MainDark || defaultTheme.MainDark};
     border-radius: 0 0 5px 5px;
   }
 `;

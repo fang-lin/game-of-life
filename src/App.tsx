@@ -20,7 +20,7 @@ import Dashboard from './Dashboard';
 import Footer from './Footer';
 import Header from './Header';
 import {Stage} from './Stage';
-import isEmpty from 'lodash/isEmpty';
+import {Pattern} from './PatternsPanel';
 
 interface AppState {
     size: [number, number];
@@ -28,7 +28,7 @@ interface AppState {
     frameIndex: number;
     addedCells: Coordinate[];
     hoveringCell: Coordinate | null;
-    selectedCells: Coordinate[];
+    selectedPattern: Pattern | null;
     cellsCount: number;
     client: Coordinate;
     origin: Coordinate;
@@ -47,7 +47,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             playState: PlayState.Editing,
             addedCells: [],
             hoveringCell: null,
-            selectedCells: [],
+            selectedPattern: null,
             cellsCount: 0,
             client: [0, 0],
             origin: parseParams(this.props.match.params).origin,
@@ -62,7 +62,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
 
     setPlayState = (playState: PlayState) => this.setState({playState});
     setFrameIndex = (op: (index: number) => number) => this.setState({frameIndex: op(this.state.frameIndex)});
-    setSelectedCells = (selectedCells: Coordinate[], cb?: () => void) => this.setState({selectedCells}, cb);
+    setSelectedPattern = (selectedPattern: Pattern | null, cb?: () => void) => this.setState({selectedPattern}, cb);
     setCellsCount = (cellsCount: number) => this.setState({cellsCount});
 
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
@@ -90,11 +90,15 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     onKeydown = (event: Event) => {
         const {key} = event as unknown as KeyboardEvent;
         if (key === 'Escape') {
-            this.setState({selectedCells: []});
-        } else if (key === 'ArrowLeft') {
-            this.setState({selectedCells: rotateCells(this.state.selectedCells, false)});
-        } else if (key === 'ArrowRight') {
-            this.setState({selectedCells: rotateCells(this.state.selectedCells, true)});
+            this.setState({selectedPattern: null});
+        }
+        if (this.state.selectedPattern) {
+            const {name, cells} = this.state.selectedPattern;
+            if (key === 'ArrowLeft') {
+                this.setState({selectedPattern: {name, cells: rotateCells(cells, false)}});
+            } else if (key === 'ArrowRight') {
+                this.setState({selectedPattern: {name, cells: rotateCells(cells, true)}});
+            }
         }
     };
 
@@ -115,17 +119,17 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         const currentClient = getClient(event as DragEvent);
         const instantaneousOffset = this.getInstantaneousOffset(currentClient);
         if (!this.shouldDragCanvas(instantaneousOffset)) {
-            const {playState, selectedCells} = this.state;
+            const {playState, selectedPattern} = this.state;
             const cell: Coordinate = this.clientToCell(currentClient);
             if (playState === PlayState.Editing) {
-                if (isEmpty(selectedCells)) {
+                if (selectedPattern === null) {
                     this.setState({
                         addedCells: [cell],
                         hoveringCell: cell,
                     }, () => this.setState({addedCells: []}));
                 } else {
                     this.setState({
-                        addedCells: selectedCells.map(s => [s[0] + cell[0], s[1] + cell[1]]),
+                        addedCells: selectedPattern.cells.map(s => [s[0] + cell[0], s[1] + cell[1]]),
                         hoveringCell: cell,
                     }, () => this.setState({addedCells: []}));
                 }
@@ -183,7 +187,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             cellsCount,
             origin,
             dragState,
-            selectedCells,
+            selectedPattern,
             addedCells,
         } = this.state;
 
@@ -192,7 +196,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             setFrameIndex,
             setPlayState,
             setCellsCount,
-            setSelectedCells,
+            setSelectedPattern,
         } = this;
 
         const params = parseParams(this.props.match.params);
@@ -207,13 +211,13 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                     playState,
                     addedCells,
                     hoveringCell,
-                    selectedCells,
+                    selectedPattern,
                     frameIndex,
                     params,
                     origin,
                 }}/>
                 <Header/>
-                <Dashboard {...{frameIndex, cellsCount, params, hoveringCell, setSelectedCells}}/>
+                <Dashboard {...{frameIndex, cellsCount, params, hoveringCell, setSelectedPattern, selectedPattern}}/>
                 <BottomSection>
                     <Footer/>
                     <Panel {...{playState, pushToHistory, params, setPlayState}}/>

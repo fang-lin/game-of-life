@@ -1,6 +1,6 @@
 import React, {MouseEvent} from 'react';
 import {Coordinate} from './Canvas';
-import {PatternsPanelWrapper} from './PatternsPanel.styles';
+import {PatternsPanelWrapper, SmallButton} from './PatternsPanel.styles';
 import Block from './Patterns/Block.json';
 import BeeHive from './Patterns/BeeHive.json';
 import Loaf from './Patterns/Loaf.json';
@@ -24,7 +24,7 @@ import Infinity1 from './Patterns/Infinity1.json';
 import Infinity2 from './Patterns/Infinity2.json';
 import Infinity3 from './Patterns/Infinity3.json';
 
-interface Pattern {
+export interface Pattern {
     name: string;
     cells: Coordinate[];
 }
@@ -71,52 +71,43 @@ const infinityPatterns = [
 ] as Pattern[];
 
 interface PatternsPanelProps {
-    setSelectedCells: (cells: Coordinate[], cb?: () => void) => void;
+    selectedPattern: Pattern | null;
+    setSelectedPattern: (pattern: Pattern | null, cb?: () => void) => void;
 }
 
-function PatternsPanel({setSelectedCells}: PatternsPanelProps) {
+interface ButtonGroupProps {
+    patterns: Pattern[];
+    selectedPattern: Pattern | null;
+    onClickButton: (pattern: Pattern) => (event: MouseEvent<HTMLButtonElement>) => void;
+}
 
-    const onClickButton = (cells: Coordinate[]) => (event: MouseEvent<HTMLButtonElement>) => {
+function ButtonGroup({patterns, onClickButton, selectedPattern}: ButtonGroupProps) {
+    return <div>
+        {
+            patterns.map((pattern) => <SmallButton
+                pressed={selectedPattern?.name === pattern.name}
+                onClick={onClickButton(pattern)}
+                key={pattern.name}><span>{pattern.name}</span></SmallButton>)
+        }
+    </div>;
+}
+
+function PatternsPanel({setSelectedPattern, selectedPattern}: PatternsPanelProps) {
+
+    const onClickButton = (pattern: Pattern) => (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        setSelectedCells(cells);
+        setSelectedPattern(pattern.name === selectedPattern?.name ? null : pattern);
     };
 
+    const props = {onClickButton, selectedPattern};
+
     return <PatternsPanelWrapper>
-        {
-            stillLifePatterns.map(({name, cells}) => <button
-                onClick={onClickButton(cells)}
-                key={name}><span>{name}</span></button>)
-        }
-        <br/>
-        {
-            oscillatorsPatterns.map(({name, cells}) => <button
-                onClick={onClickButton(cells)}
-                key={name}><span>{name}</span></button>)
-        }
-        <br/>
-        {
-            spaceshipsPatterns.map(({name, cells}) => <button
-                onClick={onClickButton(cells)}
-                key={name}><span>{name}</span></button>)
-        }
-        <br/>
-        {
-            methuselahPatterns.map(({name, cells}) => <button
-                onClick={onClickButton(cells)}
-                key={name}><span>{name}</span></button>)
-        }
-        <br/>
-        {
-            gliderGunPatterns.map(({name, cells}) => <button
-                onClick={onClickButton(cells)}
-                key={name}><span>{name}</span></button>)
-        }
-        <br/>
-        {
-            infinityPatterns.map(({name, cells}) => <button
-                onClick={onClickButton(cells)}
-                key={name}><span>{name}</span></button>)
-        }
+        <ButtonGroup {...props} patterns={stillLifePatterns}/>
+        <ButtonGroup {...props} patterns={oscillatorsPatterns}/>
+        <ButtonGroup {...props} patterns={spaceshipsPatterns}/>
+        <ButtonGroup {...props} patterns={methuselahPatterns}/>
+        <ButtonGroup {...props} patterns={gliderGunPatterns}/>
+        <ButtonGroup {...props} patterns={infinityPatterns}/>
     </PatternsPanelWrapper>;
 }
 

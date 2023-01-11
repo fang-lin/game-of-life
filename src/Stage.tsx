@@ -3,6 +3,7 @@ import Canvas, {Coordinate} from './Canvas';
 import MaskCanvas from './MaskCanvas';
 import {StageWrapper} from './Stage.styles';
 import {Attributes, isTouchscreenDevices, ParsedParams, pixelRatio, PlayState} from './App.functions';
+import {Pattern} from './PatternsPanel';
 
 interface StageProps {
     size: [number, number];
@@ -11,7 +12,7 @@ interface StageProps {
     frameIndex: number;
     setFrameIndex: (op: (index: number) => number) => void;
     hoveringCell: Coordinate | null;
-    selectedCells: Coordinate[];
+    selectedPattern: Pattern | null;
     addedCells: Coordinate[];
     origin: Coordinate;
     params: ParsedParams;
@@ -31,7 +32,7 @@ export const Stage: FunctionComponent<StageProps> = (props) => {
         params,
         origin,
         addedCells,
-        selectedCells
+        selectedPattern
     } = props;
 
     const attributes: Attributes = {
@@ -53,6 +54,6 @@ export const Stage: FunctionComponent<StageProps> = (props) => {
             origin,
         }}/>
         {isTouchscreenDevices ||
-        <MaskCanvas {...{size, playState, hoveringCell, params, attributes, origin, selectedCells}} />}
+        <MaskCanvas {...{size, playState, hoveringCell, params, attributes, origin, selectedPattern}} />}
     </StageWrapper>;
 };

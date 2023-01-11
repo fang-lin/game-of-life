@@ -2,23 +2,24 @@ import React from 'react';
 import {DashboardWrapper} from './Dashboard.styles';
 import {ParsedParams} from './App.functions';
 import {Coordinate} from './Canvas';
-import PatternsPanel from './PatternsPanel';
+import PatternsPanel, {Pattern} from './PatternsPanel';
 
 interface DashboardProps {
     frameIndex: number;
     cellsCount: number;
     hoveringCell: Coordinate | null;
-    setSelectedCells: (cells: Coordinate[], cb?: () => void) => void;
+    setSelectedPattern: (pattern: Pattern | null, cb?: () => void) => void;
+    selectedPattern: Pattern | null;
     params: ParsedParams;
 }
 
-function Dashboard({frameIndex, cellsCount, params: {speed, scale}, hoveringCell, setSelectedCells}: DashboardProps) {
+function Dashboard({frameIndex, cellsCount, params: {speed, scale}, hoveringCell, setSelectedPattern, selectedPattern}: DashboardProps) {
 
     return <DashboardWrapper>
         <p>Frame:{frameIndex} Cells:{cellsCount}</p>
         <p>Speed:{speed} Size:{scale}</p>
         <p>{hoveringCell ? `X:${hoveringCell[0]} Y:${hoveringCell[1]}` : 'X:-,Y:-'}</p>
-        <PatternsPanel {...{setSelectedCells}}/>
+        <PatternsPanel {...{setSelectedPattern, selectedPattern}}/>
     </DashboardWrapper>;
 }
 
