@@ -1,6 +1,6 @@
 import React, {MouseEvent} from 'react';
 import {Coordinate} from '../Canvas/Canvas';
-import {PatternsPanelWrapper, SmallButton} from './PatternsPanel.styles';
+import {PatternsPanelWrapper, ButtonRow, SmallButton} from './PatternsPanel.styles';
 import Block from '../Patterns/Block.json';
 import BeeHive from '../Patterns/BeeHive.json';
 import Loaf from '../Patterns/Loaf.json';
@@ -83,15 +83,15 @@ interface ButtonGroupProps {
     onClickButton: (pattern: Pattern) => (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-function ButtonGroup({patterns, onClickButton, selectedPattern}: ButtonGroupProps) {
-    return <div>
+function Row({patterns, onClickButton, selectedPattern}: ButtonGroupProps) {
+    return <ButtonRow>
         {
             patterns.map((pattern) => <SmallButton
                 pressed={selectedPattern?.name === pattern.name}
                 onClick={onClickButton(pattern)}
                 key={pattern.name}><span>{pattern.name}</span></SmallButton>)
         }
-    </div>;
+    </ButtonRow>;
 }
 
 function PatternsPanel({setSelectedPattern, selectedPattern}: PatternsPanelProps) {
@@ -104,12 +104,12 @@ function PatternsPanel({setSelectedPattern, selectedPattern}: PatternsPanelProps
     const props = {onClickButton, selectedPattern};
 
     return <PatternsPanelWrapper>
-        <ButtonGroup {...props} patterns={stillLifePatterns}/>
-        <ButtonGroup {...props} patterns={oscillatorsPatterns}/>
-        <ButtonGroup {...props} patterns={spaceshipsPatterns}/>
-        <ButtonGroup {...props} patterns={methuselahPatterns}/>
-        <ButtonGroup {...props} patterns={gliderGunPatterns}/>
-        <ButtonGroup {...props} patterns={infinityPatterns}/>
+        <Row {...props} patterns={stillLifePatterns}/>
+        <Row {...props} patterns={oscillatorsPatterns}/>
+        <Row {...props} patterns={spaceshipsPatterns}/>
+        <Row {...props} patterns={methuselahPatterns}/>
+        <Row {...props} patterns={gliderGunPatterns}/>
+        <Row {...props} patterns={infinityPatterns}/>
     </PatternsPanelWrapper>;
 }
 

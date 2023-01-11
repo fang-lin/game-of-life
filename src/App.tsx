@@ -29,6 +29,7 @@ interface AppState {
     addedCells: Coordinate[];
     hoveringCell: Coordinate | null;
     selectedPattern: Pattern | null;
+    showPatternPanel: boolean;
     cellsCount: number;
     client: Coordinate;
     origin: Coordinate;
@@ -48,6 +49,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             addedCells: [],
             hoveringCell: null,
             selectedPattern: null,
+            showPatternPanel: false,
             cellsCount: 0,
             client: [0, 0],
             origin: parseParams(this.props.match.params).origin,
@@ -64,6 +66,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     setFrameIndex = (op: (index: number) => number) => this.setState({frameIndex: op(this.state.frameIndex)});
     setSelectedPattern = (selectedPattern: Pattern | null, cb?: () => void) => this.setState({selectedPattern}, cb);
     setCellsCount = (cellsCount: number) => this.setState({cellsCount});
+    togglePatternPanel = (showPatternPanel: boolean) => this.setState({showPatternPanel});
 
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
         const {history: {push}, match: {params}} = this.props;
@@ -188,6 +191,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             origin,
             dragState,
             selectedPattern,
+            showPatternPanel,
             addedCells,
         } = this.state;
 
@@ -197,6 +201,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             setPlayState,
             setCellsCount,
             setSelectedPattern,
+            togglePatternPanel,
         } = this;
 
         const params = parseParams(this.props.match.params);
@@ -217,10 +222,10 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                     origin,
                 }}/>
                 <Header/>
-                <Dashboard {...{frameIndex, cellsCount, params, hoveringCell, setSelectedPattern, selectedPattern}}/>
+                <Dashboard {...{frameIndex, cellsCount, params, hoveringCell}}/>
                 <BottomSection>
                     <Footer/>
-                    <Panel {...{playState, pushToHistory, params, setPlayState}}/>
+                    <Panel {...{playState, pushToHistory, params, setPlayState, showPatternPanel, togglePatternPanel, setSelectedPattern, selectedPattern}}/>
                 </BottomSection>
             </AppWrapper>
         );

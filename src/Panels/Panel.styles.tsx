@@ -13,11 +13,14 @@ const defaultTheme = CGBlue;
 
 export const PanelWrapper = styled.div`
   display: flex;
-  row-gap: 13px;
-  column-gap: 8px;
+  gap: 8px;
   flex-wrap: wrap-reverse;
   justify-content: flex-end;
   padding: 0 0 6px 0;
+`;
+
+export const ButtonWrapper = styled.div`
+  position: relative;
 `;
 
 export const Button = styled.button<{ height?: string; width?: string, pressed?: boolean, theme: Theme }>`
@@ -95,7 +98,7 @@ export const Button = styled.button<{ height?: string; width?: string, pressed?:
 export const Tag = styled.div<{ height?: string; width?: string, theme: Theme }>`
   position: relative;
   padding: 0 0 6px 0;
-  
+
   span {
     font-family: 'Fira Sans', sans-serif;
     font-size: 14px;

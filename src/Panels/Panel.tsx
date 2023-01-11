@@ -7,18 +7,33 @@ import {
     Button,
     FasterIcon,
     SlowerIcon,
+    ButtonWrapper
 } from './Panel.styles';
 import {Scale, ParsedParams, Speed, PlayState, GridTypes} from '../App.functions';
 import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from '../Theme';
+import PatternsPanel, {Pattern} from './PatternsPanel';
 
 interface PanelProps {
     playState: PlayState,
     pushToHistory: (parsedParams: Partial<ParsedParams>) => void;
     setPlayState: (playState: PlayState, cb?: () => void) => void;
+    showPatternPanel: boolean;
+    togglePatternPanel: (showPatternPanel: boolean) => void;
     params: ParsedParams;
+    selectedPattern: Pattern | null;
+    setSelectedPattern: (pattern: Pattern | null, cb?: () => void) => void;
 }
 
-function Panel({playState, pushToHistory, params: {scale, gridType, speed}, setPlayState}: PanelProps) {
+function Panel({
+    playState,
+    pushToHistory,
+    params: {scale, gridType, speed},
+    setPlayState,
+    showPatternPanel,
+    togglePatternPanel,
+    selectedPattern,
+    setSelectedPattern
+}: PanelProps) {
     const onClickPlay = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         setPlayState(PlayState.Playing);
@@ -52,6 +67,10 @@ function Panel({playState, pushToHistory, params: {scale, gridType, speed}, setP
         event.stopPropagation();
         pushToHistory({speed: speed + offset});
     };
+    const onClickAdd = (event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        togglePatternPanel(!showPatternPanel);
+    };
     return (<PanelWrapper>
         {
             (playState === PlayState.Paused || playState === PlayState.Editing) &&
@@ -80,6 +99,13 @@ function Panel({playState, pushToHistory, params: {scale, gridType, speed}, setP
             <Button width="36px" onClick={onClickSlowerFaster(1)} disabled={speed === Speed.Max} theme={CGBlue}
                 title="Faster"><span><FasterIcon/></span></Button>
         </ButtonGroup>
+        <ButtonWrapper>
+            <Button width="36px" onClick={onClickAdd}
+                pressed={showPatternPanel}
+                theme={CGBlue}><span>Add</span></Button>
+            {showPatternPanel && <PatternsPanel {...{setSelectedPattern, selectedPattern}}/>}
+        </ButtonWrapper>
+
     </PanelWrapper>);
 }
 
