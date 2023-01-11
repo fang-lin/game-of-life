@@ -7,7 +7,7 @@ import {
     Button,
     FasterIcon,
     SlowerIcon,
-    ButtonWrapper
+    ButtonWrapper, GliderIcon
 } from './Panel.styles';
 import {Scale, ParsedParams, Speed, PlayState, GridTypes} from '../App.functions';
 import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from '../Theme';
@@ -102,7 +102,7 @@ function Panel({
         <ButtonWrapper>
             <Button width="36px" onClick={onClickAdd}
                 pressed={showPatternPanel}
-                theme={CGBlue}><span>Add</span></Button>
+                theme={selectedPattern ? BottleGreen : CGBlue}><span><GliderIcon/></span></Button>
             {showPatternPanel && <PatternsPanel {...{setSelectedPattern, selectedPattern}}/>}
         </ButtonWrapper>
 

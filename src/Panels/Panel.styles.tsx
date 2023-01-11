@@ -4,6 +4,7 @@ import {ReactComponent as Rabbit} from '../images/rabbit.svg';
 import {ReactComponent as Snail} from '../images/snail.svg';
 import {ReactComponent as ZoomIn} from '../images/zoom-in.svg';
 import {ReactComponent as ZoomOut} from '../images/zoom-out.svg';
+import {ReactComponent as Glider} from '../images/glider.svg';
 import {CGBlue, Theme} from '../Theme';
 
 // https://coolors.co/d9ed92-b5e48c-99d98c-76c893-52b69a-34a0a4-168aad-1a759f-1e6091-184e77
@@ -183,3 +184,4 @@ export const ZoomInIcon = Icon(ZoomIn);
 export const ZoomOutIcon = Icon(ZoomOut);
 export const FasterIcon = Icon(Rabbit);
 export const SlowerIcon = Icon(Snail);
+export const GliderIcon = Icon(Glider);
