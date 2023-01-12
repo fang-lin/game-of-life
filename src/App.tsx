@@ -206,8 +206,8 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
 
         this.setCells = setCellsHook;
         this.createSharedLink = () => {
-            pushToHistory({cells: getCellsHook()});
-            navigator.clipboard.writeText(window.location.href).then(r => {
+            const path = combinePathToURL(stringifyParams({...parseParams(this.props.match.params), ...{cells: getCellsHook()}}));
+            navigator.clipboard.writeText(`${window.location.origin}/#${path}`).then(r => {
                 alert('Copied the shared link to clipboard');
             });
         };
