@@ -1,9 +1,10 @@
-import React, {Component, RefObject, KeyboardEvent} from 'react';
+import React, {Component, KeyboardEvent, RefObject} from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
-import {Coordinate} from './Canvas/Canvas';
+import Canvas, {Coordinate, LifeMapHooks} from './Canvas/Canvas';
 import {RouteComponentProps} from 'react-router-dom';
 import Panel from './Panels/Panel';
 import {
+    Attributes,
     combinePathToURL,
     DragEvent,
     DragEvents,
@@ -13,49 +14,55 @@ import {
     OriginalParams,
     ParsedParams,
     parseParams,
-    PlayState, rotateCells,
+    pixelRatio,
+    PlayState,
+    rotateCells,
     stringifyParams
 } from './App.functions';
 import Dashboard from './Dashboard';
 import Footer from './Footer';
 import Header from './Header';
-import {Stage} from './Canvas/Stage';
 import {Pattern} from './Panels/PatternsPanel';
 
 interface AppState {
     size: [number, number];
     playState: PlayState;
-    frameIndex: number;
-    addedCells: Coordinate[];
+    evolutionIndex: number;
     hoveringCell: Coordinate | null;
     selectedPattern: Pattern | null;
     showPatternPanel: boolean;
     cellsCount: number;
-    client: Coordinate;
     origin: Coordinate;
     dragState: DragState;
 }
 
 export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
-    private readonly appRef: RefObject<HTMLDivElement>;
     private getCells?: () => Coordinate[];
+    private edit?: () => void;
+    private getCellsHook?: () => Coordinate[];
+    private next?: () => void;
+    private pause?: () => void;
+    private play?: () => void;
+    private reset?: () => void;
+    private setCells?: (addedCells: Coordinate[]) => void;
+    private rendering?: (cells: Coordinate[]) => void;
+    private readonly appRef: RefObject<HTMLDivElement>;
+    private client: Coordinate = [NaN, NaN];
 
     constructor(props: RouteComponentProps<OriginalParams>) {
         super(props);
         this.appRef = React.createRef();
         const {origin} = parseParams(this.props.match.params);
         this.state = {
-            frameIndex: 0,
+            evolutionIndex: 0,
             size: [0, 0],
             playState: PlayState.Editing,
-            addedCells: [],
             hoveringCell: null,
             selectedPattern: null,
             showPatternPanel: false,
             cellsCount: 0,
-            client: [0, 0],
-            origin,
             dragState: DragState.end,
+            origin,
         };
     }
 
@@ -64,10 +71,8 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         this.setState({size: [width, height]});
     });
 
-    setPlayState = (playState: PlayState) => this.setState({playState});
-    setFrameIndex = (op: (index: number) => number) => this.setState({frameIndex: op(this.state.frameIndex)});
-    setSelectedPattern = (selectedPattern: Pattern | null, cb?: () => void) => this.setState({selectedPattern}, cb);
-    setCellsCount = (cellsCount: number) => this.setState({cellsCount});
+    setSelectedPattern = (selectedPattern: Pattern | null) => this.setState({selectedPattern});
+
     togglePatternPanel = (showPatternPanel: boolean) => this.setState({showPatternPanel});
 
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
@@ -75,11 +80,11 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         push(combinePathToURL(stringifyParams({...parseParams(params), ...parsedParams})));
     };
 
-
     setCellsFromParams = () => {
         const {cells} = parseParams(this.props.match.params);
-        if (cells) {
-            this.setState({addedCells: cells}, () => this.setState({addedCells: []}));
+        if (cells && this.setCells) {
+            this.setCells(cells);
+            this.setState({cellsCount: cells.length});
         }
     };
 
@@ -103,61 +108,30 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
 
     onKeydown = (event: Event) => {
         const {key} = event as unknown as KeyboardEvent;
-        if (key === 'Escape') {
+        switch (key) {
+        case 'Escape':
             this.setState({selectedPattern: null});
+            break;
+        case 'ArrowLeft':
+            this.rotateHoveringCells(false);
+            break;
+        case 'ArrowRight':
+            this.rotateHoveringCells(true);
+            break;
         }
-        if (this.state.selectedPattern) {
-            const {name, cells} = this.state.selectedPattern;
-            if (key === 'ArrowLeft') {
-                this.setState({selectedPattern: {name, cells: rotateCells(cells, false)}});
-            } else if (key === 'ArrowRight') {
-                this.setState({selectedPattern: {name, cells: rotateCells(cells, true)}});
-            }
-        }
-    };
-
-    onMouseMove = (event: Event) => {
-        this.setState({hoveringCell: this.clientToCell(getClient(event as DragEvent))});
     };
 
     clientToCell = (currentClient: Coordinate): Coordinate => {
-        const {size, origin} = this.state;
-        const {scale} = parseParams(this.props.match.params);
+        const {size} = this.state;
+        const {scale, origin} = parseParams(this.props.match.params);
         return [
             Math.floor(origin[0] + (currentClient[0] - size[0] / 2) / scale),
             Math.floor(origin[1] + (currentClient[1] - size[1] / 2) / scale),
         ];
     }
 
-    onClickCell = (event: Event) => {
-        const currentClient = getClient(event as DragEvent);
-        const instantaneousOffset = this.getInstantaneousOffset(currentClient);
-        if (!this.shouldDragCanvas(instantaneousOffset)) {
-            const {playState, selectedPattern} = this.state;
-            const cell: Coordinate = this.clientToCell(currentClient);
-            if (playState === PlayState.Editing) {
-                if (selectedPattern === null) {
-                    this.setState({
-                        addedCells: [cell],
-                        hoveringCell: cell,
-                    }, () => this.setState({addedCells: []}));
-                } else {
-                    this.setState({
-                        addedCells: selectedPattern.cells.map(s => [s[0] + cell[0], s[1] + cell[1]]),
-                        hoveringCell: cell,
-                    }, () => this.setState({addedCells: []}));
-                }
-
-            } else {
-                this.setState({
-                    hoveringCell: cell,
-                });
-            }
-        }
-    };
-
     clientToOrigin = (currentClient: Coordinate): Coordinate => {
-        const {client} = this.state;
+        const {client} = this;
         const {origin, scale} = parseParams(this.props.match.params);
         return [
             origin[0] + (client[0] - currentClient[0]) / scale,
@@ -165,98 +139,201 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         ];
     }
 
+    onClickCell = (event: Event) => {
+        const currentClient = getClient(event as DragEvent);
+        const instantaneousOffset = this.getInstantaneousOffset(currentClient);
+        if (!this.shouldDragCanvas(instantaneousOffset)) {
+            const {playState} = this.state;
+            if (playState === PlayState.Editing) {
+                this.setCells && this.setCells(this.getHoveringCells(this.clientToCell(currentClient)));
+            }
+        }
+    };
+
+    onMouseMove = (event: Event) => {
+        if (this.rendering && this.state.dragState === DragState.end) {
+            this.setHoveringCell(event);
+            this.rendering(this.getHoveringCells(this.state.hoveringCell));
+        }
+    };
+
     onDragStart = (event: Event): void => {
-        this.setState({
-            client: getClient(event as DragEvent),
-            dragState: DragState.start
-        });
+        this.setState({dragState: DragState.start});
+        this.setHoveringCell(event);
+        this.client = getClient(event as DragEvent);
         window.addEventListener(DragEvents[DragState.moving], this.onDragging);
         window.addEventListener(DragEvents[DragState.end], this.onDragEnd);
     };
 
     onDragging = (event: Event): void => {
-        this.setState({
-            origin: this.clientToOrigin(getClient(event as DragEvent)),
-            dragState: DragState.moving
-        });
+        if (this.rendering) {
+            this.setState({
+                dragState: DragState.moving,
+                origin: this.clientToOrigin(getClient(event as DragEvent)),
+            }, () => {
+                this.rendering && this.rendering(this.getHoveringCells(this.state.hoveringCell));
+            });
+        }
     };
 
     onDragEnd = (event: Event): void => {
-        const origin = this.clientToOrigin(getClient(event as DragEvent));
-        this.pushToHistory({origin});
-        this.setState({
-            dragState: DragState.end,
-            origin,
-        });
+        if (this.rendering) {
+            const origin = this.clientToOrigin(getClient(event as DragEvent));
+            this.setHoveringCell(event);
+            this.rendering(this.getHoveringCells(this.state.hoveringCell));
+            this.setState({
+                dragState: DragState.end,
+                origin,
+            });
+            this.pushToHistory({origin});
+        }
         window.removeEventListener(DragEvents[DragState.moving], this.onDragging);
         window.removeEventListener(DragEvents[DragState.end], this.onDragEnd);
     };
 
-    getCellsHandler = (cb: () => Coordinate[]) => {
-        this.getCells = cb;
+    setLifeMapHooks = (hooks: () => LifeMapHooks) => {
+        const {pushToHistory} = this;
+        const {
+            getCellsHook,
+            setCellsHook,
+            editHook,
+            playHook,
+            pauseHook,
+            nextHook,
+            resetHook,
+            renderingHook,
+        } = hooks();
+
+        this.setCells = setCellsHook;
+        this.getCellsHook = getCellsHook;
+        this.rendering = renderingHook;
+        this.edit = () => {
+            editHook();
+            this.setState({playState: PlayState.Editing, evolutionIndex: 0});
+        };
+        this.next = nextHook;
+        this.pause = () => {
+            this.setState({playState: PlayState.Paused});
+            pauseHook();
+        };
+
+        this.reset = () => {
+            const {cells} = parseParams(this.props.match.params);
+            pushToHistory({origin: [0, 0]});
+            this.setState({
+                cellsCount: cells.length,
+                hoveringCell: null,
+                playState: PlayState.Editing,
+                origin: [0, 0],
+            }, () => resetHook(cells));
+        };
+
+        this.play = () => {
+            this.setState({playState: PlayState.Playing});
+            playHook();
+        };
+    }
+
+    onEvolve = (cells: Coordinate[]) => {
+        this.setState(({evolutionIndex}) => ({
+            cellsCount: cells.length,
+            evolutionIndex: evolutionIndex + 1
+        }));
     }
 
     render() {
         const {
             size,
             playState,
-            frameIndex,
+            evolutionIndex,
             hoveringCell,
             cellsCount,
             origin,
             dragState,
             selectedPattern,
             showPatternPanel,
-            addedCells,
         } = this.state;
 
         const {
             pushToHistory,
-            setFrameIndex,
-            setPlayState,
-            setCellsCount,
             setSelectedPattern,
             togglePatternPanel,
-            getCellsHandler,
             getCells,
+            setLifeMapHooks,
+            reset,
+            next,
+            pause,
+            play,
+            edit,
+            onEvolve,
         } = this;
 
         const params = parseParams(this.props.match.params);
 
+        const attributes: Attributes = {
+            width: size[0] * pixelRatio,
+            height: size[1] * pixelRatio
+        };
+
         return (
             <AppWrapper ref={this.appRef} {...{playState, dragState}}>
-                <Stage {...{
-                    setFrameIndex,
-                    setPlayState,
-                    setCellsCount,
+                <Canvas {...{
                     size,
                     playState,
-                    addedCells,
-                    hoveringCell,
-                    selectedPattern,
-                    frameIndex,
                     params,
+                    attributes,
                     origin,
-                    getCellsHandler,
+                    setLifeMapHooks,
+                    onEvolve,
                 }}/>
                 <Header/>
-                <Dashboard {...{frameIndex, cellsCount, params, hoveringCell}}/>
+                <Dashboard {...{evolutionIndex, cellsCount, params, hoveringCell}}/>
                 <BottomSection>
                     <Footer/>
-                    <Panel {...{
+                    {reset && next && pause && play && edit && <Panel {...{
                         playState,
                         pushToHistory,
                         params,
-                        setPlayState,
                         showPatternPanel,
                         togglePatternPanel,
                         setSelectedPattern,
                         selectedPattern,
-                        getCells
-                    }}/>
+                        getCells,
+                        reset,
+                        next,
+                        pause,
+                        play,
+                        edit,
+                    }}/>}
                 </BottomSection>
             </AppWrapper>
         );
+    }
+
+    private rotateHoveringCells = (clockwise = true) => {
+        if (this.state.selectedPattern) {
+            const {name, cells} = this.state.selectedPattern;
+            this.setState({
+                selectedPattern: {
+                    name,
+                    cells: rotateCells(cells, clockwise)
+                }
+            }, () => this.rendering && this.rendering(this.getHoveringCells(this.state.hoveringCell)));
+        }
+    }
+
+    private setHoveringCell = (event: Event) => {
+        this.setState({
+            hoveringCell: this.state.playState === PlayState.Editing ? this.clientToCell(getClient(event as DragEvent)) : null
+        });
+    };
+
+    private getHoveringCells(cell: Coordinate | null): Coordinate[] {
+        const {selectedPattern} = this.state;
+        if (cell) {
+            return selectedPattern ? selectedPattern.cells.map(s => [s[0] + cell[0], s[1] + cell[1]]) : [cell];
+        }
+        return [];
     }
 
     private shouldDragCanvas(instantaneousOffset: Coordinate): boolean {
@@ -265,7 +342,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     private getInstantaneousOffset(instantaneousClient: Coordinate): Coordinate {
-        const {state: {client}} = this;
+        const {client} = this;
         return [
             instantaneousClient[0] - client[0],
             instantaneousClient[1] - client[1],

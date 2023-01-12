@@ -76,7 +76,7 @@ const infinityPatterns = [
 
 interface PatternsPanelProps {
     selectedPattern: Pattern | null;
-    setSelectedPattern: (pattern: Pattern | null, cb?: () => void) => void;
+    setSelectedPattern: (pattern: Pattern | null) => void;
     togglePatternPanel: (showPatternPanel: boolean) => void;
 }
 

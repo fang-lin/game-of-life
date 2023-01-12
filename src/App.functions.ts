@@ -32,7 +32,8 @@ export const defaultParams: ParsedParams = {
     scale: Scale.Default,
     gridType: GridTypes[0],
     speed: Speed.Default,
-    origin: [0, 0]
+    origin: [0, 0],
+    cells: [],
 };
 
 export interface ParsedParams {
@@ -40,7 +41,7 @@ export interface ParsedParams {
     gridType: GridType;
     speed: number;
     origin: Coordinate;
-    cells?: Coordinate[];
+    cells: Coordinate[];
 }
 
 export type OriginalParams = {
@@ -61,8 +62,6 @@ export enum DragState {
 }
 
 export enum PlayState {
-    Reset = 'reset',
-    Next = 'next',
     Editing = 'editing',
     Playing = 'playing',
     Paused = 'paused',
@@ -100,7 +99,7 @@ export function parseParams({scale, gridType, speed, originX, originY, cells}: O
         gridType: parseGridType(gridType),
         speed: parseString(speed, Speed),
         origin: [parseFloat(originX), parseFloat(originY)],
-        cells: cells === '-' ? undefined : JSON.parse(cells.replaceAll('][', '],[')),
+        cells: cells === '-' ? [] : JSON.parse(cells.replaceAll('][', '],[')),
     };
 }
 

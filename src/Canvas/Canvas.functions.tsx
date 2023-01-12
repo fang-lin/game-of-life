@@ -48,6 +48,13 @@ export function drawCell(canvasRef: RefObject<HTMLCanvasElement>, color: string,
     }
 }
 
+export function wipe(canvasRef: RefObject<HTMLCanvasElement>, size: Size) {
+    const context = canvasRef.current?.getContext('2d');
+    if (context) {
+        context.clearRect(0, 0, size[0] * pixelRatio, size[1] * pixelRatio);
+    }
+}
+
 export function drawCells(canvasRef: RefObject<HTMLCanvasElement>, color: string, cells: CellsMap | Coordinate[], scale: number, size: Size, origin: Coordinate, gridType: GridType) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
@@ -56,19 +63,13 @@ export function drawCells(canvasRef: RefObject<HTMLCanvasElement>, color: string
     }
 }
 
-export function wipe(canvasRef: RefObject<HTMLCanvasElement>, size: Size) {
-    const context = canvasRef.current?.getContext('2d');
-    if (context) {
-        context.clearRect(0, 0, size[0] * pixelRatio, size[1] * pixelRatio);
-    }
-}
-
-export function draw(canvasRef: RefObject<HTMLCanvasElement>, color: string, size: Size, cells: CellsMap, scale: number, gridType: GridType, origin: Coordinate = [0, 0]) {
+export function draw(canvasRef: RefObject<HTMLCanvasElement>, size: Size, cells: CellsMap, cellsColor: string, hoveringCells: Coordinate[], hoveringCellsColor: string, scale: number, gridType: GridType, origin: Coordinate = [0, 0]) {
     wipe(canvasRef, size);
     if (gridType === GridTypes[0]) {
         drawGrid(canvasRef, size, scale, origin);
     }
-    drawCells(canvasRef, color, cells, scale, size, origin, gridType);
+    drawCells(canvasRef, cellsColor, cells, scale, size, origin, gridType);
+    drawCells(canvasRef, hoveringCellsColor, hoveringCells, scale, size, origin, gridType);
 }
 
 interface LayoutCanvasProps {

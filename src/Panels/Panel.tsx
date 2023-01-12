@@ -12,51 +12,55 @@ import {
 import {Scale, ParsedParams, Speed, PlayState, GridTypes} from '../App.functions';
 import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from '../Theme';
 import PatternsPanel, {Pattern} from './PatternsPanel';
-import {Coordinate} from '../Canvas/Canvas';
 
 interface PanelProps {
     playState: PlayState,
     pushToHistory: (parsedParams: Partial<ParsedParams>) => void;
-    setPlayState: (playState: PlayState, cb?: () => void) => void;
     showPatternPanel: boolean;
     togglePatternPanel: (showPatternPanel: boolean) => void;
     params: ParsedParams;
     selectedPattern: Pattern | null;
-    setSelectedPattern: (pattern: Pattern | null, cb?: () => void) => void;
-    getCells?: () => Coordinate[];
+    setSelectedPattern: (pattern: Pattern | null) => void;
+    reset: () => void;
+    next: () => void;
+    pause: () => void;
+    play: () => void;
+    edit: () => void;
 }
 
 function Panel({
     playState,
     pushToHistory,
     params: {scale, gridType, speed},
-    setPlayState,
     showPatternPanel,
     togglePatternPanel,
     selectedPattern,
     setSelectedPattern,
-    getCells,
+    reset,
+    next,
+    pause,
+    play,
+    edit,
 }: PanelProps) {
     const onClickPlay = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        setPlayState(PlayState.Playing);
+        play();
     };
     const onClickPaused = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        setPlayState(PlayState.Paused);
+        pause();
     };
     const onClickEdit = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        setPlayState(PlayState.Editing);
+        edit();
     };
     const onClickReset = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        setPlayState(PlayState.Reset);
-        pushToHistory({origin: [0, 0]});
+        reset();
     };
     const onClickNext = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        setPlayState(PlayState.Next);
+        next();
     };
     const onClickScale = (offset: number) => (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -76,7 +80,6 @@ function Panel({
     };
     const onClickShare = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        console.log(getCells && getCells());
     };
     return (<PanelWrapper>
         <Button onClick={onClickShare}><span>Share</span></Button>
