@@ -207,9 +207,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         this.setCells = setCellsHook;
         this.createSharedLink = () => {
             const path = combinePathToURL(stringifyParams({...parseParams(this.props.match.params), ...{cells: getCellsHook()}}));
-            navigator.clipboard.writeText(`${window.location.origin}/#${path}`).then(r => {
-                alert('Copied the shared link to clipboard');
-            });
+            navigator.clipboard.writeText(`${window.location.origin}/#${path}`).then(() => alert('Copied the shared link to clipboard'));
         };
         this.rendering = renderingHook;
         this.edit = () => {
@@ -330,9 +328,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     private setHoveringCell = (event: Event) => {
-        this.setState({
-            hoveringCell: this.state.playState === PlayState.Editing ? this.clientToCell(getClient(event as DragEvent)) : null
-        });
+        this.setState({hoveringCell: this.clientToCell(getClient(event as DragEvent))});
     };
 
     private getHoveringCells(cell: Coordinate | null): Coordinate[] {
