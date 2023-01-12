@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {GlobalStyle} from './index.styles';
 import {App} from './App';
-import reportWebVitals from './reportWebVitals';
+// import reportWebVitals from './reportWebVitals';
 import {HashRouter, Switch, Redirect, Route} from 'react-router-dom';
 import {combinePathToURL, defaultParams, routerPath, stringifyParams} from './App.functions';
 
