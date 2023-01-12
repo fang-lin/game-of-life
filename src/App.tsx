@@ -39,7 +39,7 @@ interface AppState {
 export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
     private getCells?: () => Coordinate[];
     private edit?: () => void;
-    private getCellsHook?: () => Coordinate[];
+    private createSharedLink?: () => void;
     private next?: () => void;
     private pause?: () => void;
     private play?: () => void;
@@ -205,7 +205,9 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         } = hooks();
 
         this.setCells = setCellsHook;
-        this.getCellsHook = getCellsHook;
+        this.createSharedLink = () => {
+            pushToHistory({cells: getCellsHook()});
+        };
         this.rendering = renderingHook;
         this.edit = () => {
             editHook();
@@ -266,6 +268,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             play,
             edit,
             onEvolve,
+            createSharedLink,
         } = this;
 
         const params = parseParams(this.props.match.params);
@@ -290,7 +293,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                 <Dashboard {...{evolutionIndex, cellsCount, params, hoveringCell}}/>
                 <BottomSection>
                     <Footer/>
-                    {reset && next && pause && play && edit && <Panel {...{
+                    {reset && next && pause && play && edit && createSharedLink && <Panel {...{
                         playState,
                         pushToHistory,
                         params,
@@ -304,6 +307,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                         pause,
                         play,
                         edit,
+                        createSharedLink,
                     }}/>}
                 </BottomSection>
             </AppWrapper>

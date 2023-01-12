@@ -99,7 +99,7 @@ export function parseParams({scale, gridType, speed, originX, originY, cells}: O
         gridType: parseGridType(gridType),
         speed: parseString(speed, Speed),
         origin: [parseFloat(originX), parseFloat(originY)],
-        cells: cells === '-' ? [] : JSON.parse(cells.replaceAll('][', '],[')),
+        cells: cells === '-' ? [] : cells.split(':').map(s => s.split('.').map(s => parseInt(s)) as Coordinate),
     };
 }
 
@@ -125,7 +125,7 @@ export function stringifyParams({scale, gridType, speed, origin, cells}: ParsedP
         speed: stringifyNumber(speed, Speed),
         originX: stringifyCoordinate(origin[0]),
         originY: stringifyCoordinate(origin[1]),
-        cells: cells ? JSON.stringify(cells).replaceAll('],[', '][') : '-',
+        cells: cells.length ? cells.map(s => s.join('.')).join(':') : '-',
     };
 }
 

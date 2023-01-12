@@ -26,6 +26,7 @@ interface PanelProps {
     pause: () => void;
     play: () => void;
     edit: () => void;
+    createSharedLink: () => void;
 }
 
 function Panel({
@@ -41,6 +42,7 @@ function Panel({
     pause,
     play,
     edit,
+    createSharedLink,
 }: PanelProps) {
     const onClickPlay = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -80,6 +82,7 @@ function Panel({
     };
     const onClickShare = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
+        createSharedLink();
     };
     return (<PanelWrapper>
         <Button onClick={onClickShare}><span>Share</span></Button>
