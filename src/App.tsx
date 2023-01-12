@@ -207,6 +207,9 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         this.setCells = setCellsHook;
         this.createSharedLink = () => {
             pushToHistory({cells: getCellsHook()});
+            navigator.clipboard.writeText(window.location.href).then(r => {
+                alert('Copied the shared link to clipboard');
+            });
         };
         this.rendering = renderingHook;
         this.edit = () => {

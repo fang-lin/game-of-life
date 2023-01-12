@@ -85,7 +85,6 @@ function Panel({
         createSharedLink();
     };
     return (<PanelWrapper>
-        <Button onClick={onClickShare}><span>Share</span></Button>
         {
             (playState === PlayState.Paused || playState === PlayState.Editing) &&
             <Button style={{width: '72px'}} onClick={onClickPlay} theme={BottleGreen}><span>Play</span></Button>
@@ -116,6 +115,7 @@ function Panel({
                 theme={CGBlue}
                 title="Faster"><span><FasterIcon/></span></Button>
         </ButtonGroup>
+        <Button style={{width: '64px'}} theme={BlazeOrange} onClick={onClickShare}><span>Share</span></Button>
         <ButtonWrapper>
             <Button style={{width: '36px'}} onClick={onClickAdd}
                 pressed={showPatternPanel}
