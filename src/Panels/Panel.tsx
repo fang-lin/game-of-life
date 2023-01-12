@@ -1,4 +1,4 @@
-import React, {MouseEvent} from 'react';
+import React, {FunctionComponent, MouseEvent} from 'react';
 import {
     PanelWrapper,
     ButtonGroup,
@@ -7,7 +7,7 @@ import {
     Button,
     FasterIcon,
     SlowerIcon,
-    ButtonWrapper, GliderIcon
+    ButtonWrapper, GliderIcon, ShareIcon
 } from './Panel.styles';
 import {Scale, ParsedParams, Speed, PlayState, GridTypes} from '../App.functions';
 import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from '../Theme';
@@ -29,7 +29,7 @@ interface PanelProps {
     createSharedLink: () => void;
 }
 
-function Panel({
+const Panel: FunctionComponent<PanelProps> = ({
     playState,
     pushToHistory,
     params: {scale, gridType, speed},
@@ -43,7 +43,7 @@ function Panel({
     play,
     edit,
     createSharedLink,
-}: PanelProps) {
+}) => {
     const onClickPlay = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         play();
@@ -115,7 +115,7 @@ function Panel({
                 theme={CGBlue}
                 title="Faster"><span><FasterIcon/></span></Button>
         </ButtonGroup>
-        <Button style={{width: '64px'}} theme={BlazeOrange} onClick={onClickShare}><span>Share</span></Button>
+        <Button style={{width: '36px'}} theme={BlazeOrange} onClick={onClickShare}><span><ShareIcon/></span></Button>
         <ButtonWrapper>
             <Button style={{width: '36px'}} onClick={onClickAdd}
                 pressed={showPatternPanel}
@@ -124,6 +124,6 @@ function Panel({
         </ButtonWrapper>
 
     </PanelWrapper>);
-}
+};
 
 export default Panel;

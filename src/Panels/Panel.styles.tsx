@@ -6,6 +6,7 @@ import {ReactComponent as ZoomIn} from '../images/zoom-in.svg';
 import {ReactComponent as ZoomOut} from '../images/zoom-out.svg';
 import {ReactComponent as Glider} from '../images/glider.svg';
 import {ReactComponent as Close} from '../images/close.svg';
+import {ReactComponent as Share} from '../images/share.svg';
 import {CGBlue, Theme} from '../Theme';
 import {Size} from '../Canvas/Canvas';
 
@@ -186,3 +187,4 @@ export const FasterIcon = Icon(Rabbit);
 export const SlowerIcon = Icon(Snail);
 export const GliderIcon = Icon(Glider);
 export const CloseIcon = Icon(Close);
+export const ShareIcon = Icon(Share);

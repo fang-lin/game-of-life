@@ -1,4 +1,4 @@
-import React, {MouseEvent} from 'react';
+import React, {FunctionComponent, MouseEvent} from 'react';
 import {Coordinate} from '../Canvas/Canvas';
 import {PatternsPanelWrapper, ButtonRow, SmallButton, CapsuleButton} from './PatternsPanel.styles';
 import Block from '../Patterns/Block.json';
@@ -86,7 +86,7 @@ interface ButtonGroupProps {
     onClickButton: (pattern: Pattern) => (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-function Row({patterns, onClickButton, selectedPattern}: ButtonGroupProps) {
+const Row: FunctionComponent<ButtonGroupProps> = ({patterns, onClickButton, selectedPattern}) => {
     return <ButtonRow>
         {
             patterns.map((pattern) => <SmallButton
@@ -96,9 +96,9 @@ function Row({patterns, onClickButton, selectedPattern}: ButtonGroupProps) {
                 key={pattern.name}><span>{pattern.name}</span></SmallButton>)
         }
     </ButtonRow>;
-}
+};
 
-function PatternsPanel({setSelectedPattern, selectedPattern, togglePatternPanel}: PatternsPanelProps) {
+const PatternsPanel: FunctionComponent<PatternsPanelProps> = ({setSelectedPattern, selectedPattern, togglePatternPanel}) => {
 
     const onClickButton = (pattern: Pattern) => (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -123,6 +123,6 @@ function PatternsPanel({setSelectedPattern, selectedPattern, togglePatternPanel}
         <Row {...props} patterns={gliderGunPatterns}/>
         <Row {...props} patterns={infinityPatterns}/>
     </PatternsPanelWrapper>;
-}
+};
 
 export default PatternsPanel;

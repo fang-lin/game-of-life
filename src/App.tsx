@@ -23,6 +23,7 @@ import Dashboard from './Dashboard';
 import Footer from './Footer';
 import Header from './Header';
 import {Pattern} from './Panels/PatternsPanel';
+import Toast from './Toast';
 
 interface AppState {
     size: [number, number];
@@ -34,6 +35,7 @@ interface AppState {
     cellsCount: number;
     origin: Coordinate;
     dragState: DragState;
+    showToast: boolean;
 }
 
 export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
@@ -62,6 +64,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             showPatternPanel: false,
             cellsCount: 0,
             dragState: DragState.end,
+            showToast: false,
             origin,
         };
     }
@@ -207,7 +210,9 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         this.setCells = setCellsHook;
         this.createSharedLink = () => {
             const path = combinePathToURL(stringifyParams({...parseParams(this.props.match.params), ...{cells: getCellsHook()}}));
-            navigator.clipboard.writeText(`${window.location.origin}/#${path}`).then(() => alert('Copied the shared link to clipboard'));
+            navigator.clipboard.writeText(`${window.location.origin}/#${path}`).then(() => {
+                this.setState({showToast: true});
+            });
         };
         this.rendering = renderingHook;
         this.edit = () => {
@@ -244,6 +249,8 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         }));
     }
 
+    toggleToast = (showToast: boolean, cb?: () => void) => this.setState({showToast}, cb);
+
     render() {
         const {
             size,
@@ -255,6 +262,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             dragState,
             selectedPattern,
             showPatternPanel,
+            showToast,
         } = this.state;
 
         const {
@@ -270,6 +278,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             edit,
             onEvolve,
             createSharedLink,
+            toggleToast,
         } = this;
 
         const params = parseParams(this.props.match.params);
@@ -311,6 +320,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                         createSharedLink,
                     }}/>}
                 </BottomSection>
+                <Toast {...{showToast, toggleToast}}>Hi man!</Toast>
             </AppWrapper>
         );
     }

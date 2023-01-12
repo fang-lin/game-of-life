@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {FunctionComponent} from 'react';
 import {FooterWrapper, Anchor} from './Footer.styles';
 
-function Footer() {
+const Footer: FunctionComponent = () => {
     return <FooterWrapper>
         <Anchor href="https://conwaylife.com/wiki/" target="_blank">LifeWiki</Anchor> | <Anchor
             href="https://github.com/fang-lin/game-of-life" target="_blank">GitHub</Anchor> | <Anchor
@@ -9,6 +9,6 @@ function Footer() {
             href="https://plotter.fanglin.me/" target="_blank">Function Plotter</Anchor> | <Anchor
             href="https://algorythm.fanglin.me/" target="_blank">algoRYTHM</Anchor>
     </FooterWrapper>;
-}
+};
 
 export default Footer;
