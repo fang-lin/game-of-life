@@ -37,38 +37,18 @@ export const SmallButton = styled(Button)`
 export const CapsuleButton = styled(Button)`
   span {
     font-size: 14px;
-    height: 32px;
-    border-radius: 16px;
+    height: 36px;
+    border-radius: 18px;
   }
 
   &:before {
-    height: ${({pressed}) => pressed ? '18px' : '22px'};
-    border-radius: 0 0 16px 16px;
+    height: ${({pressed}) => pressed ? '20px' : '24px'};
+    border-radius: 0 0 18px 18px;
   }
 
   &:not([disabled]):active {
     &:before {
-      height: 16px;
-    }
-  }
-`;
-
-export const SmallCapsuleButton = styled(CapsuleButton)`
-  span {
-    font-size: 12px;
-    height: 24px;
-    border-radius: 12px;
-    padding: 0;
-  }
-
-  &:before {
-    height: ${({pressed}) => pressed ? '14px' : '18px'};
-    border-radius: 0 0 12px 12px;
-  }
-
-  &:not([disabled]):active {
-    &:before {
-      height: 12px;
+      height: 18px;
     }
   }
 `;
