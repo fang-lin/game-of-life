@@ -32,8 +32,7 @@ import Infinity1 from '../Patterns/Infinity1.json';
 import Infinity2 from '../Patterns/Infinity2.json';
 import Infinity3 from '../Patterns/Infinity3.json';
 import x66 from '../Patterns/x66.json';
-import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from '../Theme';
-import {CloseIcon} from './Panel.styles';
+import {BlazeOrange, BottleGreen, CGBlue} from '../Theme';
 
 export interface Pattern {
     name: string;
@@ -85,7 +84,6 @@ const infinityPatterns = [
 interface PatternsPanelProps {
     selectedPattern: Pattern | null;
     setSelectedPattern: (pattern: Pattern | null) => void;
-    togglePatternPanel: (showPatternPanel: boolean) => void;
     rotateHoveringCells: (clockwise: boolean) => void;
 }
 
@@ -107,17 +105,11 @@ const Row: FunctionComponent<ButtonGroupProps> = ({patterns, onClickButton, sele
     </ButtonRow>;
 };
 
-const PatternsPanel: FunctionComponent<PatternsPanelProps> = ({setSelectedPattern, selectedPattern, togglePatternPanel, rotateHoveringCells}) => {
+const PatternsPanel: FunctionComponent<PatternsPanelProps> = ({setSelectedPattern, selectedPattern, rotateHoveringCells}) => {
 
     const onClickButton = (pattern: Pattern) => (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         setSelectedPattern(pattern.name === selectedPattern?.name ? null : pattern);
-    };
-
-    const onClickCloseButton = (event: MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
-        setSelectedPattern(null);
-        togglePatternPanel(false);
     };
 
     const onClickRotateButton = (clockwise: boolean) => (event: MouseEvent<HTMLButtonElement>) => {
@@ -133,8 +125,6 @@ const PatternsPanel: FunctionComponent<PatternsPanelProps> = ({setSelectedPatter
                 onClick={onClickRotateButton(false)}><span><RotateLeftIcon/></span></CapsuleButton>
             <CapsuleButton style={{width: '36px'}} theme={BlazeOrange}
                 onClick={onClickRotateButton(true)}><span><RotateRightIcon/></span></CapsuleButton>
-            <CapsuleButton style={{width: '36px'}} theme={AntiqueRuby}
-                onClick={onClickCloseButton}><span><CloseIcon/></span></CapsuleButton>
         </ButtonTopRow>
         <Row {...props} patterns={stillLifePatterns}/>
         <Row {...props} patterns={oscillatorsPatterns}/>

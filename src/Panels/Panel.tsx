@@ -93,18 +93,18 @@ const Panel: FunctionComponent<PanelProps> = ({
     return (<PanelWrapper>
         {
             (playState === PlayState.Paused || playState === PlayState.Editing) &&
-            <Button style={{width: '72px'}} onClick={onClickPlay} theme={BottleGreen}><span>Play</span></Button>
+            <Button style={{width: '72px'}} onClick={onClickPlay} theme={BottleGreen}><span>PLAY</span></Button>
         }
         {
             playState === PlayState.Playing &&
             <Button style={{width: '72px'}} pressed onClick={onClickPaused}
-                theme={BottleGreen}><span>Paused</span></Button>
+                theme={BottleGreen}><span>PAUSED</span></Button>
         }
         <Button style={{width: '48px'}} onClick={onClickEdit} disabled={playState !== PlayState.Paused}
-            theme={BlazeOrange}><span>Edit</span></Button>
+            theme={BlazeOrange}><span>EDIT</span></Button>
         <Button style={{width: '48px'}} onClick={onClickNext} disabled={playState !== PlayState.Paused}
-            theme={BlazeOrange}><span>Next</span></Button>
-        <Button style={{width: '64px'}} onClick={onClickReset} theme={AntiqueRuby}><span>Reset</span></Button>
+            theme={BlazeOrange}><span>NEXT</span></Button>
+        <Button style={{width: '64px'}} onClick={onClickReset} theme={AntiqueRuby}><span>RESET</span></Button>
         <ButtonGroup>
             <Button style={{width: '36px'}} onClick={onClickScale(-1)} disabled={scale === Scale.Min} theme={CGBlue}
                 title="Zoom Out"><span><ZoomOutIcon/></span></Button>
@@ -128,7 +128,7 @@ const Panel: FunctionComponent<PanelProps> = ({
             <Button style={{width: '36px'}} onClick={onClickAdd}
                 pressed={showPatternPanel}
                 theme={selectedPattern ? BottleGreen : CGBlue}><span><GliderIcon/></span></Button>
-            {showPatternPanel && <PatternsPanel {...{setSelectedPattern, selectedPattern, togglePatternPanel, rotateHoveringCells}}/>}
+            {showPatternPanel && <PatternsPanel {...{setSelectedPattern, selectedPattern, rotateHoveringCells}}/>}
         </ButtonWrapper>
 
     </PanelWrapper>);
