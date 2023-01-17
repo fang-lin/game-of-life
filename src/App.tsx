@@ -217,27 +217,37 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         this.rendering = renderingHook;
         this.edit = () => {
             editHook();
-            this.setState({playState: PlayState.Editing, evolutionIndex: 0});
+            this.setState({
+                playState: PlayState.Editing,
+                evolutionIndex: 0
+            });
         };
         this.next = nextHook;
         this.pause = () => {
-            this.setState({playState: PlayState.Paused});
+            this.setState({
+                playState: PlayState.Paused
+            });
             pauseHook();
         };
 
         this.reset = () => {
             const {cells} = parseParams(this.props.match.params);
-            pushToHistory({origin: [0, 0]});
+            pushToHistory({
+                origin: [0, 0]
+            });
             this.setState({
                 cellsCount: cells.length,
                 hoveringCell: null,
                 playState: PlayState.Editing,
+                evolutionIndex: 0,
                 origin: [0, 0],
             }, () => resetHook(cells));
         };
 
         this.play = () => {
-            this.setState({playState: PlayState.Playing});
+            this.setState({
+                playState: PlayState.Playing
+            });
             playHook();
         };
     }
