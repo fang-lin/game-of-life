@@ -17,7 +17,7 @@ import {
     pixelRatio,
     PlayState,
     rotateCells,
-    stringifyParams
+    stringifyParams,
 } from './App.functions';
 import Dashboard from './Dashboard';
 import Footer from './Footer';
@@ -319,7 +319,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                         play,
                         edit,
                         createSharedLink,
-                        rotateHoveringCells
+                        rotateHoveringCells,
                     }}/>}
                 </BottomSection>
                 <Toast {...{showToast, toggleToast}}>Copied the shared link to clipboard.</Toast>

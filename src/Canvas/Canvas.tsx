@@ -153,9 +153,19 @@ export class Canvas extends Component<CanvasProps> implements LifeMapHooks {
         const {
             lifeMap,
             canvasRef,
-            props: {params: {scale, gridType}, size, origin}
+            props: {params: {scale, gridType, showDeadCells}, size, origin}
         } = this;
-        draw(canvasRef, size, lifeMap.cells, 'black', hoveringCells, 'rgba(0,0,0,.3)', scale, gridType, origin);
+
+        draw({
+            canvasRef,
+            size,
+            lifeMap,
+            hoveringCells,
+            scale,
+            gridType,
+            origin,
+            showDeadCells
+        });
     };
 }
 

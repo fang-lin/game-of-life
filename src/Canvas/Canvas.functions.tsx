@@ -1,9 +1,9 @@
 import {Coordinate, Size} from './Canvas';
 import {GridType, GridTypes, ParsedParams, pixelRatio} from '../App.functions';
-import {CellsMap} from '../LifeMap';
+import {CellsMap, LifeMap} from '../LifeMap';
 import {RefObject} from 'react';
 
-export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, scale: number, origin: Coordinate) {
+export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, scale: number, origin: Coordinate, gridColor: string) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         const [width, height] = size;
@@ -25,7 +25,7 @@ export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, sc
             context.lineTo(x, height * pixelRatio);
         }
         context.lineWidth = pixelRatio;
-        context.strokeStyle = 'rgba(0,0,0,.1)';
+        context.strokeStyle = gridColor;
         context.stroke();
     }
 }
@@ -63,13 +63,36 @@ export function drawCells(canvasRef: RefObject<HTMLCanvasElement>, color: string
     }
 }
 
-export function draw(canvasRef: RefObject<HTMLCanvasElement>, size: Size, cells: CellsMap, cellsColor: string, hoveringCells: Coordinate[], hoveringCellsColor: string, scale: number, gridType: GridType, origin: Coordinate = [0, 0]) {
+interface DrawParams {
+    canvasRef: RefObject<HTMLCanvasElement>;
+    size: Size;
+    lifeMap: LifeMap;
+    hoveringCells: Coordinate[];
+    scale: number;
+    gridType: GridType;
+    origin: Coordinate;
+    showDeadCells: boolean;
+}
+
+export function draw({
+    canvasRef,
+    size,
+    lifeMap,
+    scale,
+    gridType,
+    origin,
+    hoveringCells,
+    showDeadCells,
+}: DrawParams) {
     wipe(canvasRef, size);
     if (gridType === GridTypes[0]) {
-        drawGrid(canvasRef, size, scale, origin);
+        drawGrid(canvasRef, size, scale, origin, 'rgba(0,0,0,.1)');
     }
-    drawCells(canvasRef, cellsColor, cells, scale, size, origin, gridType);
-    drawCells(canvasRef, hoveringCellsColor, hoveringCells, scale, size, origin, gridType);
+    drawCells(canvasRef, '#183A37', lifeMap.cells, scale, size, origin, gridType);
+    if (showDeadCells) {
+        drawCells(canvasRef, 'rgba(196,73,0,.3)', lifeMap.deadList, scale, size, origin, gridType);
+    }
+    drawCells(canvasRef, 'rgba(0,0,0,.3)', hoveringCells, scale, size, origin, gridType);
 }
 
 interface LayoutCanvasProps {

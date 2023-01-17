@@ -31,6 +31,7 @@ export type GridType = typeof GridTypes[number];
 export const defaultParams: ParsedParams = {
     scale: Scale.Default,
     gridType: GridTypes[0],
+    showDeadCells: false,
     speed: Speed.Default,
     origin: [0, 0],
     cells: [],
@@ -39,6 +40,7 @@ export const defaultParams: ParsedParams = {
 export interface ParsedParams {
     scale: number;
     gridType: GridType;
+    showDeadCells: boolean;
     speed: number;
     origin: Coordinate;
     cells: Coordinate[];
@@ -47,6 +49,7 @@ export interface ParsedParams {
 export type OriginalParams = {
     scale: string;
     gridType: string;
+    showDeadCells: string;
     speed: string;
     originX: string;
     originY: string;
@@ -82,7 +85,7 @@ export const DragEvents: Record<DragState, keyof WindowEventMap> = isTouchscreen
     [DragState.end]: 'mouseup',
 };
 
-const paramsSegments: Array<keyof OriginalParams> = ['scale', 'speed', 'gridType', 'originX', 'originY', 'cells'];
+const paramsSegments: Array<keyof OriginalParams> = ['scale', 'speed', 'gridType', 'showDeadCells', 'originX', 'originY', 'cells'];
 
 function parseString(s: string, constraint: NumberConstraint): number {
     const n = parseInt(s);
@@ -93,10 +96,11 @@ function parseGridType(g: string): GridType {
     return GridTypes[parseInt(g)] || GridTypes[0];
 }
 
-export function parseParams({scale, gridType, speed, originX, originY, cells}: OriginalParams): ParsedParams {
+export function parseParams({scale, gridType, showDeadCells, speed, originX, originY, cells}: OriginalParams): ParsedParams {
     return {
         scale: parseString(scale, Scale),
         gridType: parseGridType(gridType),
+        showDeadCells: showDeadCells === '1',
         speed: parseString(speed, Speed),
         origin: [parseFloat(originX), parseFloat(originY)],
         cells: cells === '-' ? [] : cells.split(':').map(s => s.split('.').map(s => parseInt(s)) as Coordinate),
@@ -118,10 +122,11 @@ function stringifyCoordinate(n: number): string {
     return n.toString();
 }
 
-export function stringifyParams({scale, gridType, speed, origin, cells}: ParsedParams): OriginalParams {
+export function stringifyParams({scale, gridType, showDeadCells, speed, origin, cells}: ParsedParams): OriginalParams {
     return {
         scale: stringifyNumber(scale, Scale),
         gridType: GridTypes.indexOf(gridType).toString(),
+        showDeadCells: showDeadCells ? '1' : '0',
         speed: stringifyNumber(speed, Speed),
         originX: stringifyCoordinate(origin[0]),
         originY: stringifyCoordinate(origin[1]),
@@ -145,7 +150,6 @@ export function getClient(event: DragEvent): Coordinate {
     const {clientX, clientY} = isTouchEvent(event) ? event.changedTouches[0] : event;
     return [clientX, clientY];
 }
-
 
 export function rotateCells(cells: Coordinate[], clockwise = true): Coordinate[] {
     return clockwise ?

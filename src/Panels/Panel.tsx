@@ -33,7 +33,7 @@ interface PanelProps {
 const Panel: FunctionComponent<PanelProps> = ({
     playState,
     pushToHistory,
-    params: {scale, gridType, speed},
+    params: {scale, gridType, speed, showDeadCells},
     showPatternPanel,
     togglePatternPanel,
     selectedPattern,
@@ -86,6 +86,10 @@ const Panel: FunctionComponent<PanelProps> = ({
         event.stopPropagation();
         createSharedLink();
     };
+    const onClickToggleDeadAndBorn = (event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        pushToHistory({showDeadCells: !showDeadCells});
+    };
     return (<PanelWrapper>
         {
             (playState === PlayState.Paused || playState === PlayState.Editing) &&
@@ -101,8 +105,6 @@ const Panel: FunctionComponent<PanelProps> = ({
         <Button style={{width: '48px'}} onClick={onClickNext} disabled={playState !== PlayState.Paused}
             theme={BlazeOrange}><span>Next</span></Button>
         <Button style={{width: '64px'}} onClick={onClickReset} theme={AntiqueRuby}><span>Reset</span></Button>
-        <Button style={{width: '96px'}} onClick={onClickToggleGrid}
-            theme={CGBlue}><span>Grid: {gridType}</span></Button>
         <ButtonGroup>
             <Button style={{width: '36px'}} onClick={onClickScale(-1)} disabled={scale === Scale.Min} theme={CGBlue}
                 title="Zoom Out"><span><ZoomOutIcon/></span></Button>
@@ -117,6 +119,10 @@ const Panel: FunctionComponent<PanelProps> = ({
                 theme={CGBlue}
                 title="Faster"><span><FasterIcon/></span></Button>
         </ButtonGroup>
+        <Button style={{width: '36px'}} onClick={onClickToggleGrid}
+            theme={CGBlue}><span style={{fontSize: '10px'}}>{gridType} Grid</span></Button>
+        <Button style={{width: '36px'}} onClick={onClickToggleDeadAndBorn} pressed={showDeadCells}
+            theme={CGBlue}><span style={{fontSize: '10px'}}>Show Dead</span></Button>
         <Button style={{width: '36px'}} theme={BlazeOrange} onClick={onClickShare}><span><ShareIcon/></span></Button>
         <ButtonWrapper>
             <Button style={{width: '36px'}} onClick={onClickAdd}
