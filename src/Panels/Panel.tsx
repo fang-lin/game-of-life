@@ -27,6 +27,7 @@ interface PanelProps {
     play: () => void;
     edit: () => void;
     createSharedLink: () => void;
+    rotateHoveringCells: (clockwise: boolean) => void;
 }
 
 const Panel: FunctionComponent<PanelProps> = ({
@@ -43,6 +44,7 @@ const Panel: FunctionComponent<PanelProps> = ({
     play,
     edit,
     createSharedLink,
+    rotateHoveringCells,
 }) => {
     const onClickPlay = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -120,7 +122,7 @@ const Panel: FunctionComponent<PanelProps> = ({
             <Button style={{width: '36px'}} onClick={onClickAdd}
                 pressed={showPatternPanel}
                 theme={selectedPattern ? BottleGreen : CGBlue}><span><GliderIcon/></span></Button>
-            {showPatternPanel && <PatternsPanel {...{setSelectedPattern, selectedPattern, togglePatternPanel}}/>}
+            {showPatternPanel && <PatternsPanel {...{setSelectedPattern, selectedPattern, togglePatternPanel, rotateHoveringCells}}/>}
         </ButtonWrapper>
 
     </PanelWrapper>);

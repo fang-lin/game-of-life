@@ -279,6 +279,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             onEvolve,
             createSharedLink,
             toggleToast,
+            rotateHoveringCells,
         } = this;
 
         const params = parseParams(this.props.match.params);
@@ -318,6 +319,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                         play,
                         edit,
                         createSharedLink,
+                        rotateHoveringCells
                     }}/>}
                 </BottomSection>
                 <Toast {...{showToast, toggleToast}}>Hi man!</Toast>

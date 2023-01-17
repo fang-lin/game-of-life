@@ -1,6 +1,14 @@
 import React, {FunctionComponent, MouseEvent} from 'react';
 import {Coordinate} from '../Canvas/Canvas';
-import {PatternsPanelWrapper, ButtonRow, SmallButton, CapsuleButton} from './PatternsPanel.styles';
+import {
+    PatternsPanelWrapper,
+    ButtonRow,
+    ButtonTopRow,
+    SmallButton,
+    CapsuleButton,
+    RotateLeftIcon,
+    RotateRightIcon
+} from './PatternsPanel.styles';
 import Block from '../Patterns/Block.json';
 import BeeHive from '../Patterns/BeeHive.json';
 import Loaf from '../Patterns/Loaf.json';
@@ -24,7 +32,7 @@ import Infinity1 from '../Patterns/Infinity1.json';
 import Infinity2 from '../Patterns/Infinity2.json';
 import Infinity3 from '../Patterns/Infinity3.json';
 import x66 from '../Patterns/x66.json';
-import {AntiqueRuby, BottleGreen, CGBlue} from '../Theme';
+import {AntiqueRuby, BlazeOrange, BottleGreen, CGBlue} from '../Theme';
 import {CloseIcon} from './Panel.styles';
 
 export interface Pattern {
@@ -78,6 +86,7 @@ interface PatternsPanelProps {
     selectedPattern: Pattern | null;
     setSelectedPattern: (pattern: Pattern | null) => void;
     togglePatternPanel: (showPatternPanel: boolean) => void;
+    rotateHoveringCells: (clockwise: boolean) => void;
 }
 
 interface ButtonGroupProps {
@@ -98,7 +107,7 @@ const Row: FunctionComponent<ButtonGroupProps> = ({patterns, onClickButton, sele
     </ButtonRow>;
 };
 
-const PatternsPanel: FunctionComponent<PatternsPanelProps> = ({setSelectedPattern, selectedPattern, togglePatternPanel}) => {
+const PatternsPanel: FunctionComponent<PatternsPanelProps> = ({setSelectedPattern, selectedPattern, togglePatternPanel, rotateHoveringCells}) => {
 
     const onClickButton = (pattern: Pattern) => (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -111,11 +120,22 @@ const PatternsPanel: FunctionComponent<PatternsPanelProps> = ({setSelectedPatter
         togglePatternPanel(false);
     };
 
+    const onClickRotateButton = (clockwise: boolean) => (event: MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        rotateHoveringCells(clockwise);
+    };
+
     const props = {onClickButton, selectedPattern};
 
     return <PatternsPanelWrapper>
-        <CapsuleButton style={{width: '32px', marginBottom: '6px'}} theme={AntiqueRuby}
-            onClick={onClickCloseButton}><span><CloseIcon/></span></CapsuleButton>
+        <ButtonTopRow>
+            <CapsuleButton style={{width: '32px'}} theme={BlazeOrange}
+                onClick={onClickRotateButton(false)}><span><RotateLeftIcon/></span></CapsuleButton>
+            <CapsuleButton style={{width: '32px'}} theme={BlazeOrange}
+                onClick={onClickRotateButton(true)}><span><RotateRightIcon/></span></CapsuleButton>
+            <CapsuleButton style={{width: '32px'}} theme={AntiqueRuby}
+                onClick={onClickCloseButton}><span><CloseIcon/></span></CapsuleButton>
+        </ButtonTopRow>
         <Row {...props} patterns={stillLifePatterns}/>
         <Row {...props} patterns={oscillatorsPatterns}/>
         <Row {...props} patterns={spaceshipsPatterns}/>
