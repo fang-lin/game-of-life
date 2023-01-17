@@ -6,7 +6,7 @@ interface ToastProps {
     toggleToast: (show: boolean) => void;
 }
 
-const Toast: FunctionComponent<ToastProps> = ({showToast, toggleToast}) => {
+const Toast: FunctionComponent<ToastProps> = ({children, showToast, toggleToast}) => {
 
     const [hide, setHide] = useState<boolean>(false);
 
@@ -24,9 +24,7 @@ const Toast: FunctionComponent<ToastProps> = ({showToast, toggleToast}) => {
 
     return showToast ?
         <ToastBackground>
-            <ToastWrapper hide={hide}>
-                Copied the shared link to clipboard!
-            </ToastWrapper>
+            <ToastWrapper hide={hide}>{children}</ToastWrapper>
         </ToastBackground> : null;
 };
 

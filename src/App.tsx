@@ -322,7 +322,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                         rotateHoveringCells
                     }}/>}
                 </BottomSection>
-                <Toast {...{showToast, toggleToast}}>Hi man!</Toast>
+                <Toast {...{showToast, toggleToast}}>Copied the shared link to clipboard.</Toast>
             </AppWrapper>
         );
     }
