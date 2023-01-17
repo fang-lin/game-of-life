@@ -88,11 +88,11 @@ export function draw({
     if (gridType === GridTypes[0]) {
         drawGrid(canvasRef, size, scale, origin, 'rgba(0,0,0,.1)');
     }
+    drawCells(canvasRef, 'rgba(0,0,0,.3)', hoveringCells, scale, size, origin, gridType);
     drawCells(canvasRef, '#183A37', lifeMap.cells, scale, size, origin, gridType);
     if (showDeadCells) {
         drawCells(canvasRef, 'rgba(196,73,0,.3)', lifeMap.deadList, scale, size, origin, gridType);
     }
-    drawCells(canvasRef, 'rgba(0,0,0,.3)', hoveringCells, scale, size, origin, gridType);
 }
 
 interface LayoutCanvasProps {

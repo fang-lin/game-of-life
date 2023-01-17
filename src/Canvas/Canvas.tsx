@@ -72,6 +72,7 @@ function getDuration(speed: number) {
 export class Canvas extends Component<CanvasProps> implements LifeMapHooks {
     lifeMap: LifeMap;
     private playTimeout = NaN;
+    private hoveringCells: Coordinate[] = [];
     private readonly canvasRef: RefObject<HTMLCanvasElement>;
     private start: number = -Infinity;
 
@@ -93,7 +94,7 @@ export class Canvas extends Component<CanvasProps> implements LifeMapHooks {
 
     componentDidUpdate(prevProps: CanvasProps) {
         if (shouldLayoutCanvas(prevProps, this.props)) {
-            this.renderCells([]);
+            this.renderCells();
         }
     }
 
@@ -103,7 +104,8 @@ export class Canvas extends Component<CanvasProps> implements LifeMapHooks {
     }
 
     renderingHook = (hoveringCells: Coordinate[]) => {
-        window.requestAnimationFrame(() => this.renderCells(hoveringCells));
+        this.hoveringCells = hoveringCells;
+        window.requestAnimationFrame(() => this.renderCells());
     }
 
     editHook = () => {
@@ -114,7 +116,7 @@ export class Canvas extends Component<CanvasProps> implements LifeMapHooks {
 
     setCellsHook = (addedCells: Coordinate[]) => {
         this.lifeMap.toggleCells(addedCells);
-        this.renderCells([]);
+        this.renderCells();
     }
 
     nextHook = () => this.evolve();
@@ -126,9 +128,10 @@ export class Canvas extends Component<CanvasProps> implements LifeMapHooks {
     resetHook = (cells: Coordinate[]) => {
         const {lifeMap, playTimeout, renderCells} = this;
         window.cancelAnimationFrame(playTimeout);
+        this.hoveringCells = [];
         lifeMap.reset();
         lifeMap.addCells(cells);
-        renderCells([]);
+        renderCells();
     }
 
     private evolve() {
@@ -138,7 +141,7 @@ export class Canvas extends Component<CanvasProps> implements LifeMapHooks {
         } = this;
         lifeMap.evolve();
         onEvolve(lifeMap.getCells());
-        this.renderCells([]);
+        this.renderCells();
     }
 
     private play = (timestamp: number) => {
@@ -149,10 +152,11 @@ export class Canvas extends Component<CanvasProps> implements LifeMapHooks {
         this.playTimeout = window.requestAnimationFrame(this.play);
     };
 
-    private renderCells = (hoveringCells: Coordinate[]) => {
+    private renderCells = () => {
         const {
             lifeMap,
             canvasRef,
+            hoveringCells,
             props: {params: {scale, gridType, showDeadCells}, size, origin}
         } = this;
 
