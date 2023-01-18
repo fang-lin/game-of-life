@@ -8,14 +8,16 @@ export const DashboardWrapper = styled.div`
   font-weight: 500;
   color: #333;
   position: absolute;
-  top: 8px;
-  right: 8px;
-  margin: 0 -4px;
-  table, tr, td {
+  top: 10px;
+  right: 10px;
+  table {
+    margin: -4px -4px 0 -4px;
+    border-collapse: collapse;
+  }
+  tr, td {
     margin: 0;
     padding: 0;
     border: medium none;
-    border-collapse: collapse;
     span {
       display: inline-block;
       padding: 0 4px;

@@ -45,9 +45,9 @@ export const AppWrapper = styled.div<AppWrapperProps>`
 
 export const BottomSection = styled.div`
   position: absolute;
-  bottom: 8px;
-  left: 8px;
-  right: 8px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
   display: flex;
   flex-direction: column-reverse;
   justify-content: flex-end;

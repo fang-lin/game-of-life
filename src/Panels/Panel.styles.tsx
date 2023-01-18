@@ -24,7 +24,6 @@ export const PanelWrapper = styled.div`
   gap: 8px;
   flex-wrap: wrap-reverse;
   justify-content: flex-end;
-  padding: 0 0 6px 0;
 `;
 
 export const ButtonWrapper = styled.div`

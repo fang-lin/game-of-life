@@ -8,7 +8,7 @@ export const FooterWrapper = styled.footer`
   color: #333;
   background-color: rgba(255,255,255,.6);
   padding: 0 4px;
-  margin: 0 -4px;
+  margin: 0 -4px -5px -4px;
   
   @media ${device.laptop} {
     text-align: left;
