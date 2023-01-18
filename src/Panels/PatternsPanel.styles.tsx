@@ -28,6 +28,8 @@ export const ButtonTopRow = styled.div`
 `;
 
 export const SmallButton = styled(Button)`
+  width: auto;
+  
   span {
     font-size: 12px;
     height: 24px;

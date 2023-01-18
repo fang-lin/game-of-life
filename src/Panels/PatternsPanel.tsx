@@ -121,9 +121,9 @@ const PatternsPanel: FunctionComponent<PatternsPanelProps> = ({setSelectedPatter
 
     return <PatternsPanelWrapper>
         <ButtonTopRow>
-            <CapsuleButton style={{width: '36px'}} theme={BlazeOrange}
+            <CapsuleButton theme={BlazeOrange}
                 onClick={onClickRotateButton(false)}><span><RotateLeftIcon/></span></CapsuleButton>
-            <CapsuleButton style={{width: '36px'}} theme={BlazeOrange}
+            <CapsuleButton theme={BlazeOrange}
                 onClick={onClickRotateButton(true)}><span><RotateRightIcon/></span></CapsuleButton>
         </ButtonTopRow>
         <Row {...props} patterns={stillLifePatterns}/>

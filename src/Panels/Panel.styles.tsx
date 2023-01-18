@@ -6,6 +6,11 @@ import {ReactComponent as ZoomIn} from '../images/zoom-in.svg';
 import {ReactComponent as ZoomOut} from '../images/zoom-out.svg';
 import {ReactComponent as Glider} from '../images/glider.svg';
 import {ReactComponent as Share} from '../images/share.svg';
+import {ReactComponent as Play} from '../images/play.svg';
+import {ReactComponent as Pause} from '../images/pause.svg';
+import {ReactComponent as Next} from '../images/next.svg';
+import {ReactComponent as Stop} from '../images/stop.svg';
+import {ReactComponent as Write} from '../images/write.svg';
 import {CGBlue, Theme} from '../Theme';
 import {Size} from '../Canvas/Canvas';
 
@@ -34,6 +39,7 @@ export const Button = styled.button<{ pressed?: boolean, theme: Theme, size?: Si
   cursor: pointer;
   background: transparent;
   user-select: none;
+  width: 36px;
 
   span {
     font-family: 'Fira Sans', sans-serif;
@@ -186,3 +192,8 @@ export const FasterIcon = Icon(Rabbit);
 export const SlowerIcon = Icon(Snail);
 export const GliderIcon = Icon(Glider);
 export const ShareIcon = Icon(Share);
+export const PlayIcon = Icon(Play);
+export const PauseIcon = Icon(Pause);
+export const NextIcon = Icon(Next);
+export const StopIcon = Icon(Stop);
+export const WriteIcon = Icon(Write);
