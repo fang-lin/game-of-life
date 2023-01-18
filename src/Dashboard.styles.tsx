@@ -5,7 +5,7 @@ export const DashboardWrapper = styled.div`
   font-size: 12px;
   text-align: right;
   line-height: 18px;
-  font-weight: 600;
+  font-weight: 500;
   color: #333;
   position: absolute;
   top: 8px;
@@ -25,8 +25,5 @@ export const DashboardWrapper = styled.div`
         font-family: 'Fira Code', sans-serif;
       }
     }
-  }
-  td:first-child {
-    padding-right: 6px;
   }
 `;
