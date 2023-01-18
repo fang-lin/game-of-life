@@ -1,6 +1,6 @@
 import {Coordinate, Size} from './Canvas';
 import {GridType, GridTypes, ParsedParams, pixelRatio} from '../App.functions';
-import {CellsMap, LifeMap} from '../LifeMap';
+import {CellsMap, LifeMap} from './LifeMap';
 import {RefObject} from 'react';
 
 export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, scale: number, origin: Coordinate, gridColor: string) {
