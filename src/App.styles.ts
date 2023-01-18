@@ -55,7 +55,7 @@ export const BottomSection = styled.div`
   gap: 8px;
   @media ${device.laptop} {
     text-align: left;
-    flex-grow: 1;
     flex-direction: row;
+    justify-content: space-between;
   }
 `;

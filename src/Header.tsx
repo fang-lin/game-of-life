@@ -6,9 +6,9 @@ const Header: FunctionComponent = () => {
     return <HeaderWrapper>
         <Anchor href="./" target="_blank">
             <H1>
-                Conway's<br/>
-                Game of Life<br/>
-                {pkg.version}
+                <span>Conway's</span><br/>
+                <span>Game of Life</span><br/>
+                <span>{pkg.version}</span>
             </H1>
         </Anchor>
     </HeaderWrapper>;

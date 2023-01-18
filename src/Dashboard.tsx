@@ -19,16 +19,16 @@ const Dashboard: FunctionComponent<DashboardProps> = ({
     return <DashboardWrapper>
         <table>
             <tr>
-                <td>Age: <span>{evolutionIndex}</span></td>
-                <td>Cells: <span>{cellsCount}</span></td>
+                <td><span>Age: <pre>{evolutionIndex}</pre></span></td>
+                <td><span>Cells: <pre>{cellsCount}</pre></span></td>
             </tr>
             <tr>
-                <td>Velocity: <span>{speed}</span></td>
-                <td>Size: <span>{scale}</span></td>
+                <td><span>Velocity: <pre>{speed}</pre></span></td>
+                <td><span>Size: <pre>{scale}</pre></span></td>
             </tr>
             <tr>
-                <td>X: <span>{hoveringCell ? hoveringCell[0] : '-'}</span></td>
-                <td>Y: <span>{hoveringCell ? hoveringCell[1] : '-'}</span></td>
+                <td><span>X: <pre>{hoveringCell ? hoveringCell[0] : '-'}</pre></span></td>
+                <td><span>Y: <pre>{hoveringCell ? hoveringCell[1] : '-'}</pre></span></td>
             </tr>
         </table>
     </DashboardWrapper>;

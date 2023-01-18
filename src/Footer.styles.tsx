@@ -3,14 +3,15 @@ import {device} from './App.styles';
 
 export const FooterWrapper = styled.footer`
   font-size: 12px;
-  line-height: 16px;
+  line-height: 18px;
   text-align: right;
   color: #333;
-  text-shadow: 0 1px 3px white;
+  background-color: rgba(255,255,255,.6);
+  padding: 0 4px;
+  margin: 0 -4px;
   
   @media ${device.laptop} {
     text-align: left;
-    flex-grow: 1;
   }
 `;
 

@@ -10,19 +10,23 @@ export const DashboardWrapper = styled.div`
   position: absolute;
   top: 8px;
   right: 8px;
-  background-color: rgba(255,255,255,.6);
-  padding: 0 5px;
-  margin: 0 -5px;
+  margin: 0 -4px;
   table, tr, td {
     margin: 0;
     padding: 0;
     border: medium none;
     border-collapse: collapse;
     span {
-      font-family: 'Fira Code', sans-serif;
+      display: inline-block;
+      padding: 0 4px;
+      background-color: rgba(255,255,255,.6);
+      pre {
+        display: inline;
+        font-family: 'Fira Code', sans-serif;
+      }
     }
   }
   td:first-child {
-    padding-right: 10px;
+    padding-right: 6px;
   }
 `;
