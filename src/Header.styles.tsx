@@ -10,13 +10,16 @@ export const HeaderWrapper = styled.header`
 
 export const H1 = styled.h1`
   font-family: 'Fira Sans', sans-serif;
-  font-size: 16px;
+  font-size: 12px;
+  line-height: 18px;
   font-weight: 500;
-  margin: 0;
+  color: #333;
+  background-color: rgba(255,255,255,.6);
+  padding: 0 5px;
+  margin: 0 -5px;
 `;
 
 export const Anchor = styled.a`
-  color: #333;
   font-size: 12px;
   font-weight: 500;
   text-decoration: none;

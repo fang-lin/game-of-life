@@ -16,11 +16,21 @@ const Dashboard: FunctionComponent<DashboardProps> = ({
     params: {speed, scale},
     hoveringCell
 }) => {
-
     return <DashboardWrapper>
-        <p>Age:{evolutionIndex} Cells:{cellsCount}</p>
-        <p>Speed:{speed} Size:{scale}</p>
-        <p>{hoveringCell ? `X:${hoveringCell[0]} Y:${hoveringCell[1]}` : 'X:-,Y:-'}</p>
+        <table>
+            <tr>
+                <td>Age: <span>{evolutionIndex}</span></td>
+                <td>Cells: <span>{cellsCount}</span></td>
+            </tr>
+            <tr>
+                <td>Velocity: <span>{speed}</span></td>
+                <td>Size: <span>{scale}</span></td>
+            </tr>
+            <tr>
+                <td>X: <span>{hoveringCell ? hoveringCell[0] : '-'}</span></td>
+                <td>Y: <span>{hoveringCell ? hoveringCell[1] : '-'}</span></td>
+            </tr>
+        </table>
     </DashboardWrapper>;
 };
 

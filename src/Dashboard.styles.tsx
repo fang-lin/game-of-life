@@ -1,16 +1,28 @@
 import styled from 'styled-components';
-import {BlazeOrange} from './Theme';
 
 export const DashboardWrapper = styled.div`
-  font-family: 'Fira Code', sans-serif;
+  font-family: 'Fira Sans', sans-serif;
   font-size: 12px;
-  font-weight: 600;
   text-align: right;
-  color: ${BlazeOrange.MainDark};
+  line-height: 18px;
+  font-weight: 600;
+  color: #333;
   position: absolute;
   top: 8px;
   right: 8px;
-  p {
+  background-color: rgba(255,255,255,.6);
+  padding: 0 5px;
+  margin: 0 -5px;
+  table, tr, td {
     margin: 0;
+    padding: 0;
+    border: medium none;
+    border-collapse: collapse;
+    span {
+      font-family: 'Fira Code', sans-serif;
+    }
+  }
+  td:first-child {
+    padding-right: 10px;
   }
 `;
