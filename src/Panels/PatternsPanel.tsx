@@ -32,6 +32,9 @@ import Infinity1 from '../Patterns/Infinity1.json';
 import Infinity2 from '../Patterns/Infinity2.json';
 import Infinity3 from '../Patterns/Infinity3.json';
 import x66 from '../Patterns/x66.json';
+import c8Diagonal from '../Patterns/C8Diagonal.json';
+import c3Orthogonal from '../Patterns/C3Orthogonal.json';
+import Spacefiller2 from '../Patterns/Spacefiller2.json';
 import {BlazeOrange, BottleGreen, CGBlue} from '../Theme';
 
 export interface Pattern {
@@ -55,13 +58,14 @@ const oscillatorsPatterns = [
     Pentadecathlon,
 ] as Pattern[];
 
-
 const spaceshipsPatterns = [
     Glider,
     LWSS,
     MWSS,
     HWSS,
     x66,
+    c3Orthogonal,
+    c8Diagonal,
 ] as Pattern[];
 
 const methuselahPatterns = [
@@ -79,6 +83,10 @@ const infinityPatterns = [
     Infinity1,
     Infinity2,
     Infinity3,
+] as Pattern[];
+
+const maxPatterns = [
+    Spacefiller2,
 ] as Pattern[];
 
 interface PatternsPanelProps {
@@ -132,6 +140,7 @@ const PatternsPanel: FunctionComponent<PatternsPanelProps> = ({setSelectedPatter
         <Row {...props} patterns={methuselahPatterns}/>
         <Row {...props} patterns={gliderGunPatterns}/>
         <Row {...props} patterns={infinityPatterns}/>
+        <Row {...props} patterns={maxPatterns}/>
     </PatternsPanelWrapper>;
 };
 

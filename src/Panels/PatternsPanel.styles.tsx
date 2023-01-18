@@ -13,12 +13,14 @@ export const PatternsPanelWrapper = styled.div`
   flex-direction: column;
   align-items: flex-end;
   gap: 2px;
+  width: calc(100vw - 20px);
 `;
 
 export const ButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 2px;
+  flex-wrap: wrap;
 `;
 export const ButtonTopRow = styled.div`
   display: flex;
@@ -29,10 +31,10 @@ export const ButtonTopRow = styled.div`
 
 export const SmallButton = styled(Button)`
   width: auto;
-  
   span {
     font-size: 12px;
     height: 24px;
+    white-space: nowrap;
   }
 `;
 
