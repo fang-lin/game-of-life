@@ -1,6 +1,6 @@
 {
   "name": "game-of-life",
-  "version": "1.4.32",
+  "version": "0.0.0-development",
   "private": true,
   "dependencies": {
     "@commitlint/cli": "^17.4.4",
@@ -81,5 +81,18 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/fang-lin/game-of-life.git"
+  },
+  "release": {
+    "branches": [
+      "master"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github"
+    ]
+  },
+  "devDependencies": {
+    "semantic-release": "^20.1.0"
   }
 }
