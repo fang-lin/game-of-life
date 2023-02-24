@@ -1,6 +1,6 @@
 {
   "name": "game-of-life",
-  "version": "0.0.0-development",
+  "version": "1.4.32",
   "private": true,
   "dependencies": {
     "@commitlint/cli": "^17.4.4",
@@ -91,8 +91,5 @@
       "@semantic-release/release-notes-generator",
       "@semantic-release/github"
     ]
-  },
-  "devDependencies": {
-    "semantic-release": "^20.1.0"
   }
 }
