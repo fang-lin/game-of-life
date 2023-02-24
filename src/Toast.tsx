@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useEffect, useState} from 'react';
+import React, {FunctionComponent, useEffect, useState, PropsWithChildren} from 'react';
 import {ToastBackground, ToastWrapper} from './Toast.styles';
 
 interface ToastProps {
@@ -6,7 +6,7 @@ interface ToastProps {
     toggleToast: (show: boolean) => void;
 }
 
-const Toast: FunctionComponent<ToastProps> = ({children, showToast, toggleToast}) => {
+const Toast: FunctionComponent<PropsWithChildren<ToastProps>> = ({children, showToast, toggleToast}) => {
 
     const [hide, setHide] = useState<boolean>(false);
 

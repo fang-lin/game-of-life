@@ -5,16 +5,14 @@ jobs:
   build:
     executor:
       name: node/default
-      tag: '16.18.1'
+      tag: '18.14.2'
     steps:
       - checkout
       - node/install-packages:
-          check-cache: always
-          pkg-manager: yarn-berry
-          with-cache: false
-      - run: yarn run lint
-      - run: yarn run test --ci
-      - run: yarn run build
+          with-cache: true
+      - run: npm run lint
+      - run: npm run test --ci
+      - run: npm run build
       - persist_to_workspace:
           root: .
           paths:

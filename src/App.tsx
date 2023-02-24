@@ -1,7 +1,12 @@
-import React, {Component, KeyboardEvent, RefObject} from 'react';
+import React, {
+    Component,
+    ComponentType,
+    KeyboardEvent,
+    RefObject
+} from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
 import Canvas, {Coordinate, LifeMapHooks} from './Canvas/Canvas';
-import {RouteComponentProps} from 'react-router-dom';
+import {useNavigate, useParams, NavigateFunction} from 'react-router-dom';
 import Panel from './Panels/Panel';
 import {
     Attributes,
@@ -25,6 +30,24 @@ import Header from './Header';
 import {Pattern} from './Panels/PatternsPanel';
 import Toast from './Toast';
 
+
+interface RouterProps{
+    router: {
+        navigate: NavigateFunction;
+        params: OriginalParams;
+    }
+}
+
+function withRouter(WrappedComponent: ComponentType){
+    return (props: any) => {
+        let navigate = useNavigate();
+        let params = useParams();
+        return (
+            <WrappedComponent {...props} router={{ navigate, params }}/>
+        );
+    };
+}
+
 interface AppState {
     size: [number, number];
     playState: PlayState;
@@ -38,7 +61,7 @@ interface AppState {
     showToast: boolean;
 }
 
-export class App extends Component<RouteComponentProps<OriginalParams>, AppState> {
+export const App = withRouter(class extends Component<RouterProps, AppState>{
     private getCells?: () => Coordinate[];
     private edit?: () => void;
     private createSharedLink?: () => void;
@@ -51,10 +74,10 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     private readonly appRef: RefObject<HTMLDivElement>;
     private client: Coordinate = [NaN, NaN];
 
-    constructor(props: RouteComponentProps<OriginalParams>) {
+    constructor(props: any) {
         super(props);
         this.appRef = React.createRef();
-        const {origin} = parseParams(this.props.match.params);
+        const {origin} = parseParams(this.props.router.params);
         this.state = {
             evolutionIndex: 0,
             size: [0, 0],
@@ -79,12 +102,12 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     togglePatternPanel = (showPatternPanel: boolean) => this.setState({showPatternPanel});
 
     pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
-        const {history: {push}, match: {params}} = this.props;
-        push(combinePathToURL(stringifyParams({...parseParams(params), ...parsedParams})));
+        const {navigate, params} = this.props.router;
+        navigate(combinePathToURL(stringifyParams({...parseParams(params), ...parsedParams})));
     };
 
     setCellsFromParams = () => {
-        const {cells} = parseParams(this.props.match.params);
+        const {cells} = parseParams(this.props.router.params);
         if (cells && this.setCells) {
             this.setCells(cells);
             this.setState({cellsCount: cells.length});
@@ -126,21 +149,21 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
 
     clientToCell = (currentClient: Coordinate): Coordinate => {
         const {size} = this.state;
-        const {scale, origin} = parseParams(this.props.match.params);
+        const {scale, origin} = parseParams(this.props.router.params);
         return [
             Math.floor(origin[0] + (currentClient[0] - size[0] / 2) / scale),
             Math.floor(origin[1] + (currentClient[1] - size[1] / 2) / scale),
         ];
-    }
+    };
 
     clientToOrigin = (currentClient: Coordinate): Coordinate => {
         const {client} = this;
-        const {origin, scale} = parseParams(this.props.match.params);
+        const {origin, scale} = parseParams(this.props.router.params);
         return [
             origin[0] + (client[0] - currentClient[0]) / scale,
             origin[1] + (client[1] - currentClient[1]) / scale
         ];
-    }
+    };
 
     onClickCell = (event: Event) => {
         const currentClient = getClient(event as DragEvent);
@@ -209,7 +232,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
 
         this.setCells = setCellsHook;
         this.createSharedLink = () => {
-            const path = combinePathToURL(stringifyParams({...parseParams(this.props.match.params), ...{cells: getCellsHook()}}));
+            const path = combinePathToURL(stringifyParams({...parseParams(this.props.router.params), ...{cells: getCellsHook()}}));
             navigator.clipboard.writeText(`${window.location.origin}/#${path}`).then(() => {
                 this.setState({showToast: true});
             });
@@ -231,7 +254,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
         };
 
         this.reset = () => {
-            const {cells} = parseParams(this.props.match.params);
+            const {cells} = parseParams(this.props.router.params);
             pushToHistory({
                 origin: [0, 0]
             });
@@ -250,14 +273,14 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             });
             playHook();
         };
-    }
+    };
 
     onEvolve = (cells: Coordinate[]) => {
         this.setState(({evolutionIndex}) => ({
             cellsCount: cells.length,
             evolutionIndex: evolutionIndex + 1
         }));
-    }
+    };
 
     toggleToast = (showToast: boolean, cb?: () => void) => this.setState({showToast}, cb);
 
@@ -292,7 +315,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             rotateHoveringCells,
         } = this;
 
-        const params = parseParams(this.props.match.params);
+        const params = parseParams(this.props.router.params);
 
         const attributes: Attributes = {
             width: size[0] * pixelRatio,
@@ -347,7 +370,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
                 }
             }, () => this.rendering && this.rendering(this.getHoveringCells(this.state.hoveringCell)));
         }
-    }
+    };
 
     private setHoveringCell = (event: Event) => {
         this.setState({hoveringCell: this.clientToCell(getClient(event as DragEvent))});
@@ -362,7 +385,7 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
     }
 
     private shouldDragCanvas(instantaneousOffset: Coordinate): boolean {
-        const {scale} = parseParams(this.props.match.params);
+        const {scale} = parseParams(this.props.router.params);
         return Math.abs(instantaneousOffset[0]) > scale || Math.abs(instantaneousOffset[1]) > scale;
     }
 
@@ -373,6 +396,4 @@ export class App extends Component<RouteComponentProps<OriginalParams>, AppState
             instantaneousClient[1] - client[1],
         ];
     }
-}
-
-export default App;
+});

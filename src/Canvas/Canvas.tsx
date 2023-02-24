@@ -106,18 +106,18 @@ export class Canvas extends Component<CanvasProps> implements LifeMapHooks {
     renderingHook = (hoveringCells: Coordinate[]) => {
         this.hoveringCells = hoveringCells;
         window.requestAnimationFrame(() => this.renderCells());
-    }
+    };
 
     editHook = () => {
         window.cancelAnimationFrame(this.playTimeout);
-    }
+    };
 
     getCellsHook = (): Coordinate[] => this.lifeMap.getCells();
 
     setCellsHook = (addedCells: Coordinate[]) => {
         this.lifeMap.toggleCells(addedCells);
         this.renderCells();
-    }
+    };
 
     nextHook = () => this.evolve();
 
@@ -132,7 +132,7 @@ export class Canvas extends Component<CanvasProps> implements LifeMapHooks {
         lifeMap.reset();
         lifeMap.addCells(cells);
         renderCells();
-    }
+    };
 
     private evolve() {
         const {
