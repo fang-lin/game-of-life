@@ -9,9 +9,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [ 18.14.2 ]
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -24,12 +21,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Setup node
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18.14.2
         cache: 'npm'
 
+    - run: npm ci
     - run: npm run lint
     - run: npm run test --ci
     - run: npm run build
