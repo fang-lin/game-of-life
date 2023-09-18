@@ -32,6 +32,8 @@ jobs:
     - run: npm run test --ci
     - run: npm run build
     - run: npm run semantic-release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     - run: npm run build
 
     - name: Cache assets
