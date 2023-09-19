@@ -6,7 +6,11 @@ on:
 permissions:
   contents: read
 
+env:
+  cache-name: build-assets-cache
+
 jobs:
+
   build:
     runs-on: ubuntu-latest
 
@@ -36,8 +40,6 @@ jobs:
 
     - name: Cache assets
       uses: actions/cache@v3
-      env:
-        cache-name: cache-build-assets
       with:
         path: |
           build
