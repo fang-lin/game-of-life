@@ -1,3 +1,4 @@
-# [Conway's Game of Life](https://game-of-life.fanglin.me/) &middot; [![CircleCI](https://dl.circleci.com/status-badge/img/gh/fang-lin/game-of-life/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/fang-lin/game-of-life/tree/master)
+# [Conway's Game of Life](https://game-of-life.fanglin.me/)
 
 ----
+[![Build and Deploy](https://github.com/fang-lin/game-of-life/actions/workflows/build-and-deploy.yml/badge.svg?branch=master)](https://github.com/fang-lin/game-of-life/actions/workflows/build-and-deploy.yml)
