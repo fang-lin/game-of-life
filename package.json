@@ -1,6 +1,6 @@
 {
   "name": "game-of-life",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
     "@commitlint/cli": "^17.4.4",
