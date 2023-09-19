@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
     permissions: write-all
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -33,6 +34,8 @@ jobs:
     - run: npm run test --ci
     - run: npm run build
     - run: npm run semantic-release
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
     - run: npm run build
 
     - name: Cache assets
