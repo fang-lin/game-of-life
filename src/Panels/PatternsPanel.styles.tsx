@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import {Button} from './Panel.styles';
-import {ReactComponent as RotateLeft} from '../images/rotate-left.svg';
-import {ReactComponent as RotateRight} from '../images/rotate-right.svg';
+import RotateLeft from '../images/rotate-left.svg?react';
+import RotateRight from '../images/rotate-right.svg?react';
 import {ComponentType} from 'react';
 
 export const PatternsPanelWrapper = styled.div`

@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 import {ComponentType} from 'react';
-import {ReactComponent as Rabbit} from '../images/rabbit.svg';
-import {ReactComponent as Snail} from '../images/snail.svg';
-import {ReactComponent as ZoomIn} from '../images/zoom-in.svg';
-import {ReactComponent as ZoomOut} from '../images/zoom-out.svg';
-import {ReactComponent as Glider} from '../images/glider.svg';
-import {ReactComponent as Share} from '../images/share.svg';
-import {ReactComponent as Play} from '../images/play.svg';
-import {ReactComponent as Pause} from '../images/pause.svg';
-import {ReactComponent as Next} from '../images/next.svg';
-import {ReactComponent as Stop} from '../images/stop.svg';
-import {ReactComponent as Write} from '../images/write.svg';
+import Rabbit from '../images/rabbit.svg?react';
+import Snail from '../images/snail.svg?react';
+import ZoomIn from '../images/zoom-in.svg?react';
+import ZoomOut from '../images/zoom-out.svg?react';
+import Glider from '../images/glider.svg?react';
+import Share from '../images/share.svg?react';
+import Play from '../images/play.svg?react';
+import Pause from '../images/pause.svg?react';
+import Next from '../images/next.svg?react';
+import Stop from '../images/stop.svg?react';
+import Write from '../images/write.svg?react';
 import {CGBlue, Theme} from '../Theme';
 import {Size} from '../Canvas/Canvas';
 
