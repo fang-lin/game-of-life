@@ -3,29 +3,29 @@
   "version": "1.6.2",
   "private": true,
   "dependencies": {
-    "@commitlint/cli": "^17.4.4",
-    "@commitlint/config-conventional": "^17.4.4",
+    "@commitlint/cli": "^20.5.2",
+    "@commitlint/config-conventional": "^20.5.0",
     "@semantic-release/git": "^10.0.1",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^26.0.15",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^29.5.14",
     "@types/lodash": "^4.14.176",
-    "@types/node": "^12.0.0",
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
+    "@types/node": "^22.19.17",
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.15",
-    "husky": "^8.0.3",
+    "husky": "^9.1.7",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",
-    "semantic-release": "^22.0.0",
+    "semantic-release": "^25.0.3",
     "styled-components": "^5.3.1",
-    "typescript": "4.4.4",
-    "web-vitals": "^2.1.4"
+    "typescript": "^5.9.3",
+    "web-vitals": "^4.2.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -33,7 +33,7 @@
     "test": "react-scripts test",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "eject": "react-scripts eject",
-    "prepare": "husky install",
+    "prepare": "husky",
     "semantic-release": "semantic-release"
   },
   "eslintConfig": {
@@ -76,8 +76,8 @@
     ]
   },
   "engines": {
-    "npm": "9.6.7",
-    "node": "18.17.1"
+    "npm": ">=10",
+    "node": ">=22"
   },
   "repository": {
     "type": "git",
