@@ -1,6 +1,6 @@
 # STORY-009: 引入 React Context 替代 prop drilling
 
-- **状态**: Todo
+- **状态**: Cancelled
 - **Epic**: [Epic-002](../epic/002-code-quality.md)
 - **日期**: 2026-05-04
 - **负责人**:
@@ -26,8 +26,13 @@
 
 依赖 STORY-007 和 STORY-008 完成。使用 `useContext` + `useReducer` 模式，将状态和 dispatch 分离为两个 Context，避免不必要的 re-render。
 
+## 备注
+
+取消原因：重构后 prop drilling 只有一层（App → Panel/Dashboard/Toast），引入 Context 反而增加复杂度，不值得。
+
 ## 变更记录
 
 | 日期 | 变更内容 |
 |------|---------|
 | 2026-05-04 | Story 创建 |
+| 2026-05-04 | 评估后取消 |

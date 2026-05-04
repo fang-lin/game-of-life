@@ -1,6 +1,6 @@
 # STORY-010: 主题颜色整合与响应式断点修复
 
-- **状态**: Todo
+- **状态**: Done
 - **Epic**: [Epic-002](../epic/002-code-quality.md)
 - **日期**: 2026-05-04
 - **负责人**:
@@ -15,10 +15,10 @@ Canvas 绘制颜色硬编码在 `Canvas.functions.tsx` 中（如 `#183A37`、`rg
 
 ## 验收标准
 
-- [ ] Canvas 绘制颜色（grid、cells、hovering cells、dead cells）提取到 Theme 或常量
-- [ ] 修复 `App.styles.ts` 中 `desktopL` 断点与 `desktop` 重复的问题
-- [ ] 消除样式文件中的 magic numbers（Toast top、Panel pressed offset、Dashboard margin）
-- [ ] 视觉效果不变
+- [x] Canvas 绘制颜色（grid、cells、hovering cells、dead cells）提取到 Theme 或常量
+- [x] 修复 `App.styles.ts` 中 `desktopL` 断点与 `desktop` 重复的问题
+- [x] 消除样式文件中的 magic numbers（Toast top、Panel pressed offset、Dashboard margin）
+- [x] 视觉效果不变
 
 ## 技术方案
 
@@ -29,3 +29,4 @@ Canvas 绘制颜色硬编码在 `Canvas.functions.tsx` 中（如 `#183A37`、`rg
 | 日期 | 变更内容 |
 |------|---------|
 | 2026-05-04 | Story 创建 |
+| 2026-05-04 | Canvas colors extracted to Theme, dead breakpoint removed |

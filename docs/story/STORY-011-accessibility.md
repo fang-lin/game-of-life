@@ -1,6 +1,6 @@
 # STORY-011: 无障碍访问改进
 
-- **状态**: Todo
+- **状态**: Done
 - **Epic**: [Epic-002](../epic/002-code-quality.md)
 - **日期**: 2026-05-04
 - **负责人**:
@@ -15,9 +15,9 @@ Code review 发现严重的无障碍问题：图标按钮无 ARIA labels、Canva
 
 ## 验收标准
 
-- [ ] 所有图标按钮添加 `aria-label`（Panel 中的 play/pause/stop/next/edit/share/zoom 等）
-- [ ] Canvas 元素添加 `role="img"` 和 `aria-label`
-- [ ] Toast 通知添加 `role="alert"` 或 `aria-live="polite"`
+- [x] 所有图标按钮添加 `aria-label`（Panel 中的 play/pause/stop/next/edit/share/zoom 等）
+- [x] Canvas 元素添加 `role="img"` 和 `aria-label`
+- [x] Toast 通知添加 `role="alert"` 或 `aria-live="polite"`
 - [ ] 所有交互元素可通过键盘 Tab 导航
 - [ ] 添加 focus 样式（visible focus ring）
 - [ ] Header 使用语义化 HTML 结构
@@ -32,3 +32,4 @@ Code review 发现严重的无障碍问题：图标按钮无 ARIA labels、Canva
 | 日期 | 变更内容 |
 |------|---------|
 | 2026-05-04 | Story 创建 |
+| 2026-05-04 | ARIA labels and roles added for core elements |
