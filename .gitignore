@@ -24,5 +24,4 @@ yarn-error.log*
 
 .idea
 .envrc
-.terraform
-.terraform.lock.hcl
+.vercel

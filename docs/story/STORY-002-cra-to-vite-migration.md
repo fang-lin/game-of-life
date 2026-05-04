@@ -1,6 +1,7 @@
 # STORY-002: CRA 迁移到 Vite
 
-- **状态**: In Progress
+- **状态**: Done
+- **Epic**: [Epic-001](../epic/001-modernize-stack.md)
 - **日期**: 2026-04-29
 - **负责人**: Claude + linfang
 
@@ -14,13 +15,13 @@ Create React App (react-scripts) 已停止维护，是 React 19、styled-compone
 
 ## 验收标准
 
-- [ ] 移除 react-scripts 依赖
-- [ ] Vite 配置完成，dev server 和 build 正常工作
-- [ ] 所有测试通过（迁移到 Vitest）
-- [ ] ESLint 配置独立（不再依赖 react-app preset）
-- [ ] HashRouter 路由正常
-- [ ] 生产构建产物正常
-- [ ] ADR 记录迁移决策
+- [x] 移除 react-scripts 依赖
+- [x] Vite 配置完成，dev server 和 build 正常工作
+- [x] 所有测试通过（迁移到 Vitest）
+- [x] ESLint 配置独立（不再依赖 react-app preset）
+- [x] HashRouter 路由正常
+- [x] 生产构建产物正常
+- [x] ADR 记录迁移决策
 
 ## 技术方案
 
@@ -31,3 +32,4 @@ Create React App (react-scripts) 已停止维护，是 React 19、styled-compone
 | 日期 | 变更内容 |
 |------|---------|
 | 2026-04-29 | Story 创建，开始迁移 |
+| 2026-04-29 | Vite 迁移完成 (commit aa267bf) |

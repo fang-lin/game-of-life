@@ -1,6 +1,7 @@
 # STORY-001: 依赖升级
 
 - **状态**: Done
+- **Epic**: [Epic-001](../epic/001-modernize-stack.md)
 - **日期**: 2026-04-29
 - **负责人**: Claude + linfang
 

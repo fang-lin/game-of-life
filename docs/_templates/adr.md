@@ -1,16 +1,12 @@
-# ADR-XXX: [标题]
+# ADR-NNN: 标题
 
-- **状态**: Proposed | Accepted | Deprecated | Superseded
+- **状态**: Proposed | Accepted | Rejected | Superseded
 - **日期**: YYYY-MM-DD
-- **关联 Story**: STORY-XXX
+- **关联 Story**: STORY-NNN
 
 ## 背景
 
 什么问题需要做决策？
-
-## 决策
-
-我们决定...
 
 ## 备选方案
 
@@ -21,6 +17,10 @@
 ### 方案 B
 - 优点:
 - 缺点:
+
+## 决策
+
+我们决定...
 
 ## 影响
 

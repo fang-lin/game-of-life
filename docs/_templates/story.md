@@ -1,6 +1,7 @@
-# STORY-XXX: [标题]
+# Story-NNN: 标题
 
-- **状态**: Draft | In Progress | Done | Cancelled
+- **状态**: Todo | In Progress | Done | Blocked
+- **Epic**: [Epic-NNN](../epic/NNN-title.md)
 - **日期**: YYYY-MM-DD
 - **负责人**:
 
@@ -14,8 +15,7 @@
 
 ## 验收标准
 
-- [ ] 标准 1
-- [ ] 标准 2
+- [ ]
 
 ## 技术方案
 
