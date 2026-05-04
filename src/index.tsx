@@ -13,7 +13,6 @@ createRoot(document.getElementById('root')!).render(
             <Routes>
                 <Route path={routerPath()} element={<App/>}/>
                 <Route path="/" element={<Navigate to={defaultURL} replace/>}/>
-                <Route path="/game" element={<Navigate to={defaultURL} replace/>}/>
                 <Route path="*" element={<NotFound/>}/>
             </Routes>
         </BrowserRouter>

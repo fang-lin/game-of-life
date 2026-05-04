@@ -135,11 +135,11 @@ export function stringifyParams({scale, gridType, showDeadCells, speed, origin, 
 }
 
 export function combinePathToURL(params: OriginalParams): string {
-    return `/game/${paramsSegments.map(segment => params[segment]).join('/')}`;
+    return `/${paramsSegments.map(segment => params[segment]).join('/')}`;
 }
 
 export function routerPath(): string {
-    return `/game/${paramsSegments.map(segment => `:${segment}`).join('/')}`;
+    return `/${paramsSegments.map(segment => `:${segment}`).join('/')}`;
 }
 
 function isTouchEvent(event: DragEvent): event is TouchEvent {

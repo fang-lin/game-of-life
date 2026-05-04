@@ -282,7 +282,7 @@ describe('combinePathToURL', () => {
     it('should combine params into URL path', () => {
         const original = stringifyParams(defaultParams);
         const url = combinePathToURL(original);
-        expect(url).toBe('/game/20/3/0/0/0/0/-');
+        expect(url).toBe('/20/3/0/0/0/0/-');
     });
 
     it('should include cells in URL path', () => {
@@ -291,13 +291,13 @@ describe('combinePathToURL', () => {
             cells: [[1, 2], [3, 4]],
         };
         const url = combinePathToURL(stringifyParams(params));
-        expect(url).toBe('/game/20/3/0/0/0/0/1.2:3.4');
+        expect(url).toBe('/20/3/0/0/0/0/1.2:3.4');
     });
 });
 
 describe('routerPath', () => {
     it('should return parameterized path', () => {
-        expect(routerPath()).toBe('/game/:scale/:speed/:gridType/:showDeadCells/:originX/:originY/:cells');
+        expect(routerPath()).toBe('/:scale/:speed/:gridType/:showDeadCells/:originX/:originY/:cells');
     });
 });
 
