@@ -1,5 +1,4 @@
 import {Coordinate} from './Canvas';
-import {NodePool} from './HashLife';
 
 export type CellsMap = Map<string, Coordinate>;
 
@@ -7,8 +6,6 @@ export class LifeMap {
     cells: CellsMap = new Map();
     deadList: CellsMap = new Map();
     bornList: CellsMap = new Map();
-    private pool: NodePool = new NodePool();
-    private generation = 0;
 
     constructor(cells?: Coordinate[]) {
         if (cells)
@@ -49,50 +46,57 @@ export class LifeMap {
             .reduce((num, cell) => this.cells.get(`${cell}`) ? num + 1 : num, 0);
     }
 
+    /**
+     * Neighbor counting algorithm: O(8N) per generation.
+     *
+     * 1. For each alive cell, increment a counter for all 8 neighbors → 8N ops
+     * 2. Scan the counter map:
+     *    - count = 3 → alive (birth or survival)
+     *    - count = 2 and currently alive → survival
+     *    - otherwise → dead
+     */
     evolve() {
-        const currentCells = this.getCells() as [number, number][];
+        const neighborCount = new Map<string, number>();
 
-        // Build tree, expand, step, collect — all in one pass with fresh coordinates
-        let tree = this.pool.fromCells(currentCells);
-        tree = this.pool.expand(tree);
-        tree = this.pool.expand(tree);
-        tree = this.pool.stepOne(tree);
+        // Count neighbors: 8 increments per alive cell
+        this.cells.forEach(([x, y]) => {
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    if (dx === 0 && dy === 0) continue;
+                    const key = `${x + dx},${y + dy}`;
+                    neighborCount.set(key, (neighborCount.get(key) || 0) + 1);
+                }
+            }
+        });
 
-        const newCells: [number, number][] = [];
-        this.pool.collectCells(tree, 0, 0, newCells);
-
-        // Diff for deadList / bornList
-        const oldSet = new Set(currentCells.map(c => `${c[0]},${c[1]}`));
-        const newSet = new Set(newCells.map(c => `${c[0]},${c[1]}`));
-
+        // Determine next generation
         this.deadList = new Map();
         this.bornList = new Map();
+        const nextCells: CellsMap = new Map();
 
-        for (const cell of currentCells) {
-            if (!newSet.has(`${cell[0]},${cell[1]}`)) {
-                this.deadList.set(`${cell}`, cell);
+        neighborCount.forEach((count, key) => {
+            const [x, y] = key.split(',').map(Number) as Coordinate;
+            const wasAlive = this.cells.has(key);
+
+            if (count === 3 || (count === 2 && wasAlive)) {
+                nextCells.set(key, [x, y]);
+                if (!wasAlive) {
+                    this.bornList.set(key, [x, y]);
+                }
             }
-        }
+        });
 
-        this.cells = new Map();
-        for (const cell of newCells) {
-            const coord: Coordinate = [cell[0], cell[1]];
-            this.cells.set(`${coord}`, coord);
-            if (!oldSet.has(`${cell[0]},${cell[1]}`)) {
-                this.bornList.set(`${coord}`, coord);
+        // Find dead cells (were alive, now not)
+        this.cells.forEach((cell, key) => {
+            if (!nextCells.has(key)) {
+                this.deadList.set(key, cell);
             }
-        }
+        });
 
-        // Periodically create fresh pool to prevent unbounded cache growth
-        this.generation++;
-        if (this.generation % 100 === 0) {
-            this.pool = new NodePool();
-        }
+        this.cells = nextCells;
     }
 
     reset() {
         this.cells = new Map();
-        this.pool = new NodePool();
-        this.generation = 0;
     }
 }
