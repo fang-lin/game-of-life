@@ -1,14 +1,10 @@
-import React, {
-    Component,
-    ComponentType,
-    RefObject
-} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
-import Canvas, {Coordinate, LifeMapHooks} from './Canvas/Canvas';
-import {useNavigate, useParams, NavigateFunction} from 'react-router-dom';
+import {Coordinate} from './Canvas/Canvas';
+import {CanvasWrapper} from './Canvas/Canvas.styles';
+import {useNavigate, useParams} from 'react-router-dom';
 import Panel from './Panels/Panel';
 import {
-    Attributes,
     combinePathToURL,
     DragEvent,
     DragEvents,
@@ -22,379 +18,355 @@ import {
     PlayState,
     rotateCells,
     stringifyParams,
+    Attributes,
 } from './App.functions';
 import Dashboard from './Dashboard';
 import Footer from './Footer';
 import Header from './Header';
 import {Pattern} from './Panels/PatternsPanel';
 import Toast from './Toast';
+import {LifeMap} from './Canvas/LifeMap';
+import {draw} from './Canvas/Canvas.functions';
 
+export function App() {
+    const navigate = useNavigate();
+    const routerParams = useParams<Record<string, string>>() as OriginalParams;
+    const params = parseParams(routerParams);
 
-interface RouterProps{
-    router: {
-        navigate: NavigateFunction;
-        params: OriginalParams;
-    }
-}
+    const appRef = useRef<HTMLDivElement>(null);
+    const lifeMapRef = useRef<LifeMap>(new LifeMap());
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const clientRef = useRef<Coordinate>([NaN, NaN]);
+    const playTimeoutRef = useRef<number>(NaN);
+    const hoveringCellsRef = useRef<Coordinate[]>([]);
 
-function withRouter(WrappedComponent: ComponentType){
-    return (props: any) => {
-        let navigate = useNavigate();
-        let params = useParams();
-        return (
-            <WrappedComponent {...props} router={{ navigate, params }}/>
-        );
-    };
-}
+    const [size, setSize] = useState<[number, number]>([0, 0]);
+    const [playState, setPlayState] = useState(PlayState.Editing);
+    const [evolutionIndex, setEvolutionIndex] = useState(0);
+    const [hoveringCell, setHoveringCell] = useState<Coordinate | null>(null);
+    const [selectedPattern, setSelectedPattern] = useState<Pattern | null>(null);
+    const [showPatternPanel, setShowPatternPanel] = useState(false);
+    const [cellsCount, setCellsCount] = useState(0);
+    const [origin, setOrigin] = useState<Coordinate>(params.origin);
+    const [dragState, setDragState] = useState(DragState.end);
+    const [showToast, setShowToast] = useState(false);
 
-interface AppState {
-    size: [number, number];
-    playState: PlayState;
-    evolutionIndex: number;
-    hoveringCell: Coordinate | null;
-    selectedPattern: Pattern | null;
-    showPatternPanel: boolean;
-    cellsCount: number;
-    origin: Coordinate;
-    dragState: DragState;
-    showToast: boolean;
-}
+    const pushToHistory = useCallback((parsedParams: Partial<ParsedParams>): void => {
+        navigate(combinePathToURL(stringifyParams({...parseParams(routerParams), ...parsedParams})));
+    }, [navigate, routerParams]);
 
-export const App = withRouter(class extends Component<RouterProps, AppState>{
-    private getCells?: () => Coordinate[];
-    private edit?: () => void;
-    private createSharedLink?: () => void;
-    private next?: () => void;
-    private pause?: () => void;
-    private play?: () => void;
-    private reset?: () => void;
-    private setCells?: (addedCells: Coordinate[]) => void;
-    private rendering?: (cells: Coordinate[]) => void;
-    private readonly appRef: RefObject<HTMLDivElement>;
-    private client: Coordinate = [NaN, NaN];
+    // Use refs to avoid stale closures in event handlers
+    const paramsRef = useRef(params);
+    paramsRef.current = params;
+    const sizeRef = useRef(size);
+    sizeRef.current = size;
+    const originRef = useRef(origin);
+    originRef.current = origin;
+    const dragStateRef = useRef(dragState);
+    dragStateRef.current = dragState;
+    const playStateRef = useRef(playState);
+    playStateRef.current = playState;
+    const selectedPatternRef = useRef(selectedPattern);
+    selectedPatternRef.current = selectedPattern;
+    const hoveringCellRef = useRef(hoveringCell);
+    hoveringCellRef.current = hoveringCell;
 
-    constructor(props: any) {
-        super(props);
-        this.appRef = React.createRef();
-        const {origin} = parseParams(this.props.router.params);
-        this.state = {
-            evolutionIndex: 0,
-            size: [0, 0],
-            playState: PlayState.Editing,
-            hoveringCell: null,
-            selectedPattern: null,
-            showPatternPanel: false,
-            cellsCount: 0,
-            dragState: DragState.end,
-            showToast: false,
-            origin,
-        };
-    }
+    const renderCells = useCallback(() => {
+        const {scale, gridType, showDeadCells} = paramsRef.current;
+        draw({
+            canvasRef,
+            size: sizeRef.current,
+            lifeMap: lifeMapRef.current,
+            hoveringCells: hoveringCellsRef.current,
+            scale,
+            gridType,
+            origin: originRef.current,
+            showDeadCells,
+        });
+    }, []);
 
-    onResize = () => requestAnimationFrame(() => {
-        const {width = 0, height = 0} = this.appRef.current?.getBoundingClientRect() || {};
-        this.setState({size: [width, height]});
-    });
-
-    setSelectedPattern = (selectedPattern: Pattern | null) => this.setState({selectedPattern});
-
-    togglePatternPanel = (showPatternPanel: boolean) => this.setState({showPatternPanel});
-
-    pushToHistory = (parsedParams: Partial<ParsedParams>): void => {
-        const {navigate, params} = this.props.router;
-        navigate(combinePathToURL(stringifyParams({...parseParams(params), ...parsedParams})));
-    };
-
-    setCellsFromParams = () => {
-        const {cells} = parseParams(this.props.router.params);
-        if (cells && this.setCells) {
-            this.setCells(cells);
-            this.setState({cellsCount: cells.length});
+    const getHoveringCells = useCallback((cell: Coordinate | null): Coordinate[] => {
+        const pattern = selectedPatternRef.current;
+        if (cell) {
+            return pattern ? pattern.cells.map(s => [s[0] + cell[0], s[1] + cell[1]]) : [cell];
         }
-    };
+        return [];
+    }, []);
 
-    componentDidMount(): void {
-        this.onResize();
-        this.setCellsFromParams();
-        window.addEventListener('resize', this.onResize);
-        window.addEventListener(DragEvents[DragState.start], this.onDragStart);
-        isTouchscreenDevices || window.addEventListener('mousemove', this.onMouseMove);
-        window.addEventListener('click', this.onClickCell);
-        window.addEventListener('keydown', this.onKeydown);
-    }
-
-    componentWillUnmount(): void {
-        window.removeEventListener('resize', this.onResize);
-        window.removeEventListener(DragEvents[DragState.start], this.onDragStart);
-        isTouchscreenDevices || window.removeEventListener('mousemove', this.onMouseMove);
-        window.removeEventListener('click', this.onClickCell);
-        window.removeEventListener('keydown', this.onKeydown);
-        window.removeEventListener(DragEvents[DragState.moving], this.onDragging);
-        window.removeEventListener(DragEvents[DragState.end], this.onDragEnd);
-    }
-
-    onKeydown = (event: Event) => {
-        const {key} = event as globalThis.KeyboardEvent;
-        switch (key) {
-        case 'Escape':
-            this.setState({selectedPattern: null});
-            break;
-        case 'ArrowLeft':
-            this.rotateHoveringCells(false);
-            break;
-        case 'ArrowRight':
-            this.rotateHoveringCells(true);
-            break;
-        }
-    };
-
-    clientToCell = (currentClient: Coordinate): Coordinate => {
-        const {size} = this.state;
-        const {scale, origin} = parseParams(this.props.router.params);
+    const clientToCell = useCallback((currentClient: Coordinate): Coordinate => {
+        const s = sizeRef.current;
+        const {scale, origin} = paramsRef.current;
         return [
-            Math.floor(origin[0] + (currentClient[0] - size[0] / 2) / scale),
-            Math.floor(origin[1] + (currentClient[1] - size[1] / 2) / scale),
+            Math.floor(origin[0] + (currentClient[0] - s[0] / 2) / scale),
+            Math.floor(origin[1] + (currentClient[1] - s[1] / 2) / scale),
         ];
-    };
+    }, []);
 
-    clientToOrigin = (currentClient: Coordinate): Coordinate => {
-        const {client} = this;
-        const {origin, scale} = parseParams(this.props.router.params);
+    const clientToOrigin = useCallback((currentClient: Coordinate): Coordinate => {
+        const client = clientRef.current;
+        const {origin, scale} = paramsRef.current;
         return [
             origin[0] + (client[0] - currentClient[0]) / scale,
             origin[1] + (client[1] - currentClient[1]) / scale
         ];
-    };
+    }, []);
 
-    onClickCell = (event: Event) => {
-        const currentClient = getClient(event as DragEvent);
-        const instantaneousOffset = this.getInstantaneousOffset(currentClient);
-        if (!this.shouldDragCanvas(instantaneousOffset)) {
-            const {playState} = this.state;
-            if (playState === PlayState.Editing) {
-                this.setCells && this.setCells(this.getHoveringCells(this.clientToCell(currentClient)));
+    const rendering = useCallback((cells: Coordinate[]) => {
+        hoveringCellsRef.current = cells;
+        window.requestAnimationFrame(() => renderCells());
+    }, [renderCells]);
+
+    // Canvas lifecycle hooks
+    const setCellsOnMap = useCallback((addedCells: Coordinate[]) => {
+        lifeMapRef.current.toggleCells(addedCells);
+        renderCells();
+    }, [renderCells]);
+
+    const getCells = useCallback((): Coordinate[] => {
+        return lifeMapRef.current.getCells();
+    }, []);
+
+    const edit = useCallback(() => {
+        window.cancelAnimationFrame(playTimeoutRef.current);
+        setPlayState(PlayState.Editing);
+        setEvolutionIndex(0);
+    }, []);
+
+    const next = useCallback(() => {
+        const lifeMap = lifeMapRef.current;
+        lifeMap.evolve();
+        const cells = lifeMap.getCells();
+        setCellsCount(cells.length);
+        setEvolutionIndex(prev => prev + 1);
+        renderCells();
+    }, [renderCells]);
+
+    const pause = useCallback(() => {
+        setPlayState(PlayState.Paused);
+        window.cancelAnimationFrame(playTimeoutRef.current);
+    }, []);
+
+    const play = useCallback(() => {
+        setPlayState(PlayState.Playing);
+        const startRef = {value: -Infinity};
+        const durations = [1000, 500, 100, 50, 25, 0];
+        const getDuration = (speed: number) => durations[speed] ?? durations[3];
+
+        const animate = (timestamp: number) => {
+            if (timestamp - startRef.value >= getDuration(paramsRef.current.speed)) {
+                startRef.value = timestamp;
+                const lifeMap = lifeMapRef.current;
+                lifeMap.evolve();
+                const cells = lifeMap.getCells();
+                setCellsCount(cells.length);
+                setEvolutionIndex(prev => prev + 1);
+                renderCells();
             }
-        }
-    };
-
-    onMouseMove = (event: Event) => {
-        if (this.rendering && this.state.dragState === DragState.end) {
-            this.setHoveringCell(event);
-            this.rendering(this.getHoveringCells(this.state.hoveringCell));
-        }
-    };
-
-    onDragStart = (event: Event): void => {
-        this.setState({dragState: DragState.start});
-        this.setHoveringCell(event);
-        this.client = getClient(event as DragEvent);
-        window.addEventListener(DragEvents[DragState.moving], this.onDragging);
-        window.addEventListener(DragEvents[DragState.end], this.onDragEnd);
-    };
-
-    onDragging = (event: Event): void => {
-        if (this.rendering) {
-            this.setState({
-                dragState: DragState.moving,
-                origin: this.clientToOrigin(getClient(event as DragEvent)),
-            }, () => {
-                this.rendering && this.rendering(this.getHoveringCells(this.state.hoveringCell));
-            });
-        }
-    };
-
-    onDragEnd = (event: Event): void => {
-        if (this.rendering) {
-            const origin = this.clientToOrigin(getClient(event as DragEvent));
-            this.setHoveringCell(event);
-            this.rendering(this.getHoveringCells(this.state.hoveringCell));
-            this.setState({
-                dragState: DragState.end,
-                origin,
-            });
-            this.pushToHistory({origin});
-        }
-        window.removeEventListener(DragEvents[DragState.moving], this.onDragging);
-        window.removeEventListener(DragEvents[DragState.end], this.onDragEnd);
-    };
-
-    setLifeMapHooks = (hooks: () => LifeMapHooks) => {
-        const {pushToHistory} = this;
-        const {
-            getCellsHook,
-            setCellsHook,
-            editHook,
-            playHook,
-            pauseHook,
-            nextHook,
-            resetHook,
-            renderingHook,
-        } = hooks();
-
-        this.setCells = setCellsHook;
-        this.createSharedLink = () => {
-            const path = combinePathToURL(stringifyParams({...parseParams(this.props.router.params), ...{cells: getCellsHook()}}));
-            navigator.clipboard.writeText(`${window.location.origin}/#${path}`).then(() => {
-                this.setState({showToast: true});
-            });
+            playTimeoutRef.current = window.requestAnimationFrame(animate);
         };
-        this.rendering = renderingHook;
-        this.edit = () => {
-            editHook();
-            this.setState({
-                playState: PlayState.Editing,
-                evolutionIndex: 0
-            });
-        };
-        this.next = nextHook;
-        this.pause = () => {
-            this.setState({
-                playState: PlayState.Paused
-            });
-            pauseHook();
-        };
+        playTimeoutRef.current = window.requestAnimationFrame(animate);
+    }, [renderCells]);
 
-        this.reset = () => {
-            const {cells} = parseParams(this.props.router.params);
-            pushToHistory({
-                origin: [0, 0]
-            });
-            this.setState({
-                cellsCount: cells.length,
-                hoveringCell: null,
-                playState: PlayState.Editing,
-                evolutionIndex: 0,
-                origin: [0, 0],
-            }, () => resetHook(cells));
-        };
+    const reset = useCallback(() => {
+        const {cells} = parseParams(routerParams);
+        pushToHistory({origin: [0, 0]});
+        window.cancelAnimationFrame(playTimeoutRef.current);
+        hoveringCellsRef.current = [];
+        lifeMapRef.current.reset();
+        lifeMapRef.current.addCells(cells);
+        setCellsCount(cells.length);
+        setHoveringCell(null);
+        setPlayState(PlayState.Editing);
+        setEvolutionIndex(0);
+        setOrigin([0, 0]);
+        renderCells();
+    }, [routerParams, pushToHistory, renderCells]);
 
-        this.play = () => {
-            this.setState({
-                playState: PlayState.Playing
-            });
-            playHook();
-        };
-    };
-
-    onEvolve = (cells: Coordinate[]) => {
-        this.setState(({evolutionIndex}) => ({
-            cellsCount: cells.length,
-            evolutionIndex: evolutionIndex + 1
+    const createSharedLink = useCallback(() => {
+        const path = combinePathToURL(stringifyParams({
+            ...parseParams(routerParams),
+            cells: lifeMapRef.current.getCells()
         }));
-    };
+        navigator.clipboard.writeText(`${window.location.origin}/#${path}`).then(() => {
+            setShowToast(true);
+        });
+    }, [routerParams]);
 
-    toggleToast = (showToast: boolean, cb?: () => void) => this.setState({showToast}, cb);
+    const rotateHoveringCells = useCallback((clockwise = true) => {
+        const pattern = selectedPatternRef.current;
+        if (pattern) {
+            const newPattern = {
+                name: pattern.name,
+                cells: rotateCells(pattern.cells, clockwise)
+            };
+            setSelectedPattern(newPattern);
+            selectedPatternRef.current = newPattern;
+            rendering(getHoveringCells(hoveringCellRef.current));
+        }
+    }, [rendering, getHoveringCells]);
 
-    render() {
-        const {
-            size,
-            playState,
-            evolutionIndex,
-            hoveringCell,
-            cellsCount,
-            origin,
-            dragState,
-            selectedPattern,
-            showPatternPanel,
-            showToast,
-        } = this.state;
+    // Resize handler
+    useEffect(() => {
+        const onResize = () => requestAnimationFrame(() => {
+            const {width = 0, height = 0} = appRef.current?.getBoundingClientRect() || {};
+            setSize([width, height]);
+        });
+        onResize();
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+    }, []);
 
-        const {
-            pushToHistory,
-            setSelectedPattern,
-            togglePatternPanel,
-            getCells,
-            setLifeMapHooks,
-            reset,
-            next,
-            pause,
-            play,
-            edit,
-            onEvolve,
-            createSharedLink,
-            toggleToast,
-            rotateHoveringCells,
-        } = this;
+    // Load cells from URL params on mount
+    useEffect(() => {
+        const {cells} = parseParams(routerParams);
+        if (cells.length) {
+            lifeMapRef.current.reset();
+            lifeMapRef.current.addCells(cells);
+            setCellsCount(cells.length);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-        const params = parseParams(this.props.router.params);
+    // Mouse move (hovering)
+    useEffect(() => {
+        if (isTouchscreenDevices) return;
 
-        const attributes: Attributes = {
-            width: size[0] * pixelRatio,
-            height: size[1] * pixelRatio
+        const onMouseMove = (event: Event) => {
+            if (dragStateRef.current !== DragState.end) return;
+            const cell = clientToCell(getClient(event as DragEvent));
+            setHoveringCell(cell);
+            hoveringCellRef.current = cell;
+            rendering(getHoveringCells(cell));
         };
 
-        return (
-            <AppWrapper ref={this.appRef} {...{playState, dragState}}>
-                <Canvas {...{
-                    size,
+        window.addEventListener('mousemove', onMouseMove);
+        return () => window.removeEventListener('mousemove', onMouseMove);
+    }, [clientToCell, rendering, getHoveringCells]);
+
+    // Click cell
+    useEffect(() => {
+        const onClickCell = (event: Event) => {
+            const currentClient = getClient(event as DragEvent);
+            const client = clientRef.current;
+            const {scale} = paramsRef.current;
+            const offset: Coordinate = [
+                currentClient[0] - client[0],
+                currentClient[1] - client[1],
+            ];
+            const shouldDrag = Math.abs(offset[0]) > scale || Math.abs(offset[1]) > scale;
+
+            if (!shouldDrag && playStateRef.current === PlayState.Editing) {
+                const cell = clientToCell(currentClient);
+                const cells = getHoveringCells(cell);
+                lifeMapRef.current.toggleCells(cells);
+                renderCells();
+            }
+        };
+
+        window.addEventListener('click', onClickCell);
+        return () => window.removeEventListener('click', onClickCell);
+    }, [clientToCell, getHoveringCells, renderCells]);
+
+    // Keyboard handler
+    useEffect(() => {
+        const onKeydown = (event: globalThis.KeyboardEvent) => {
+            switch (event.key) {
+            case 'Escape':
+                setSelectedPattern(null);
+                break;
+            case 'ArrowLeft':
+                rotateHoveringCells(false);
+                break;
+            case 'ArrowRight':
+                rotateHoveringCells(true);
+                break;
+            }
+        };
+        window.addEventListener('keydown', onKeydown);
+        return () => window.removeEventListener('keydown', onKeydown);
+    }, [rotateHoveringCells]);
+
+    // Drag handler
+    useEffect(() => {
+        const onDragStart = (event: Event): void => {
+            setDragState(DragState.start);
+            const cell = clientToCell(getClient(event as DragEvent));
+            setHoveringCell(cell);
+            hoveringCellRef.current = cell;
+            clientRef.current = getClient(event as DragEvent);
+
+            const onDragging = (event: Event): void => {
+                const newOrigin = clientToOrigin(getClient(event as DragEvent));
+                setDragState(DragState.moving);
+                setOrigin(newOrigin);
+                originRef.current = newOrigin;
+                rendering(getHoveringCells(hoveringCellRef.current));
+            };
+
+            const onDragEnd = (event: Event): void => {
+                const newOrigin = clientToOrigin(getClient(event as DragEvent));
+                const cell = clientToCell(getClient(event as DragEvent));
+                setHoveringCell(cell);
+                hoveringCellRef.current = cell;
+                rendering(getHoveringCells(cell));
+                setDragState(DragState.end);
+                setOrigin(newOrigin);
+                originRef.current = newOrigin;
+                pushToHistory({origin: newOrigin});
+
+                window.removeEventListener(DragEvents[DragState.moving], onDragging);
+                window.removeEventListener(DragEvents[DragState.end], onDragEnd);
+            };
+
+            window.addEventListener(DragEvents[DragState.moving], onDragging);
+            window.addEventListener(DragEvents[DragState.end], onDragEnd);
+        };
+
+        window.addEventListener(DragEvents[DragState.start], onDragStart);
+        return () => {
+            window.removeEventListener(DragEvents[DragState.start], onDragStart);
+        };
+    }, [clientToCell, clientToOrigin, rendering, getHoveringCells, pushToHistory]);
+
+    // Re-render when size/params change
+    useEffect(() => {
+        renderCells();
+    }, [size, params.scale, params.gridType, params.showDeadCells, origin, renderCells]);
+
+    const attributes: Attributes = {
+        width: size[0] * pixelRatio,
+        height: size[1] * pixelRatio
+    };
+
+    return (
+        <AppWrapper ref={appRef} playState={playState} dragState={dragState}>
+            <CanvasWrapper
+                ref={canvasRef}
+                width={attributes.width}
+                height={attributes.height}
+            />
+            <Header/>
+            <Dashboard {...{evolutionIndex, cellsCount, params, hoveringCell}}/>
+            <BottomSection>
+                <Footer/>
+                <Panel {...{
                     playState,
+                    pushToHistory,
                     params,
-                    attributes,
-                    origin,
-                    setLifeMapHooks,
-                    onEvolve,
+                    showPatternPanel,
+                    togglePatternPanel: setShowPatternPanel,
+                    setSelectedPattern,
+                    selectedPattern,
+                    reset,
+                    next,
+                    pause,
+                    play,
+                    edit,
+                    createSharedLink,
+                    rotateHoveringCells,
                 }}/>
-                <Header/>
-                <Dashboard {...{evolutionIndex, cellsCount, params, hoveringCell}}/>
-                <BottomSection>
-                    <Footer/>
-                    {reset && next && pause && play && edit && createSharedLink && <Panel {...{
-                        playState,
-                        pushToHistory,
-                        params,
-                        showPatternPanel,
-                        togglePatternPanel,
-                        setSelectedPattern,
-                        selectedPattern,
-                        getCells,
-                        reset,
-                        next,
-                        pause,
-                        play,
-                        edit,
-                        createSharedLink,
-                        rotateHoveringCells,
-                    }}/>}
-                </BottomSection>
-                <Toast {...{showToast, toggleToast}}>Copied the shared link to clipboard.</Toast>
-            </AppWrapper>
-        );
-    }
-
-    private rotateHoveringCells = (clockwise = true) => {
-        if (this.state.selectedPattern) {
-            const {name, cells} = this.state.selectedPattern;
-            this.setState({
-                selectedPattern: {
-                    name,
-                    cells: rotateCells(cells, clockwise)
-                }
-            }, () => this.rendering && this.rendering(this.getHoveringCells(this.state.hoveringCell)));
-        }
-    };
-
-    private setHoveringCell = (event: Event) => {
-        this.setState({hoveringCell: this.clientToCell(getClient(event as DragEvent))});
-    };
-
-    private getHoveringCells(cell: Coordinate | null): Coordinate[] {
-        const {selectedPattern} = this.state;
-        if (cell) {
-            return selectedPattern ? selectedPattern.cells.map(s => [s[0] + cell[0], s[1] + cell[1]]) : [cell];
-        }
-        return [];
-    }
-
-    private shouldDragCanvas(instantaneousOffset: Coordinate): boolean {
-        const {scale} = parseParams(this.props.router.params);
-        return Math.abs(instantaneousOffset[0]) > scale || Math.abs(instantaneousOffset[1]) > scale;
-    }
-
-    private getInstantaneousOffset(instantaneousClient: Coordinate): Coordinate {
-        const {client} = this;
-        return [
-            instantaneousClient[0] - client[0],
-            instantaneousClient[1] - client[1],
-        ];
-    }
-});
+            </BottomSection>
+            <Toast showToast={showToast} toggleToast={setShowToast}>Copied the shared link to clipboard.</Toast>
+        </AppWrapper>
+    );
+}
