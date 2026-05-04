@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
+import {GlobalStyle} from './index.styles';
 import {Coordinate} from './Canvas/Canvas';
 import {CanvasWrapper} from './Canvas/Canvas.styles';
 import {useNavigate, useParams} from 'react-router-dom';
@@ -187,7 +188,7 @@ export function App() {
             ...parseParams(routerParams),
             cells: lifeMapRef.current.getCells()
         }));
-        navigator.clipboard.writeText(`${window.location.origin}/#${path}`).then(() => {
+        navigator.clipboard.writeText(`${window.location.origin}${path}`).then(() => {
             setShowToast(true);
         });
     }, [routerParams]);
@@ -340,6 +341,7 @@ export function App() {
 
     return (
         <AppWrapper ref={appRef} playState={playState} dragState={dragState}>
+            <GlobalStyle/>
             <CanvasWrapper
                 ref={canvasRef}
                 width={attributes.width}
