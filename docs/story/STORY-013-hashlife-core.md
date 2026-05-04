@@ -1,6 +1,6 @@
 # STORY-013: HashLife 核心算法
 
-- **状态**: Todo
+- **状态**: Done
 - **Epic**: [Epic-003](../epic/003-hashlife.md)
 - **日期**: 2026-05-04
 - **负责人**: Claude + linfang
@@ -15,15 +15,16 @@ HashLife 的核心是递归计算 node.result()：对 level-n 节点，返回其
 
 ## 验收标准
 
-- [ ] level-2 base case：4×4 → 2×2，用 naive 规则计算
-- [ ] 递归 result：拆分为 9 个子问题 → 组合中心结果
-- [ ] result memoization：缓存在 Node 上
-- [ ] step(n) 支持：演化 n 步（通过 padding + 递归 result）
-- [ ] Oracle testing：与 naive 算法逐代对比
-- [ ] 已知 pattern 测试：Block 静止、Blinker 周期 2、Glider 位移
+- [x] level-2 base case：4×4 → 2×2，用 naive 规则计算
+- [x] 递归 result：拆分为 9 个子问题 → 组合中心结果
+- [x] result memoization：缓存在 Node 上
+- [x] step(n) 支持：演化 n 步（通过 padding + 递归 result）
+- [x] Oracle testing：与 naive 算法逐代对比
+- [x] 已知 pattern 测试：Block 静止、Blinker 周期 2、Glider 位移
 
 ## 变更记录
 
 | 日期 | 变更内容 |
 |------|---------|
 | 2026-05-04 | Story 创建 |
+| 2026-05-04 | HashLife step/stepOne with memoization, 30 tests passing |

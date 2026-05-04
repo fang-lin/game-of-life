@@ -1,6 +1,6 @@
 # Epic-003: HashLife 算法实现
 
-- **状态**: In Progress
+- **状态**: Done
 - **创建日期**: 2026-05-04
 
 ## 目标
@@ -28,9 +28,9 @@
 
 | # | Story | 状态 |
 |---|-------|------|
-| 012 | [QuadTree 节点 + 规范化池](../story/STORY-012-quadtree-nodes.md) | Todo |
-| 013 | [HashLife 核心算法](../story/STORY-013-hashlife-core.md) | Todo |
-| 014 | [集成替换 LifeMap](../story/STORY-014-hashlife-integration.md) | Todo |
+| 012 | [QuadTree 节点 + 规范化池](../story/STORY-012-quadtree-nodes.md) | Done |
+| 013 | [HashLife 核心算法](../story/STORY-013-hashlife-core.md) | Done |
+| 014 | [集成替换 LifeMap](../story/STORY-014-hashlife-integration.md) | Done |
 
 ## 风险与依赖
 
