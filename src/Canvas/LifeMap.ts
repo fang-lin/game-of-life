@@ -1,6 +1,9 @@
 import {Coordinate} from './Canvas';
+import {NodePool} from './HashLife';
 
 export type CellsMap = Map<string, Coordinate>;
+
+const pool = new NodePool();
 
 export class LifeMap {
     cells: CellsMap = new Map();
@@ -47,22 +50,43 @@ export class LifeMap {
     }
 
     evolve() {
-        this.bornList = new Map();
+        // Build HashLife tree from current cells
+        const currentCells = this.getCells() as [number, number][];
+        let tree = pool.fromCells(currentCells);
+
+        // Expand to ensure enough room for stepOne
+        tree = pool.expand(tree);
+        tree = pool.expand(tree);
+
+        // Advance one generation
+        tree = pool.stepOne(tree);
+
+        // Collect new cells
+        const newCells: [number, number][] = [];
+        pool.collectCells(tree, 0, 0, newCells);
+
+        // Compute deadList and bornList by diffing old and new
+        const oldSet = new Set(currentCells.map(c => `${c}`));
+        const newSet = new Set(newCells.map(c => `${c}`));
+
         this.deadList = new Map();
-        this.cells.forEach(cell => {
-            const neighborsNum = this.getNeighborsNum(cell);
-            if (neighborsNum < 2 || neighborsNum > 3) {
+        this.bornList = new Map();
+
+        for (const cell of currentCells) {
+            if (!newSet.has(`${cell}`)) {
                 this.deadList.set(`${cell}`, cell);
             }
+        }
 
-            LifeMap.adjacentCoordinates(cell).forEach(born => {
-                if (!this.cells.get(`${born}`) && !this.bornList.get(`${born}`) && this.getNeighborsNum(born) === 3) {
-                    this.bornList.set(`${born}`, born);
-                }
-            });
-        });
-        this.deadList.forEach(dead => this.removeCell(dead));
-        this.bornList.forEach(born => this.addCell(born));
+        // Update cells map
+        this.cells = new Map();
+        for (const cell of newCells) {
+            const coord: Coordinate = [cell[0], cell[1]];
+            this.cells.set(`${coord}`, coord);
+            if (!oldSet.has(`${coord}`)) {
+                this.bornList.set(`${coord}`, coord);
+            }
+        }
     }
 
     reset() {

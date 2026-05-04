@@ -145,13 +145,32 @@ describe('HashLife step', () => {
         pool = new NodePool();
     });
 
-    /** Helper: run naive LifeMap for n generations and return sorted cells */
+    /** Naive Game of Life implementation for oracle testing */
     function naiveEvolve(initialCells: Coordinate[], generations: number): Coordinate[] {
-        const lifeMap = new LifeMap(initialCells);
-        for (let i = 0; i < generations; i++) {
-            lifeMap.evolve();
+        let cells = new Map<string, Coordinate>();
+        for (const c of initialCells) cells.set(`${c}`, c);
+
+        for (let g = 0; g < generations; g++) {
+            const neighborCount = new Map<string, number>();
+            cells.forEach(([x, y]) => {
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        if (dx === 0 && dy === 0) continue;
+                        const key = `${x + dx},${y + dy}`;
+                        neighborCount.set(key, (neighborCount.get(key) || 0) + 1);
+                    }
+                }
+            });
+            const next = new Map<string, Coordinate>();
+            neighborCount.forEach((count, key) => {
+                const [x, y] = key.split(',').map(Number) as Coordinate;
+                if (count === 3 || (count === 2 && cells.has(`${x},${y}`))) {
+                    next.set(`${x},${y}`, [x, y]);
+                }
+            });
+            cells = next;
         }
-        return lifeMap.getCells().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+        return Array.from(cells.values()).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
     }
 
     /** Helper: run HashLife for n generations (single-step) and return sorted cells */
