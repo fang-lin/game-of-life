@@ -2,6 +2,7 @@ import {Coordinate, Size} from './Canvas';
 import {GridType, GridTypes, ParsedParams, pixelRatio} from '../App.functions';
 import {CellsMap, LifeMap} from './LifeMap';
 import {RefObject} from 'react';
+import {CanvasColors} from '../Theme';
 
 export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, scale: number, origin: Coordinate, gridColor: string) {
     const context = canvasRef.current?.getContext('2d');
@@ -86,12 +87,12 @@ export function draw({
 }: DrawParams) {
     wipe(canvasRef, size);
     if (gridType === GridTypes[0]) {
-        drawGrid(canvasRef, size, scale, origin, 'rgba(0,0,0,.1)');
+        drawGrid(canvasRef, size, scale, origin, CanvasColors.grid);
     }
-    drawCells(canvasRef, 'rgba(0,0,0,.3)', hoveringCells, scale, size, origin, gridType);
-    drawCells(canvasRef, '#183A37', lifeMap.cells, scale, size, origin, gridType);
+    drawCells(canvasRef, CanvasColors.hoveringCells, hoveringCells, scale, size, origin, gridType);
+    drawCells(canvasRef, CanvasColors.liveCells, lifeMap.cells, scale, size, origin, gridType);
     if (showDeadCells) {
-        drawCells(canvasRef, 'rgba(196,73,0,.3)', lifeMap.deadList, scale, size, origin, gridType);
+        drawCells(canvasRef, CanvasColors.deadCells, lifeMap.deadList, scale, size, origin, gridType);
     }
 }
 

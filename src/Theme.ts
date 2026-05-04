@@ -42,3 +42,10 @@ export const CGBlue: Theme = {
     MainDark: '#184E77',
     MainLight: '#168AAD'
 };
+
+export const CanvasColors = {
+    grid: 'rgba(0,0,0,.1)',
+    hoveringCells: 'rgba(0,0,0,.3)',
+    liveCells: '#183A37',
+    deadCells: 'rgba(196,73,0,.3)',
+} as const;
