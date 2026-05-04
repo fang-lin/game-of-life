@@ -11,15 +11,18 @@ const Toast: FunctionComponent<PropsWithChildren<ToastProps>> = ({children, show
     const [hide, setHide] = useState<boolean>(false);
 
     useEffect(() => {
-        if (showToast) {
-            setHide(false);
-            setTimeout(() => {
-                setHide(true);
-                setTimeout(() => {
-                    toggleToast(false);
-                }, 500);
-            }, 2000);
-        }
+        if (!showToast) return;
+        setHide(false);
+        const hideTimer = setTimeout(() => {
+            setHide(true);
+        }, 2000);
+        const dismissTimer = setTimeout(() => {
+            toggleToast(false);
+        }, 2500);
+        return () => {
+            clearTimeout(hideTimer);
+            clearTimeout(dismissTimer);
+        };
     }, [showToast, toggleToast]);
 
     return showToast ?

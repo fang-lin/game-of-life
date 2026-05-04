@@ -1,7 +1,6 @@
 import React, {
     Component,
     ComponentType,
-    KeyboardEvent,
     RefObject
 } from 'react';
 import {AppWrapper, BottomSection} from './App.styles';
@@ -130,10 +129,12 @@ export const App = withRouter(class extends Component<RouterProps, AppState>{
         isTouchscreenDevices || window.removeEventListener('mousemove', this.onMouseMove);
         window.removeEventListener('click', this.onClickCell);
         window.removeEventListener('keydown', this.onKeydown);
+        window.removeEventListener(DragEvents[DragState.moving], this.onDragging);
+        window.removeEventListener(DragEvents[DragState.end], this.onDragEnd);
     }
 
     onKeydown = (event: Event) => {
-        const {key} = event as unknown as KeyboardEvent;
+        const {key} = event as globalThis.KeyboardEvent;
         switch (key) {
         case 'Escape':
             this.setState({selectedPattern: null});

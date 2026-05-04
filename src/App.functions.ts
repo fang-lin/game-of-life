@@ -116,7 +116,7 @@ function stringifyNumber(n: number, constraint: NumberConstraint): string {
 }
 
 function stringifyCoordinate(n: number): string {
-    if (Number.isNaN(stringifyCoordinate)) {
+    if (Number.isNaN(n)) {
         return '0';
     }
     return n.toString();
