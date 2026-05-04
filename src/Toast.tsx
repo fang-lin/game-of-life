@@ -26,7 +26,7 @@ const Toast: FunctionComponent<PropsWithChildren<ToastProps>> = ({children, show
     }, [showToast, toggleToast]);
 
     return showToast ?
-        <ToastBackground>
+        <ToastBackground role="status" aria-live="polite">
             <ToastWrapper hide={hide}>{children}</ToastWrapper>
         </ToastBackground> : null;
 };

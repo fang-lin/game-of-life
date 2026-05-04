@@ -94,44 +94,44 @@ const Panel: FunctionComponent<PanelProps> = ({
         <ButtonGroup>
             {
                 (playState === PlayState.Paused || playState === PlayState.Editing) &&
-                <Button onClick={onClickPlay} theme={BottleGreen}><span><PlayIcon/></span></Button>
+                <Button onClick={onClickPlay} theme={BottleGreen} aria-label="Play"><span><PlayIcon/></span></Button>
             }
             {
                 playState === PlayState.Playing &&
                 <Button pressed onClick={onClickPaused}
-                    theme={BottleGreen}><span><PauseIcon/></span></Button>
+                    theme={BottleGreen} aria-label="Pause"><span><PauseIcon/></span></Button>
             }
             <Button onClick={onClickEdit} disabled={playState !== PlayState.Paused}
-                theme={BlazeOrange}><span><WriteIcon/></span></Button>
+                theme={BlazeOrange} aria-label="Edit"><span><WriteIcon/></span></Button>
             <Button onClick={onClickNext} disabled={playState !== PlayState.Paused}
-                theme={BlazeOrange}><span><NextIcon/></span></Button>
-            <Button onClick={onClickReset} theme={AntiqueRuby}><span><StopIcon/></span></Button>
+                theme={BlazeOrange} aria-label="Next Generation"><span><NextIcon/></span></Button>
+            <Button onClick={onClickReset} theme={AntiqueRuby} aria-label="Reset"><span><StopIcon/></span></Button>
         </ButtonGroup>
         <ButtonGroup>
             <Button onClick={onClickScale(-1)} disabled={scale === Scale.Min} theme={CGBlue}
-                title="Zoom Out"><span><ZoomOutIcon/></span></Button>
+                aria-label="Zoom Out"><span><ZoomOutIcon/></span></Button>
             <Button onClick={onClickScale(1)} disabled={scale === Scale.Max} theme={CGBlue}
-                title="Zoom In"><span><ZoomInIcon/></span></Button>
+                aria-label="Zoom In"><span><ZoomInIcon/></span></Button>
         </ButtonGroup>
         <ButtonGroup>
             <Button onClick={onClickSlowerFaster(-1)} disabled={speed === Speed.Min}
                 theme={CGBlue}
-                title="Slower"><span><SlowerIcon/></span></Button>
+                aria-label="Slower"><span><SlowerIcon/></span></Button>
             <Button onClick={onClickSlowerFaster(1)} disabled={speed === Speed.Max}
                 theme={CGBlue}
-                title="Faster"><span><FasterIcon/></span></Button>
+                aria-label="Faster"><span><FasterIcon/></span></Button>
         </ButtonGroup>
         <ButtonGroup>
             <Button onClick={onClickToggleGrid}
-                theme={CGBlue}><span style={{fontSize: '10px'}}>{gridType} Grid</span></Button>
+                theme={CGBlue} aria-label={`Toggle Grid: ${gridType}`}><span style={{fontSize: '10px'}}>{gridType} Grid</span></Button>
             <Button onClick={onClickToggleDeadAndBorn} pressed={showDeadCells}
-                theme={CGBlue}><span style={{fontSize: '10px'}}>Show Dead</span></Button>
+                theme={CGBlue} aria-label="Toggle Dead Cells"><span style={{fontSize: '10px'}}>Show Dead</span></Button>
         </ButtonGroup>
-        <Button theme={BlazeOrange} onClick={onClickShare}><span><ShareIcon/></span></Button>
+        <Button theme={BlazeOrange} onClick={onClickShare} aria-label="Share"><span><ShareIcon/></span></Button>
         <ButtonWrapper>
             <Button onClick={onClickAdd}
                 pressed={showPatternPanel}
-                theme={selectedPattern ? BottleGreen : CGBlue}><span><GliderIcon/></span></Button>
+                theme={selectedPattern ? BottleGreen : CGBlue} aria-label="Patterns"><span><GliderIcon/></span></Button>
             {showPatternPanel && <PatternsPanel {...{setSelectedPattern, selectedPattern, rotateHoveringCells}}/>}
         </ButtonWrapper>
     </PanelWrapper>);

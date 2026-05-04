@@ -130,9 +130,9 @@ const PatternsPanel: FunctionComponent<PatternsPanelProps> = ({setSelectedPatter
     return <PatternsPanelWrapper>
         <ButtonTopRow>
             <CapsuleButton theme={BlazeOrange}
-                onClick={onClickRotateButton(false)}><span><RotateLeftIcon/></span></CapsuleButton>
+                onClick={onClickRotateButton(false)} aria-label="Rotate Left"><span><RotateLeftIcon/></span></CapsuleButton>
             <CapsuleButton theme={BlazeOrange}
-                onClick={onClickRotateButton(true)}><span><RotateRightIcon/></span></CapsuleButton>
+                onClick={onClickRotateButton(true)} aria-label="Rotate Right"><span><RotateRightIcon/></span></CapsuleButton>
         </ButtonTopRow>
         <Row {...props} patterns={stillLifePatterns}/>
         <Row {...props} patterns={oscillatorsPatterns}/>

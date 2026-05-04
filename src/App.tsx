@@ -344,6 +344,8 @@ export function App() {
                 ref={canvasRef}
                 width={attributes.width}
                 height={attributes.height}
+                role="img"
+                aria-label="Game of Life simulation grid"
             />
             <Header/>
             <Dashboard {...{evolutionIndex, cellsCount, params, hoveringCell}}/>
