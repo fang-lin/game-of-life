@@ -18,6 +18,7 @@ export class Node {
     readonly alive: number;
     readonly id: number;
     result: Node | null = null;
+    stepOneResult: Node | null = null;
 
     constructor(
         level: number,
@@ -141,7 +142,12 @@ export class NodePool {
      */
     stepOne(node: Node): Node {
         if (node.level < 2) throw new Error('Cannot step node below level 2');
-        if (node.level === 2) return this.stepLevel2(node);
+        if (node.population === 0) return this.emptyTree(node.level - 1);
+        if (node.stepOneResult) return node.stepOneResult;
+        if (node.level === 2) {
+            node.stepOneResult = this.stepLevel2(node);
+            return node.stepOneResult;
+        }
 
         const {nw, ne, sw, se} = node;
         const n00 = this.stepOne(nw!);
@@ -154,12 +160,13 @@ export class NodePool {
         const n21 = this.stepOne(this.create(sw!.ne!, se!.nw!, sw!.se!, se!.sw!));
         const n22 = this.stepOne(se!);
 
-        return this.create(
+        node.stepOneResult = this.create(
             this.create(n00.se!, n01.sw!, n10.ne!, n11.nw!),
             this.create(n01.se!, n02.sw!, n11.ne!, n12.nw!),
             this.create(n10.se!, n11.sw!, n20.ne!, n21.nw!),
             this.create(n11.se!, n12.sw!, n21.ne!, n22.nw!),
         );
+        return node.stepOneResult;
     }
 
     /**
@@ -288,6 +295,7 @@ export class NodePool {
     clearResultCaches(): void {
         for (const node of this.cache.values()) {
             node.result = null;
+            node.stepOneResult = null;
         }
     }
 
