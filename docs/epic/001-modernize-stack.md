@@ -32,7 +32,7 @@
 |---|-------|------|
 | 001 | [依赖升级](../story/STORY-001-dependency-upgrade.md) | Done |
 | 002 | [CRA 迁移到 Vite](../story/STORY-002-cra-to-vite-migration.md) | Done |
-| 003 | [从 AWS 迁移到 Vercel 部署](../story/STORY-003-deploy-to-vercel.md) | In Progress |
+| 003 | [从 AWS 迁移到 Vercel 部署](../story/STORY-003-deploy-to-vercel.md) | Done |
 | 004 | [对齐文档体系](../story/STORY-004-align-docs-structure.md) | Done |
 
 ## 风险与依赖

@@ -1,6 +1,6 @@
 # STORY-003: 从 AWS 迁移到 Vercel 部署
 
-- **状态**: In Progress
+- **状态**: Done
 - **Epic**: [Epic-001](../epic/001-modernize-stack.md)
 - **日期**: 2026-05-04
 - **负责人**: Claude + linfang
@@ -24,7 +24,7 @@
 - [x] 旧 AWS secrets 清理
 - [x] 自定义域名 game-of-life.fanglin.me 配置到 Vercel
 - [x] 生产部署验证通过
-- [ ] 移除 AWS 旧资源 (S3 bucket, CloudFront distribution, Route53 record)
+- [x] 移除 AWS 旧资源 (S3 bucket, CloudFront distribution, Route53 record, Terraform state)
 
 ## 技术方案
 
@@ -37,3 +37,4 @@
 | 2026-05-04 | 删除 Terraform，重写 workflow，创建 ADR-003 |
 | 2026-05-04 | Vercel link、secrets 配置、域名添加完成 |
 | 2026-05-04 | Pipeline 全绿，生产部署验证通过 |
+| 2026-05-04 | AWS 旧资源全部清理 (S3, CloudFront, Route53, Terraform state) |
