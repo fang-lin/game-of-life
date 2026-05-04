@@ -1,10 +1,10 @@
 import {Coordinate, Size} from './Canvas';
-import {GridType, GridTypes, ParsedParams, pixelRatio} from '../App.functions';
+import {GridType, GridTypes, pixelRatio} from '../App.functions';
 import {CellsMap, LifeMap} from './LifeMap';
 import {RefObject} from 'react';
 import {CanvasColors} from '../Theme';
 
-export function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, scale: number, origin: Coordinate, gridColor: string) {
+function drawGrid(canvasRef: RefObject<HTMLCanvasElement>, size: Size, scale: number, origin: Coordinate, gridColor: string) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         const [width, height] = size;
@@ -41,22 +41,14 @@ function fillCell(context: CanvasRenderingContext2D, xy: Coordinate, scale: numb
     );
 }
 
-export function drawCell(canvasRef: RefObject<HTMLCanvasElement>, color: string, cell: Coordinate, scale: number, size: Size, origin: Coordinate, gridType: GridType) {
-    const context = canvasRef.current?.getContext('2d');
-    if (context) {
-        context.fillStyle = color;
-        fillCell(context, cell, scale, size, origin, gridType);
-    }
-}
-
-export function wipe(canvasRef: RefObject<HTMLCanvasElement>, size: Size) {
+function wipe(canvasRef: RefObject<HTMLCanvasElement>, size: Size) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         context.clearRect(0, 0, size[0] * pixelRatio, size[1] * pixelRatio);
     }
 }
 
-export function drawCells(canvasRef: RefObject<HTMLCanvasElement>, color: string, cells: CellsMap | Coordinate[], scale: number, size: Size, origin: Coordinate, gridType: GridType) {
+function drawCells(canvasRef: RefObject<HTMLCanvasElement>, color: string, cells: CellsMap | Coordinate[], scale: number, size: Size, origin: Coordinate, gridType: GridType) {
     const context = canvasRef.current?.getContext('2d');
     if (context) {
         context.fillStyle = color;
@@ -94,16 +86,4 @@ export function draw({
     if (showDeadCells) {
         drawCells(canvasRef, CanvasColors.deadCells, lifeMap.deadList, scale, size, origin, gridType);
     }
-}
-
-interface LayoutCanvasProps {
-    size: Size;
-    params: ParsedParams;
-}
-
-export function shouldLayoutCanvas(prevProps: LayoutCanvasProps, currentProps: LayoutCanvasProps): boolean {
-    return prevProps.size[0] !== currentProps.size[0] ||
-        prevProps.size[1] !== currentProps.size[1] ||
-        prevProps.params.scale !== currentProps.params.scale ||
-        prevProps.params.gridType !== currentProps.params.gridType;
 }
