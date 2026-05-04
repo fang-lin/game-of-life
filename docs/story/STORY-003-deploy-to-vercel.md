@@ -23,8 +23,8 @@
 - [x] GitHub repo secrets 配置 (VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID)
 - [x] 旧 AWS secrets 清理
 - [x] 自定义域名 game-of-life.fanglin.me 配置到 Vercel
-- [ ] 生���部署验证通过
-- [ ] ���除 AWS 旧资源 (S3 bucket, CloudFront distribution, Route53 record)
+- [x] 生产部署验证通过
+- [ ] 移除 AWS 旧资源 (S3 bucket, CloudFront distribution, Route53 record)
 
 ## 技术方案
 
@@ -36,3 +36,4 @@
 |------|---------|
 | 2026-05-04 | 删除 Terraform，重写 workflow，创建 ADR-003 |
 | 2026-05-04 | Vercel link、secrets 配置、域名添加完成 |
+| 2026-05-04 | Pipeline 全绿，生产部署验证通过 |
