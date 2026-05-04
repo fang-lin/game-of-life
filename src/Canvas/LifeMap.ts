@@ -1,16 +1,19 @@
 import {Coordinate} from './Canvas';
-import {NodePool} from './HashLife';
+import {Node, NodePool} from './HashLife';
 
 export type CellsMap = Map<string, Coordinate>;
-
-const pool = new NodePool();
 
 export class LifeMap {
     cells: CellsMap = new Map();
     deadList: CellsMap = new Map();
     bornList: CellsMap = new Map();
+    private pool: NodePool;
+    private tree: Node;
+    private treeDirty = true; // true when cells map was modified directly
 
     constructor(cells?: Coordinate[]) {
+        this.pool = new NodePool();
+        this.tree = this.pool.emptyTree(3);
         if (cells)
             this.addCells(cells);
     }
@@ -28,11 +31,17 @@ export class LifeMap {
         ];
     }
 
-    addCell = (coords: Coordinate) => this.cells.set(`${coords}`, coords);
+    addCell = (coords: Coordinate) => {
+        this.cells.set(`${coords}`, coords);
+        this.treeDirty = true;
+    };
 
     addCells = (cells: Coordinate[]) => cells.forEach(this.addCell);
 
-    removeCell = (cell: Coordinate) => this.cells.delete(cell.toString());
+    removeCell = (cell: Coordinate) => {
+        this.cells.delete(cell.toString());
+        this.treeDirty = true;
+    };
 
     removeCells = (cells: Coordinate[]) => cells.forEach(this.removeCell);
 
@@ -50,35 +59,36 @@ export class LifeMap {
     }
 
     evolve() {
-        // Build HashLife tree from current cells
-        const currentCells = this.getCells() as [number, number][];
-        let tree = pool.fromCells(currentCells);
+        // Sync tree from cells map if it was modified directly
+        if (this.treeDirty) {
+            this.rebuildTree();
+        }
 
-        // Expand to ensure enough room for stepOne
-        tree = pool.expand(tree);
-        tree = pool.expand(tree);
+        const oldCells = this.getCells();
 
-        // Advance one generation
-        tree = pool.stepOne(tree);
+        // Expand to ensure enough room, then step
+        this.tree = this.pool.expand(this.tree);
+        this.tree = this.pool.expand(this.tree);
+        this.tree = this.pool.stepOne(this.tree);
+        this.treeDirty = false;
 
-        // Collect new cells
+        // Collect new cells from tree
         const newCells: [number, number][] = [];
-        pool.collectCells(tree, 0, 0, newCells);
+        this.pool.collectCells(this.tree, 0, 0, newCells);
 
-        // Compute deadList and bornList by diffing old and new
-        const oldSet = new Set(currentCells.map(c => `${c}`));
+        // Compute deadList and bornList
+        const oldSet = new Set(oldCells.map(c => `${c}`));
         const newSet = new Set(newCells.map(c => `${c}`));
 
         this.deadList = new Map();
         this.bornList = new Map();
 
-        for (const cell of currentCells) {
+        for (const cell of oldCells) {
             if (!newSet.has(`${cell}`)) {
                 this.deadList.set(`${cell}`, cell);
             }
         }
 
-        // Update cells map
         this.cells = new Map();
         for (const cell of newCells) {
             const coord: Coordinate = [cell[0], cell[1]];
@@ -91,5 +101,15 @@ export class LifeMap {
 
     reset() {
         this.cells = new Map();
+        this.pool = new NodePool();
+        this.tree = this.pool.emptyTree(3);
+        this.treeDirty = true;
+    }
+
+    private rebuildTree() {
+        const cells = this.getCells() as [number, number][];
+        this.pool = new NodePool();
+        this.tree = this.pool.fromCells(cells);
+        this.treeDirty = false;
     }
 }
